@@ -2,32 +2,37 @@
 "use client"
 import { useState } from 'react';
 import { FiHome, FiUsers, FiSettings, FiMenu } from 'react-icons/fi';
+import { useRouter } from 'next/navigation';
 import { FaUser } from "react-icons/fa";
-
 import { MdGroups } from "react-icons/md";
 
 const Sidebar = () => {
+  const router = useRouter();
   const [activeMenu, setActiveMenu] = useState('home');
 
   const menus = [
     {
       id: 'home',
       label: 'Home',
+      route: '/',
       icon: <FiHome />,
     },
     {
         id: 'teachers',
         label: 'Teachers',
+        route: '/teachers',
         icon: <FaUser />,
       },
     {
       id: 'batches',
       label: 'Batches',
+      route: '/batches',
       icon: <MdGroups />,
     },
     {
       id: 'settings',
       label: 'Settings',
+      route: '/settings',
       icon: <FiSettings />,
     },
   ];
@@ -42,9 +47,12 @@ const Sidebar = () => {
           {menus.map((menu) => (
             <li key={menu.id}>
               <button
-                onClick={() => setActiveMenu(menu.id)}
+                onClick={() => {
+                  router.push(menu.route);
+                  setActiveMenu(menu.id);
+                }}
                 className={`w-full flex items-center space-x-2 p-2 rounded ${
-                  activeMenu === menu.id
+                  router.pathname === menu.route || activeMenu === menu.id
                     ? 'bg-gray-700 text-white'
                     : 'hover:bg-gray-700'
                 }`}
