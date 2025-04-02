@@ -8,7 +8,7 @@ import "react-date-range/dist/styles.css";
 
 import "react-date-range/dist/theme/default.css";
 
-import "./viewTeachers.css";
+// import "./viewTeachers.css";
 
 export default function TeachersPage() {
   const [teachers, setTeachers] = useState([]);

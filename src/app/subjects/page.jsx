@@ -1,13 +1,15 @@
-'use client';
-import { useState, useEffect } from 'react';
+"use client";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { axiosInstace } from "../../../lib/axios";
 
 export default function SubjectesPage() {
   const [Subjectes, setSubjectes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [newSubjectName, setNewSubjectName] = useState('');
+  const [newSubjectName, setNewSubjectName] = useState("");
 
-  // This useEffect will be used to fetch data when component mounts
+  // This useEffect will be used to fetch data when the component mounts
   useEffect(() => {
     fetchSubjectes();
   }, []);
@@ -16,17 +18,13 @@ export default function SubjectesPage() {
   const fetchSubjectes = async () => {
     try {
       setLoading(true);
-      // Temporary mock data - replace this with your API call later
-      const mockData = [
-        { id: 1, name: 'Mathematics' },
-        { id: 2, name: 'Physics' },
-        { id: 3, name: 'Chemistry' },
-        { id: 4, name: 'Biology' },
-        { id: 5, name: 'Environment' },
-      ];
-      setSubjectes(mockData);
+      // Replace mock data with actual API call using axios
+      const response = await axiosInstace.get(
+        "/subject/get-subjects"
+      );
+      setSubjectes(response.data); // Use the response data
     } catch (error) {
-      console.error('Error fetching Subjectes:', error);
+      console.error("Error fetching Subjectes:", error);
     } finally {
       setLoading(false);
     }
@@ -37,25 +35,18 @@ export default function SubjectesPage() {
     if (!newSubjectName.trim()) return;
 
     try {
-      // When you have your API ready, replace this with actual API call
-      // Example: 
-      // const response = await fetch('your-api-endpoint/Subjectes', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ name: newSubjectName })
-      // });
-      // const data = await response.json();
+      // Example API call to add a new subject (you can replace this later)
+      // const response = await axios.post('your-api-endpoint', { name: newSubjectName });
 
-      // For now, simulate adding a new Subject
       const newSubject = {
         id: Subjectes.length + 1,
-        name: newSubjectName
+        name: newSubjectName,
       };
       setSubjectes([...Subjectes, newSubject]);
-      setNewSubjectName('');
+      setNewSubjectName("");
       setShowAddForm(false);
     } catch (error) {
-      console.error('Error adding Subject:', error);
+      console.error("Error adding Subject:", error);
     }
   };
 
@@ -75,7 +66,10 @@ export default function SubjectesPage() {
         <div className="w-lg mx-auto mb-6 p-4 border rounded-lg bg-gray-50">
           <form onSubmit={handleAddSubject} className="space-y-4">
             <div>
-              <label htmlFor="SubjectName" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="SubjectName"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Subject Name
               </label>
               <input
@@ -99,7 +93,7 @@ export default function SubjectesPage() {
                 type="button"
                 onClick={() => {
                   setShowAddForm(false);
-                  setNewSubjectName('');
+                  setNewSubjectName("");
                 }}
                 className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
               >
@@ -133,9 +127,9 @@ export default function SubjectesPage() {
               </tr>
             ) : (
               Subjectes.map((Subject, index) => (
-                <tr key={Subject.id} className="hover:bg-gray-50">
+                <tr key={Subject._id} className="hover:bg-gray-50">
                   <td className="border px-4 py-2">{index + 1}</td>
-                  <td className="border px-4 py-2">{Subject.name}</td>
+                  <td className="border px-4 py-2">{Subject.subjectName}</td>
                 </tr>
               ))
             )}
