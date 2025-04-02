@@ -19,6 +19,7 @@ export default function TeachersPage() {
 
   useEffect(() => {
     fetchTeachers();
+    fetchTeachers();
   }, []);
 
   const fetchTeachers = async () => {
@@ -55,6 +56,7 @@ export default function TeachersPage() {
       const isMatchingTeacher = selectedTeacher === "" || teacher.name === selectedTeacher;
       return isWithinDateRange && isMatchingTeacher;
     });
+  }, [selectedTeacher, dateRange, teachers]);
   }, [selectedTeacher, dateRange, teachers]);
 
   return (
@@ -132,4 +134,5 @@ export default function TeachersPage() {
       </div>
     </div>
   );
+}
 }
