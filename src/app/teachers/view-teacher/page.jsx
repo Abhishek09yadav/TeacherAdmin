@@ -60,15 +60,15 @@ export default function TeachersPage() {
     const filtered = teachers.filter((teacher) => {
       const teacherDate = new Date(teacher.date);
       const isWithinDateRange = teacherDate >= startDate && teacherDate <= endDate;
-      const isMatchingTeacher = selectedTeacher ? teacher.name.includes(selectedTeacher) : true;
+      const isMatchingTeacher = selectedTeacher === "" || teacher.name === selectedTeacher;
       return isWithinDateRange && isMatchingTeacher;
     });
     setFilteredTeachers(filtered);
   };
 
   return (
-    <div className="p-6">
-      <div className="max-w-lg mx-auto mb-4">
+    <div className="p-6 flex flex-col items-center justify-center">
+      <div className="max-w-lg w-full mb-4">
         <label htmlFor="teacher-select" className="block text-sm font-medium text-gray-700 mb-2">
           Select Teacher
         </label>
@@ -87,9 +87,24 @@ export default function TeachersPage() {
         </select>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-6">
-        <div className="overflow-auto w-full">
-          <table className="min-w-full bg-white border border-gray-300 shadow-md rounded-lg">
+      <div className="flex flex-col items-center gap-6 w-full">
+        <div className="flex justify-center">
+          <DateRangePicker
+            showSelectionPreview={true}
+            moveRangeOnFirstSelection={false}
+            ranges={dateRange}
+            months={2}
+            direction="horizontal"
+            onChange={handleSelect}
+            rangeColors={["#3b82f6"]}
+            editableDateInputs={true}
+            staticRanges={[]}
+            inputRanges={[]}
+          />
+        </div>
+
+        <div className="overflow-auto w-2/3">
+          <table className="min-w-full bg-white border border-gray-300 shadow-md rounded-lg text-center">
             <thead>
               <tr className="bg-gray-200">
                 <th className="border px-4 py-2">S.No.</th>
@@ -126,18 +141,7 @@ export default function TeachersPage() {
             </tbody>
           </table>
         </div>
-        <div>
-          <DateRangePicker
-            showSelectionPreview={true}
-            moveRangeOnFirstSelection={false}
-            ranges={dateRange}
-            onChange={handleSelect}
-            rangeColors={["#3b82f6"]}
-            editableDateInputs={true}
-            staticRanges={[]}
-            inputRanges={[]}
-          />
-        </div>
+
       </div>
     </div>
   );
