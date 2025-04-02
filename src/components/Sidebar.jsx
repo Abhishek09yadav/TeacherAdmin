@@ -3,12 +3,15 @@
 import { useState } from 'react';
 import { FiHome, FiUsers, FiSettings, FiMenu } from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
-import { FaUser } from "react-icons/fa";
+import { FaUser  } from "react-icons/fa";
 import { MdGroups } from "react-icons/md";
+import { FaBook } from "react-icons/fa";
+import { GrNotes } from "react-icons/gr";
 
 const Sidebar = () => {
   const router = useRouter();
   const [activeMenu, setActiveMenu] = useState('home');
+  const [showTeacherSubmenu, setShowTeacherSubmenu] = useState(false); // State for submenu visibility
 
   const menus = [
     {
@@ -18,11 +21,24 @@ const Sidebar = () => {
       icon: <FiHome />,
     },
     {
-        id: 'teachers',
-        label: 'Teachers',
-        route: '/teachers',
-        icon: <FaUser />,
-      },
+      id: 'teachers',
+      label: 'Teachers',
+      route: '/teachers',
+      icon: <FaUser  />,
+      submenu: [
+        {
+          id: 'add-teacher',
+          label: 'Add Teacher',
+          route: '/teachers/add-teacher',
+        },
+        {
+          id: 'view-teacher',
+          label: 'View Teacher',
+          route: '/teachers/view-teacher',
+        },
+        // You can add more submenu items here
+      ],
+    },
     {
       id: 'batches',
       label: 'Batches',
@@ -30,17 +46,24 @@ const Sidebar = () => {
       icon: <MdGroups />,
     },
     {
-      id: 'settings',
-      label: 'Settings',
-      route: '/settings',
-      icon: <FiSettings />,
+      id: 'subjects',
+      label: 'Subjects',
+      route: '/subjects',
+      icon: <FaBook />,
+    },
+    {
+      id: 'chapters',
+      label: 'Chapters',
+      route: '/chapters',
+      icon: <GrNotes />,
     },
   ];
 
   return (
     <div className="fixed w-64 h-screen bg-gray-900 text-white">
-      <div className="p-4">
-        <h1 className="text-xl font-bold">Sidebar</h1>
+      <div className="px-8 py-4">
+        <h2 className='text-2xl text-center'>Admin Panel</h2>
+        <img src="/logo.png" alt="logo" />
       </div>
       <nav className="mt-4">
         <ul className="space-y-2">
@@ -48,8 +71,12 @@ const Sidebar = () => {
             <li key={menu.id}>
               <button
                 onClick={() => {
-                  router.push(menu.route);
-                  setActiveMenu(menu.id);
+                  if (menu.id === 'teachers') {
+                    setShowTeacherSubmenu(!showTeacherSubmenu); // Toggle submenu visibility
+                  } else {
+                    router.push(menu.route);
+                    setActiveMenu(menu.id);
+                  }
                 }}
                 className={`w-full flex items-center space-x-2 p-2 rounded ${
                   router.pathname === menu.route || activeMenu === menu.id
@@ -60,6 +87,28 @@ const Sidebar = () => {
                 <span className="text-lg">{menu.icon}</span>
                 <span>{menu.label}</span>
               </button>
+              {menu.submenu && showTeacherSubmenu && (
+                <ul className="ml-4 mt-2 space-y-1">
+                  {menu.submenu.map((subMenu) => (
+                    <li key={subMenu.id}>
+                      <button
+                        onClick={() => {
+                          router.push(subMenu.route);
+                          setActiveMenu(subMenu.id);
+                         
+                        }}
+                        className={`w-full flex items-center space-x-2 p-2 rounded ${
+                          router.pathname === subMenu.route || activeMenu === subMenu.id
+                            ? 'bg-gray-600 text-white'
+                            : 'hover:bg-gray-600'
+                        }`}
+                      >
+                        <span>{subMenu.label}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </li>
           ))}
         </ul>

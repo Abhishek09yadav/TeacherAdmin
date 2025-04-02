@@ -11,7 +11,15 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
+.p-tabview-nav {
+  display: flex;
+  justify-content: space-around; /* Distributes space evenly */
+  padding-right: 30px; /* Space for the "Next" button */
+}
 
+.p-tabview-title {
+  margin-right: 10px; /* Space between tab titles */
+}
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
