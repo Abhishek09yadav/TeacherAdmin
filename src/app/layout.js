@@ -1,11 +1,12 @@
-"use client"; 
+"use client";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import { PrimeReactProvider } from "primereact/api";
-import "primereact/resources/themes/lara-light-blue/theme.css"; 
+import "primereact/resources/themes/lara-light-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
+import { ToastContainer } from "react-toastify";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,6 +27,7 @@ export default function RootLayout({ children }) {
         >
           <Sidebar />
           {children}
+          <ToastContainer />
         </body>
       </html>
     </PrimeReactProvider>

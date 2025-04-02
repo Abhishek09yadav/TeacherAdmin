@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { axiosInstace } from "../../../lib/axios";
+import { toast } from "react-toastify";
 
 export default function SubjectesPage() {
   const [Subjectes, setSubjectes] = useState([]);
@@ -40,12 +41,15 @@ export default function SubjectesPage() {
 
       // If successful, add the new subject to the list
       if (response.status === 200) {
-        setSubjectes([...Subjectes, response.data]); 
-        setNewSubjectName("");
-        setShowAddForm(false);
+        toast.success("Subject added successfully!");
+        // setSubjectes([...Subjectes, response.data]); 
+        // setNewSubjectName("");
+        // setShowAddForm(false);
+        // window.location.reload();
       }
     } catch (error) {
       console.error("Error adding Subject:", error);
+      toast.error("Error adding Subject. Please try again.");
     }
   };
 
