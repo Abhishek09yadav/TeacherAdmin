@@ -8,6 +8,7 @@ const FormComponent = () => {
     email: '',
     aadhaar: '',
     password: '',
+    image: null, // New state for the uploaded image
   });
 
   const generatePassword = (length = 8) => {
@@ -26,8 +27,12 @@ const FormComponent = () => {
   }, []);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type, files } = e.target;
+    if (type === 'file') {
+      setFormData({ ...formData, [name]: files[0] }); // Handle file input
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleSubmit = (e) => {
@@ -44,6 +49,7 @@ const FormComponent = () => {
       email: '',
       aadhaar: '',
       password: '',
+      image: null, // Reset the image state
     });
   };
 
@@ -111,7 +117,18 @@ const FormComponent = () => {
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-500"
             />
           </div>
-          <div className ="flex justify-around">
+          <div>
+            <label htmlFor="image" className="block text-sm font-medium text-gray-700">Upload Image</label>
+            <input
+              type="file"
+              id="image"
+              name="image"
+              accept="image/*"
+              onChange={handleChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-500"
+            />
+          </div>
+          <div className="flex justify-around">
             <button type="submit" className="w-1/3 bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600">Submit</button>
             <button type="button" onClick={handleReset} className="w-1/3 bg-gray-300 text-gray-700 py-2 rounded-md hover:bg-gray-400">Reset</button>
           </div>
