@@ -19,9 +19,7 @@ export default function SubjectesPage() {
     try {
       setLoading(true);
       // Replace mock data with actual API call using axios
-      const response = await axiosInstace.get(
-        "/subject/get-subjects"
-      );
+      const response = await axiosInstace.get("/subject/get-subjects");
       setSubjectes(response.data); // Use the response data
     } catch (error) {
       console.error("Error fetching Subjectes:", error);
@@ -35,16 +33,17 @@ export default function SubjectesPage() {
     if (!newSubjectName.trim()) return;
 
     try {
-      // Example API call to add a new subject (you can replace this later)
-      // const response = await axios.post('your-api-endpoint', { name: newSubjectName });
+      // Make an API request to add a new subject
+      const response = await axiosInstace.post("/subject/add-subject", {
+        subjectName: newSubjectName,
+      });
 
-      const newSubject = {
-        id: Subjectes.length + 1,
-        name: newSubjectName,
-      };
-      setSubjectes([...Subjectes, newSubject]);
-      setNewSubjectName("");
-      setShowAddForm(false);
+      // If successful, add the new subject to the list
+      if (response.status === 200) {
+        setSubjectes([...Subjectes, response.data]); 
+        setNewSubjectName("");
+        setShowAddForm(false);
+      }
     } catch (error) {
       console.error("Error adding Subject:", error);
     }
