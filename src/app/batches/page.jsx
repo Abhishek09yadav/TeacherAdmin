@@ -103,27 +103,28 @@ export default function BatchesPage() {
             </tr>
           </thead>
           <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan="2" className="border px-4 py-2 text-center">
-                  Loading...
-                </td>
-              </tr>
-            ) : batches.length === 0 ? (
-              <tr>
-                <td colSpan="2" className="border px-4 py-2 text-center">
-                  No batches found
-                </td>
-              </tr>
-            ) : (
-              batches.map((batch, index) => (
-                <tr key={batch.id} className="hover:bg-gray-50">
-                  <td className="border px-4 py-2">{index + 1}</td>
-                  <td className="border px-4 py-2">{batch.name}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
+  {loading ? (
+    <tr>
+      <td colSpan="2" className="border px-4 py-2 text-center">
+        Loading...
+      </td>
+    </tr>
+  ) : batches.length === 0 ? (
+    <tr>
+      <td colSpan="2" className="border px-4 py-2 text-center">
+        No batches found
+      </td>
+    </tr>
+  ) : (
+    batches.map((batch, index) => (
+      <tr key={batch.id || index} className="hover:bg-gray-50">
+        <td className="border px-4 py-2">{index + 1}</td>
+        <td className="border px-4 py-2">{batch.className}</td>
+      </tr>
+    ))
+  )}
+</tbody>
+
         </table>
       </div>
     </div>

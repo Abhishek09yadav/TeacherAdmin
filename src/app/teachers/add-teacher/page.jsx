@@ -1,138 +1,141 @@
-"use client";
-import { useState, useEffect, useMemo } from "react";
-import { DateRangePicker } from "react-date-range";
-import "react-date-range/dist/styles.css";
-import "react-date-range/dist/theme/default.css";
-// import "./viewTeachers.css";
+'use client';
+import React, { useState, useEffect } from 'react';
 
-export default function TeachersPage() {
-  const [teachers, setTeachers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedTeacher, setSelectedTeacher] = useState("");
-  const [dateRange, setDateRange] = useState([
-    {
-      startDate: new Date(),
-      endDate: new Date(),
-      key: "selection",
-    },
-  ]);
+const FormComponent = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    aadhaar: '',
+    password: '',
+    image: null, // New state for the uploaded image
+  });
 
+  const generatePassword = (length = 8) => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+    let password = '';
+    for (let i = 0; i < length; i++) {
+      password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return password;
+  };
+
+  // Generate password on component mount
   useEffect(() => {
-    fetchTeachers();
-    fetchTeachers();
+    const initialPassword = generatePassword();
+    setFormData((prevData) => ({ ...prevData, password: initialPassword }));
   }, []);
 
-  const fetchTeachers = async () => {
-    try {
-      setLoading(true);
-      const mockData = [
-        { id: 1, name: "Teacher 2024-A", date: "2023-10-01", batch: "Batch 1", sub: "Math", chapter: "Algebra", topic: "Equations" },
-        { id: 2, name: "Teacher 2024-B", date: "2023-10-02", batch: "Batch 2", sub: "Science", chapter: "Physics", topic: "Mechanics" },
-        { id: 3, name: "Teacher 2024-C", date: "2023-10-03", batch: "Batch 3", sub: "History", chapter: "Medieval", topic: "Crusades" },
-        { id: 4, name: "Teacher 2024-D", date: "2023-10-04", batch: "Batch 4", sub: "English", chapter: "Literature", topic: "Shakespeare" },
-        { id: 5, name: "Teacher 2024-E", date: "2023-10-05", batch: "Batch 5", sub: "Art", chapter: "Painting", topic: "Impressionism" },
-      ];
-      setTeachers(mockData);
-    } catch (error) {
-      console.error("Error fetching teachers:", error);
-    } finally {
-      setLoading(false);
+  const handleChange = (e) => {
+    const { name, value, type, files } = e.target;
+    if (type === 'file') {
+      setFormData({ ...formData, [name]: files[0] }); // Handle file input
+    } else {
+      setFormData({ ...formData, [name]: value });
     }
   };
 
-  const handleTeacherChange = (e) => {
-    setSelectedTeacher(e.target.value);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('Form submitted:', formData);
+    handleReset(); // Optionally reset the form after submission
+    generatePassword();
   };
 
-  const handleSelect = (ranges) => {
-    setDateRange([ranges.selection]);
-  };
-
-  const filteredTeachers = useMemo(() => {
-    const { startDate, endDate } = dateRange[0];
-    return teachers.filter((teacher) => {
-      const teacherDate = new Date(teacher.date);
-      const isWithinDateRange = teacherDate >= startDate && teacherDate == endDate;
-      const isMatchingTeacher = selectedTeacher === "" || teacher.name === selectedTeacher;
-      return isWithinDateRange && isMatchingTeacher;
+  const handleReset = () => {
+    setFormData({
+      name: '',
+      phone: '',
+      email: '',
+      aadhaar: '',
+      password: '',
+      image: null, // Reset the image state
     });
-  }, [selectedTeacher, dateRange, teachers]);
- 
+  };
 
   return (
-    <div className="p-6 flex flex-col items-center justify-center">
-      <div className="max-w-lg w-full mb-4">
-        <label htmlFor="teacher-select" className="block text-sm font-medium text-gray-700 mb-2">
-          Select Teacher
-        </label>
-        <select
-          id="teacher-select"
-          value={selectedTeacher}
-          onChange={handleTeacherChange}
-          className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-        >
-          <option value="">All Teachers</option>
-          {teachers.sort((a, b) => a.name.localeCompare(b.name)).map((teacher) => (
-            <option key={teacher.id} value={teacher.name}>
-              {teacher.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="flex flex-col items-center gap-6 w-full">
-        <div className="overflow-auto w-full">
-          <table className="min-w-full bg-white border border-gray-300 shadow-md rounded-lg text-center">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="border px-4 py-2">S.No.</th>
-                <th className="border px-4 py-2">Teacher Name</th>
-                <th className="border px-4 py-2">Date</th>
-                <th className="border px-4 py-2">Batch</th>
-                <th className="border px-4 py-2">Subject</th>
-                <th className="border px-4 py-2">Chapter</th>
-                <th className="border px-4 py-2">Topic</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan="7" className="border px-4 py-2 text-center">Loading...</td>
-                </tr>
-              ) : filteredTeachers.length === 0 ? (
-                <tr>
-                  <td colSpan="7" className="border px-4 py-2 text-center">No teachers found</td>
-                </tr>
-              ) : (
-                filteredTeachers.map((teacher, index) => (
-                  <tr key={teacher.id} className="hover:bg-gray-100">
-                    <td className="border px-4 py-2">{index + 1}</td>
-                    <td className="border px-4 py-2">{teacher.name}</td>
-                    <td className="border px-4 py-2">{new Date(teacher.date).toLocaleDateString()}</td>
-                    <td className="border px-4 py-2">{teacher.batch}</td>
-                    <td className="border px-4 py-2">{teacher.sub}</td>
-                    <td className="border px-4 py-2">{teacher.chapter}</td>
-                    <td className="border px-4 py-2">{teacher.topic}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-        <div className="flex justify-center">
-          <DateRangePicker
-            showSelectionPreview={true}
-            moveRangeOnFirstSelection={false}
-            ranges={dateRange}
-            onChange={handleSelect}
-            rangeColors={["#3b82f6"]}
-            editableDateInputs={true}
-            staticRanges={[]}
-            inputRanges={[]}
-          />
-        </div>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="max-w-md w-full p-6 bg-white rounded-lg shadow-md">
+        <h2 className="text-2xl text-center mb-6">User  Registration</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              required
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label htmlFor="aadhaar" className="block text-sm font-medium text-gray-700">Aadhaar Card Number</label>
+            <input
+              type="text"
+              id="aadhaar"
+              name="aadhaar"
+              value={formData.aadhaar}
+              onChange={handleChange}
+              required
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+            <input
+              type="text" // Change to text to allow visibility and editing
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange} // Allow user to edit
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label htmlFor="image" className="block text-sm font-medium text-gray-700">Upload Image</label>
+            <input
+              type="file"
+              id="image"
+              name="image"
+              accept="image/*"
+              onChange={handleChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-500"
+            />
+          </div>
+          <div className="flex justify-around">
+            <button type="submit" className="w-1/3 bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600">Submit</button>
+            <button type="button" onClick={handleReset} className="w-1/3 bg-gray-300 text-gray-700 py-2 rounded-md hover:bg-gray-400">Reset</button>
+          </div>
+        </form>
       </div>
     </div>
   );
-}
+};
 
+export default FormComponent;
