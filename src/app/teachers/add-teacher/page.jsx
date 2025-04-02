@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { DateRangePicker } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import "./viewTeachers.css";
+// import "./viewTeachers.css";
 
 export default function TeachersPage() {
   const [teachers, setTeachers] = useState([]);
@@ -57,7 +57,7 @@ export default function TeachersPage() {
       return isWithinDateRange && isMatchingTeacher;
     });
   }, [selectedTeacher, dateRange, teachers]);
-  }, [selectedTeacher, dateRange, teachers]);
+ 
 
   return (
     <div className="p-6 flex flex-col items-center justify-center">
@@ -135,4 +135,4 @@ export default function TeachersPage() {
     </div>
   );
 }
-}
+
