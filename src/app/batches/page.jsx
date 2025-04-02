@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 export default function BatchesPage() {
   const [batches, setBatches] = useState([]);
@@ -7,24 +8,17 @@ export default function BatchesPage() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newBatchName, setNewBatchName] = useState('');
 
-  // This useEffect will be used to fetch data when component mounts
   useEffect(() => {
     fetchBatches();
   }, []);
 
-  // Function to fetch batches from API
+  const API_BASE_URL = 'https://teacher-backend-fxy3.onrender.com/api/class/classes';
+
   const fetchBatches = async () => {
     try {
       setLoading(true);
-      // Temporary mock data - replace this with your API call later
-      const mockData = [
-        { id: 1, name: 'Batch 2024-A' },
-        { id: 2, name: 'Batch 2024-B' },
-        { id: 3, name: 'Batch 2024-C' },
-        { id: 4, name: 'Batch 2024-D' },
-        { id: 5, name: 'Batch 2024-E' },
-      ];
-      setBatches(mockData);
+      const response = await axios.get(API_BASE_URL);
+      setBatches(response.data);
     } catch (error) {
       console.error('Error fetching batches:', error);
     } finally {
@@ -37,21 +31,11 @@ export default function BatchesPage() {
     if (!newBatchName.trim()) return;
 
     try {
-      // When you have your API ready, replace this with actual API call
-      // Example: 
-      // const response = await fetch('your-api-endpoint/batches', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ name: newBatchName })
-      // });
-      // const data = await response.json();
-
-      // For now, simulate adding a new batch
-      const newBatch = {
-        id: batches.length + 1,
-        name: newBatchName
-      };
-      setBatches([...batches, newBatch]);
+      const response = await axios.post(API_BASE_URL, {
+        className: newBatchName
+      });
+      
+      setBatches([...batches, { id: response.data.id, name: response.data.className }]);
       setNewBatchName('');
       setShowAddForm(false);
     } catch (error) {
