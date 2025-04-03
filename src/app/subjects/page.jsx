@@ -8,18 +8,19 @@ export default function SubjectesPage() {
   const [Subjectes, setSubjectes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [toggleSubjects, setToggleSubjects] = useState(false);
   const [newSubjectName, setNewSubjectName] = useState("");
 
   // This useEffect will be used to fetch data when the component mounts
   useEffect(() => {
     fetchSubjectes();
-  }, []);
+  }, [toggleSubjects]);
 
   // Function to fetch Subjectes from API
   const fetchSubjectes = async () => {
     try {
       setLoading(true);
-      s;
+      
       const response = await axiosInstace.get("/subject/get-subjects");
       setSubjectes(response.data);
     } catch (error) {
@@ -41,10 +42,11 @@ export default function SubjectesPage() {
       // If successful, add the new subject to the list
       if (response.status === 200) {
         toast.success("Subject added successfully!");
-        // setSubjectes([...Subjectes, response.data]);
-        // setNewSubjectName("");
+       
+        setNewSubjectName("");
+        setToggleSubjects((prev) => !prev); 
         // setShowAddForm(false);
-        // window.location.reload();
+  
       }
     } catch (error) {
       console.error("Error adding Subject:", error);
