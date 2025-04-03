@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
+import { axiosInstace } from '../../../../lib/axios';
 
 const FormComponent = () => {
   const [formData, setFormData] = useState({
@@ -11,11 +12,12 @@ const FormComponent = () => {
     image: null, // New state for the uploaded image
   });
 
-  const generatePassword = (length = 8) => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+  const generatePassword = (length = 4) => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
     let password = '';
     for (let i = 0; i < length; i++) {
       password += chars.charAt(Math.floor(Math.random() * chars.length));
+
     }
     return password;
   };
@@ -38,8 +40,19 @@ const FormComponent = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Form submitted:', formData);
-    handleReset(); // Optionally reset the form after submission
+    // handleReset(); 
     generatePassword();
+    axiosInstace.post('/auth/signup', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+      .then((response) => {
+        console.log('User added successfully:', response.data);
+      })
+      .catch((error) => {
+        console.error('Error adding user:', error);
+      });
   };
 
   const handleReset = () => {
