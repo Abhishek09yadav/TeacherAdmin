@@ -1,14 +1,16 @@
 // components/Sidebar.jsx
 "use client"
 import { useState } from 'react';
-import { FiHome, FiUsers, FiSettings, FiMenu } from 'react-icons/fi';
+import { FiHome } from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
-import { FaUser  } from "react-icons/fa";
+import { FaUser } from "react-icons/fa";
 import { MdGroups } from "react-icons/md";
 import { FaBook } from "react-icons/fa";
 import { GrNotes } from "react-icons/gr";
+import { IoMenu } from "react-icons/io5";
 
 const Sidebar = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const [activeMenu, setActiveMenu] = useState('home');
   const [showTeacherSubmenu, setShowTeacherSubmenu] = useState(false); // State for submenu visibility
@@ -24,7 +26,7 @@ const Sidebar = () => {
       id: 'teachers',
       label: 'Teachers',
       route: '/teachers',
-      icon: <FaUser  />,
+      icon: <FaUser />,
       submenu: [
         {
           id: 'add-teacher',
@@ -59,11 +61,15 @@ const Sidebar = () => {
     },
   ];
 
+
   return (
-    <div className="fixed w-64 h-screen bg-gray-900 text-white">
-      <div className="px-8 py-4">
-        <h2 className='text-2xl text-center'>Admin Panel</h2>
-        <img src="/logo.png" alt="logo" />
+    <>
+    {isOpen ? (
+      <div className="fixed w-64 h-screen bg-gray-900 text-white">
+      <div className="">
+        <h2 className='text-2xl text-center'>  <IoMenu className='mt-4 ml-4' onClick={() => setIsOpen(!isOpen)}/> Admin Panel</h2>
+        <img className='w-50 mx-auto' src="/logo.png" alt="logo" />
+       
       </div>
       <nav className="mt-4">
         <ul className="space-y-2">
@@ -78,11 +84,10 @@ const Sidebar = () => {
                     setActiveMenu(menu.id);
                   }
                 }}
-                className={`w-full flex items-center space-x-2 p-2 rounded ${
-                  router.pathname === menu.route || activeMenu === menu.id
+                className={`w-full flex items-center space-x-2 p-2 rounded ${router.pathname === menu.route || activeMenu === menu.id
                     ? 'bg-gray-700 text-white'
                     : 'hover:bg-gray-700'
-                }`}
+                  }`}
               >
                 <span className="text-lg">{menu.icon}</span>
                 <span>{menu.label}</span>
@@ -95,13 +100,12 @@ const Sidebar = () => {
                         onClick={() => {
                           router.push(subMenu.route);
                           setActiveMenu(subMenu.id);
-                         
+
                         }}
-                        className={`w-full flex items-center space-x-2 p-2 rounded ${
-                          router.pathname === subMenu.route || activeMenu === subMenu.id
+                        className={`w-full flex items-center space-x-2 p-2 rounded ${router.pathname === subMenu.route || activeMenu === subMenu.id
                             ? 'bg-gray-600 text-white'
                             : 'hover:bg-gray-600'
-                        }`}
+                          }`}
                       >
                         <span>{subMenu.label}</span>
                       </button>
@@ -114,6 +118,13 @@ const Sidebar = () => {
         </ul>
       </nav>
     </div>
+    ) : (
+      <div className="text-2xl mt-4 ml-4">
+        <IoMenu onClick={() => setIsOpen(!isOpen)}/>
+      </div>
+      )}
+      
+    </>
   );
 };
 
