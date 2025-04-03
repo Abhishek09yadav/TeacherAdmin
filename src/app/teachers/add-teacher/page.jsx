@@ -147,7 +147,7 @@ const FormComponent = () => {
               htmlFor="aadhar"
               className="block text-sm font-medium text-gray-700"
             >
-              aadhar Card Number
+              Aadhar Card Number
             </label>
             <input
               type="text"
