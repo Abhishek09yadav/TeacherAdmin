@@ -49,12 +49,12 @@ const Sidebar = () => {
       route: '/subjects',
       icon: <FaBook />,
     },
-    {
-      id: 'chapters',
-      label: 'Chapters',
-      route: '/chapters',
-      icon: <GrNotes />,
-    },
+    // {
+    //   id: 'chapters',
+    //   label: 'Chapters',
+    //   route: '/chapters',
+    //   icon: <GrNotes />,
+    // },
   ];
 
 

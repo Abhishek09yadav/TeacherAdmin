@@ -49,28 +49,28 @@ export default function BatchesPage() {
     });
   },[]) 
 
-  // const handleAddBatch = async (e) => {
-  //   e.preventDefault();
-  //   if (!newBatchName.trim()) return;
-  //   // confirmalert();
-  //   /*
-  //   try {
-  //     const response = await axiosInstace.post("/class/classes", {
-  //       className: newBatchName,
-  //     });
+  const handleAddBatch = async (e) => {
+    e.preventDefault();
+    if (!newBatchName.trim()) return;
+    // confirmalert();
+    
+    try {
+      const response = await axiosInstace.post("/class/classes", {
+        className: newBatchName,
+      });
    
-  //     if (response.status === 201) {
-  //       toast.success("Batch added successfully!");
-  //       setNewBatchName("");
-  //       setToggleBatches((prev) => !prev);
-  //       setShowAddForm(false);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error adding batch:", error);
-  //     toast.error("Error adding batch. Please try again.");
-  //   }
-  //     */
-  // };
+      if (response.status === 201) {
+        toast.success("Batch added successfully!");
+        setNewBatchName("");
+        setToggleBatches((prev) => !prev);
+        setShowAddForm(false);
+      }
+    } catch (error) {
+      console.error("Error adding batch:", error);
+      toast.error("Error adding batch. Please try again.");
+    }
+      
+  };
 
   return (
     <div className="p-6">
@@ -87,7 +87,7 @@ export default function BatchesPage() {
         <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50">
           <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-lg">
             <h2 className="text-lg font-semibold mb-4">Add New Batch</h2>
-            {/* <form onSubmit={handleAddBatch} className="space-y-4"> */}
+            <form onSubmit={handleAddBatch} className="space-y-4">
               <div>
                 <label
                   htmlFor="batchName"
@@ -124,7 +124,7 @@ export default function BatchesPage() {
                   Cancel
                 </button>
               </div>
-            {/* </form> */}
+            </form>
           </div>
         </div>
       )}
