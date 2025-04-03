@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import axios from "axios";
 import { axiosInstace } from "../../../lib/axios";
 import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
@@ -31,46 +30,42 @@ export default function BatchesPage() {
     }
   };
 
-  const handleConfirm = useCallback(()=>{
-    // log
+  const handleAddBatch = async (e) => {
+    e.preventDefault();
+
+    if (!newBatchName.trim()) return;
+    
     confirmAlert({
       title: 'Confirm to submit',
       message: 'Are you sure to do this.',
       buttons: [
         {
           label: 'Yes',
-          onClick: () => alert('Click Yes')
+          onClick: async () => {
+            try {
+              const response = await axiosInstace.post("/class/classes", {
+                className: newBatchName,
+              });
+           
+              if (response.status === 201) {
+                toast.success("Batch added successfully!");
+                setNewBatchName("");
+                setToggleBatches((prev) => !prev);
+                setShowAddForm(false);
+              }
+            } catch (error) {
+              console.error("Error adding batch:", error);
+              toast.error("Error adding batch. Please try again.");
+            }
+          }
         },
         {
           label: 'No',
-          onClick: () => alert('Click No')
+          onClick: () => alert('Batch addition cancelled !')
         }
       ]
     });
-  },[]) 
-
-  // const handleAddBatch = async (e) => {
-  //   e.preventDefault();
-  //   if (!newBatchName.trim()) return;
-  //   // confirmalert();
-  //   /*
-  //   try {
-  //     const response = await axiosInstace.post("/class/classes", {
-  //       className: newBatchName,
-  //     });
-   
-  //     if (response.status === 201) {
-  //       toast.success("Batch added successfully!");
-  //       setNewBatchName("");
-  //       setToggleBatches((prev) => !prev);
-  //       setShowAddForm(false);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error adding batch:", error);
-  //     toast.error("Error adding batch. Please try again.");
-  //   }
-  //     */
-  // };
+  };
 
   return (
     <div className="p-6">
@@ -87,7 +82,7 @@ export default function BatchesPage() {
         <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50">
           <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-lg">
             <h2 className="text-lg font-semibold mb-4">Add New Batch</h2>
-            {/* <form onSubmit={handleAddBatch} className="space-y-4"> */}
+            <form onSubmit={handleAddBatch} className="space-y-4">
               <div>
                 <label
                   htmlFor="batchName"
@@ -109,7 +104,7 @@ export default function BatchesPage() {
                 <button
                   type="submit"
                   className="bg-green-500 hover:bg-green-600 text-white px-8 py-2 rounded"
-                  onClick={handleConfirm}
+                  onClick={handleAddBatch}
                 >
                   Save
                 </button>
@@ -124,7 +119,7 @@ export default function BatchesPage() {
                   Cancel
                 </button>
               </div>
-            {/* </form> */}
+            </form> 
           </div>
         </div>
       )}
