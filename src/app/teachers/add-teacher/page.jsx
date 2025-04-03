@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { axiosInstace } from "../../../../lib/axios";
 import { toast } from "react-toastify";
 
@@ -13,10 +13,10 @@ const FormComponent = () => {
     image: null,
   });
 
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
 
-  const generatePassword = (length = 4) => {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  const generatePassword = (length = 8) => {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     let password = "";
     for (let i = 0; i < length; i++) {
       password += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -24,15 +24,19 @@ const FormComponent = () => {
     return password;
   };
 
-  useEffect(() => {
-    const initialPassword = generatePassword();
-    setFormData((prevData) => ({ ...prevData, password: initialPassword }));
-  }, []);
-
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
+
     if (type === "file") {
       setFormData({ ...formData, [name]: files[0] });
+    } else if (name === "generatePassword") {
+      // Check if the email is filled and valid before generating the password
+      if (!formData.email || !validateEmail(formData.email)) {
+        toast.error("Please enter a valid email first.");
+        return;
+      }
+      const newPassword = generatePassword();
+      setFormData({ ...formData, password: newPassword });
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -40,7 +44,7 @@ const FormComponent = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true); 
+    setLoading(true);
 
     axiosInstace
       .post("/auth/signup", formData, {
@@ -59,7 +63,7 @@ const FormComponent = () => {
         toast.error(`${error.response.data.error}`);
       })
       .finally(() => {
-        setLoading(false); 
+        setLoading(false);
       });
   };
 
@@ -74,16 +78,18 @@ const FormComponent = () => {
     });
   };
 
+  const validateEmail = (email) => {
+    const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return regex.test(email);
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="max-w-md w-full p-6 bg-white rounded-lg shadow-md">
         <h2 className="text-2xl text-center mb-6">User Registration</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
               Name
             </label>
             <input
@@ -97,10 +103,7 @@ const FormComponent = () => {
             />
           </div>
           <div>
-            <label
-              htmlFor="phoneNumber"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
               Phone Number
             </label>
             <input
@@ -114,10 +117,7 @@ const FormComponent = () => {
             />
           </div>
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email
             </label>
             <input
@@ -131,10 +131,7 @@ const FormComponent = () => {
             />
           </div>
           <div>
-            <label
-              htmlFor="aadhar"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="aadhar" className="block text-sm font-medium text-gray-700">
               Aadhar Card Number
             </label>
             <input
@@ -148,10 +145,7 @@ const FormComponent = () => {
             />
           </div>
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
               Password
             </label>
             <input
@@ -162,12 +156,18 @@ const FormComponent = () => {
               onChange={handleChange}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-500"
             />
-          </div>
-          <div>
-            <label
-              htmlFor="image"
-              className="block text-sm font-medium text-gray-700"
+            <button
+              type="button"
+              name="generatePassword"
+              onClick={handleChange}
+              className="mt-3 w-full sm:w-auto px-2 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-300"
             >
+              Generate Password
+            </button>
+          </div>
+
+          <div>
+            <label htmlFor="image" className="block text-sm font-medium text-gray-700">
               Upload Image
             </label>
             <input
@@ -182,11 +182,11 @@ const FormComponent = () => {
           <div className="flex justify-around">
             <button
               type="submit"
-              disabled={loading} // Disable button when loading
+              disabled={loading}
               className="w-1/3 bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
             >
               {loading ? (
-                <div className="animate-spin border-t-2 border-white w-4 h-4 rounded-full"></div> // Spinner during loading
+                <div className="animate-spin border-t-2 border-white w-4 h-4 rounded-full"></div>
               ) : (
                 "Submit"
               )}
