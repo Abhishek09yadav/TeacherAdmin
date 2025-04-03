@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { axiosInstace } from "../../../lib/axios";
 import { toast } from "react-toastify";
 
+
 export default function BatchesPage() {
   const [batches, setBatches] = useState([]);
   const [loading, setLoading] = useState(true);
