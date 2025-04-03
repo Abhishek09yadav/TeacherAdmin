@@ -33,11 +33,6 @@ const Sidebar = () => {
           label: 'Add Teacher',
           route: '/teachers/add-teacher',
         },
-        {
-          id: 'view-teacher',
-          label: 'View Teacher',
-          route: '/teachers/view-teacher',
-        },
         // You can add more submenu items here
       ],
     },
@@ -65,7 +60,7 @@ const Sidebar = () => {
   return (
     <>
       {isOpen ? (
-        <div className="fixed w-64 h-screen bg-gray-900 text-white">
+        <div className="fixed w-64 h-screen bg-gray-900 text-white z-10">
           <div className="">
             <h2 className='text-2xl text-center'>  <IoMenu className='mt-4 ml-4' onClick={() => setIsOpen(!isOpen)} /> Admin Panel</h2>
             <img className='w-50 mx-auto' src="/logo.png" alt="logo" />

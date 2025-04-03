@@ -34,22 +34,7 @@ export default function ChaptersPage() {
             { chapter: 'Cell Biology', topics: 'Cell Structure, Cell Division' },
             { chapter: 'Genetics', topics: 'Mendelian Genetics, DNA Structure' },
             { chapter: 'Ecology', topics: 'Ecosystems, Biodiversity' },
-        ],
-        Sports: [
-            { chapter: 'Cell Biology', topics: 'Cell Structure, Cell Division' },
-            { chapter: 'Genetics', topics: 'Mendelian Genetics, DNA Structure' },
-            { chapter: 'Ecology', topics: 'Ecosystems, Biodiversity' },
-        ],
-        Enviornment: [
-            { chapter: 'Cell Biology', topics: 'Cell Structure, Cell Division' },
-            { chapter: 'Genetics', topics: 'Mendelian Genetics, DNA Structure' },
-            { chapter: 'Ecology', topics: 'Ecosystems, Biodiversity' },
-        ],
-        Geograpghy: [
-            { chapter: 'Cell Biology', topics: 'Cell Structure, Cell Division' },
-            { chapter: 'Genetics', topics: 'Mendelian Genetics, DNA Structure' },
-            { chapter: 'Ecology', topics: 'Ecosystems, Biodiversity' },
-        ],
+        ]
     });
 
     const scrollableTabs = Object.keys(subjects).map((subject) => ({
@@ -59,9 +44,15 @@ export default function ChaptersPage() {
 
     const handleAddChapter = () => {
         if (selectedSubject && chapterName) {
-            const updatedSubjects = { ...subjects };
-            updatedSubjects[selectedSubject].push({ chapter: chapterName, topics: '' });
-            setSubjects(updatedSubjects);
+            setSubjects((prevSubjects) => {
+                return {
+                    ...prevSubjects,
+                    [selectedSubject]: [
+                        ...prevSubjects[selectedSubject],
+                        { chapter: chapterName, topics: '' },
+                    ],
+                };
+            });
             setChapterName('');
             setSelectedSubject('');
             setAddChapterButton(false);
@@ -69,49 +60,47 @@ export default function ChaptersPage() {
     };
 
     return (
-        <div>
-            <div className="card w-1/3 mx-auto">
+        <div className="p-4 flex flex-col items-center relative top-15">
+            <div className="card w-full md:w-2/3 lg:w-1/2 bg-white shadow-md relative">
                 <TabView className='no-wrap' scrollable>
-                    {scrollableTabs.map((tab) => {
-                        return (
-                            <TabPanel className='p-tabview-nav flex flex-col gap-3' key={tab.title} header={tab.title}>
-                                <DataTable  value={tab.content} paginator rows={5}>
-                                    <Column className='p-tabview-title' field="chapter" header="Chapter" />
-                                </DataTable>
-                            </TabPanel>
-                        );
-                    })}
+                    {scrollableTabs.map((tab) => (
+                        <TabPanel className='p-tabview-nav' key={tab.title} header={tab.title}>
+                            <DataTable value={tab.content} paginator rows={5} responsiveLayout="scroll">
+                                <Column field="chapter" header="Chapter" />
+                            </DataTable>
+                        </TabPanel>
+                    ))}
                 </TabView>
             </div>
 
-            <div className='relative'>
-                <div className="absolute left-70 top-2 transition-transform duration-300 ease-in-out">
-                    {addChapterButton ? (
-                        <IoIosCloseCircle
-                            onClick={() => setAddChapterButton(false)}
-                            className='text-4xl bg-white rounded-full cursor-pointer transform scale-110'
-                        />
-                    ) : (
-                        <IoIosAddCircle
-                            onClick={() => setAddChapterButton(true)}
-                            className='text-4xl bg-white rounded-full cursor-pointer transform scale-110'
-                        />
-                    )}
-                </div>
+            {/* Floating Action Button */}
+            <div className='fixed bottom-6 right-6 md:right-10'>
+                {addChapterButton ? (
+                    <IoIosCloseCircle
+                        onClick={() => setAddChapterButton(false)}
+                        className='text-5xl bg-white rounded-full shadow-lg cursor-pointer hover:scale-110 transition-all duration-300'
+                    />
+                ) : (
+                    <div className='flex text-2xl font-bold items-center gap-3'> Add Chapter
+                    <IoIosAddCircle
+                        onClick={() => setAddChapterButton(true)}
+                        className='text-5xl bg-white rounded-full shadow-lg cursor-pointer hover:scale-110 transition-all duration-300'
+                    />
+                    </div>
+                )}
             </div>
 
+            {/* Chapter Input Form */}
             {addChapterButton && (
-                <div className="flex justify-center mx-auto transition-opacity duration-300 ease-in-out opacity-100">
+                <div className="w-2/3 lg:w-full max-w-md bg-white p-4 rounded shadow-lg mt-8 flex flex-col gap-3 relative">
                     <select
                         value={selectedSubject}
                         onChange={(e) => setSelectedSubject(e.target.value)}
-                        className="border rounded p-2 mr-2 transition-all duration-300 ease-in-out"
+                        className="border rounded p-2 w-full"
                     >
                         <option value="">Select Subject</option>
                         {Object.keys(subjects).map((subject) => (
-                            <option key={subject} value={subject}>
-                                {subject}
-                            </option>
+                            <option key={subject} value={subject}>{subject}</option>
                         ))}
                     </select>
                     <input
@@ -119,10 +108,12 @@ export default function ChaptersPage() {
                         value={chapterName}
                         onChange={(e) => setChapterName(e.target.value)}
                         placeholder="Enter Chapter Name"
-                        className="border rounded p-2 mr-2 transition-all duration-300 ease-in-out"
+                        className="border rounded p-2 w-full"
                     />
-                    <button onClick={handleAddChapter} className="w-[5rem] bg-blue-500 text-white rounded p-2 mr-2 transition-transform duration-1000 ease-in-out transform hover:scale-105">Add</button>
-                    <button onClick={() => setAddChapterButton(false)} className="w-[5rem] bg-red-500 text-white rounded p-2 transition-transform duration-1000 ease-in-out transform hover:scale-105">Cancel</button>
+                    <div className="flex justify-between">
+                        <button onClick={handleAddChapter} className="bg-blue-500 text-white rounded p-2 flex-1 mr-2">Add</button>
+                        <button onClick={() => setAddChapterButton(false)} className="bg-red-500 text-white rounded p-2 flex-1">Cancel</button>
+                    </div>
                 </div>
             )}
         </div>
