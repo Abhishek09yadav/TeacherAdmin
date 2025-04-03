@@ -10,8 +10,10 @@ const FormComponent = () => {
     email: "",
     aadhar: "",
     password: "",
-    image: null, 
+    image: null,
   });
+
+  const [loading, setLoading] = useState(false); 
 
   const generatePassword = (length = 4) => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -22,7 +24,6 @@ const FormComponent = () => {
     return password;
   };
 
-  // Generate password on component mount
   useEffect(() => {
     const initialPassword = generatePassword();
     setFormData((prevData) => ({ ...prevData, password: initialPassword }));
@@ -31,9 +32,7 @@ const FormComponent = () => {
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
     if (type === "file") {
-      // console.log(name);
-
-      setFormData({ ...formData, [name]: files[0] }); // Handle file input
+      setFormData({ ...formData, [name]: files[0] });
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -41,19 +40,7 @@ const FormComponent = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // // Create FormData instance
-    // const data = new FormData();
-    // data.append("name", formData.name);
-    // data.append("phoneNumber", formData.phoneNumber);
-    // data.append("email", formData.email);
-    // data.append("aadhar", formData.aadhar);
-    // data.append("password", formData.password);
-    // if (formData.image) {
-    //   data.append("image", formData.image); 
-    // }
-
-    console.log("Submitting form data:", formData);
+    setLoading(true); 
 
     axiosInstace
       .post("/auth/signup", formData, {
@@ -62,16 +49,17 @@ const FormComponent = () => {
         },
       })
       .then((response) => {
-        if(response.status === 201){
-          console.log("User added successfully:", response.data);
+        if (response.status === 201) {
           toast.success("User added successfully!");
+          handleReset();
         }
       })
       .catch((error) => {
         console.error("Error adding user:", error);
-        toast.error(
-          `${error.response.data.error}`
-        );
+        toast.error(`${error.response.data.error}`);
+      })
+      .finally(() => {
+        setLoading(false); 
       });
   };
 
@@ -82,7 +70,7 @@ const FormComponent = () => {
       email: "",
       aadhar: "",
       password: "",
-      image: null, // Reset the image state
+      image: null,
     });
   };
 
@@ -147,7 +135,7 @@ const FormComponent = () => {
               htmlFor="aadhar"
               className="block text-sm font-medium text-gray-700"
             >
-              aadhar Card Number
+              Aadhar Card Number
             </label>
             <input
               type="text"
@@ -167,11 +155,11 @@ const FormComponent = () => {
               Password
             </label>
             <input
-              type="text" // Change to text to allow visibility and editing
+              type="text"
               id="password"
               name="password"
               value={formData.password}
-              onChange={handleChange} // Allow user to edit
+              onChange={handleChange}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-500"
             />
           </div>
@@ -194,9 +182,14 @@ const FormComponent = () => {
           <div className="flex justify-around">
             <button
               type="submit"
+              disabled={loading} // Disable button when loading
               className="w-1/3 bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
             >
-              Submit
+              {loading ? (
+                <div className="animate-spin border-t-2 border-white w-4 h-4 rounded-full"></div> // Spinner during loading
+              ) : (
+                "Submit"
+              )}
             </button>
             <button
               type="button"
