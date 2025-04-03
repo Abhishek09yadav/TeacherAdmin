@@ -72,6 +72,7 @@ export default function BatchesPage() {
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   Batch Name
+                  
                 </label>
                 <input
                   type="text"
