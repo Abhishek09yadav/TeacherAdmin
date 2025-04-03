@@ -1,10 +1,7 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import { axiosInstace } from "../../../lib/axios";
 import { toast } from "react-toastify";
-import { confirmAlert } from "react-confirm-alert";
-import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 
 export default function BatchesPage() {
   const [batches, setBatches] = useState([]);
@@ -31,34 +28,15 @@ export default function BatchesPage() {
     }
   };
 
-  const handleConfirm = useCallback(()=>{
-    // log
-    confirmAlert({
-      title: 'Confirm to submit',
-      message: 'Are you sure to do this.',
-      buttons: [
-        {
-          label: 'Yes',
-          onClick: () => alert('Click Yes')
-        },
-        {
-          label: 'No',
-          onClick: () => alert('Click No')
-        }
-      ]
-    });
-  },[]) 
-
   const handleAddBatch = async (e) => {
     e.preventDefault();
     if (!newBatchName.trim()) return;
-    // confirmalert();
-    
+
     try {
       const response = await axiosInstace.post("/class/classes", {
         className: newBatchName,
       });
-   
+
       if (response.status === 201) {
         toast.success("Batch added successfully!");
         setNewBatchName("");
@@ -69,7 +47,6 @@ export default function BatchesPage() {
       console.error("Error adding batch:", error);
       toast.error("Error adding batch. Please try again.");
     }
-      
   };
 
   return (
@@ -109,7 +86,6 @@ export default function BatchesPage() {
                 <button
                   type="submit"
                   className="bg-green-500 hover:bg-green-600 text-white px-8 py-2 rounded"
-                  onClick={handleConfirm}
                 >
                   Save
                 </button>
