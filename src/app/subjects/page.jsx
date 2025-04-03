@@ -38,8 +38,6 @@ export default function SubjectesPage() {
       const response = await axiosInstace.post("/subject/add-subject", {
         subjectName: newSubjectName,
       });
-
-      // If successful, add the new subject to the list
       if (response.status === 200) {
         toast.success("Subject added successfully!");
        
