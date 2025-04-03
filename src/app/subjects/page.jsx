@@ -54,10 +54,9 @@ export default function SubjectesPage() {
 
   return (
     <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Subjectes</h1>
+      <div className="flex justify-end m-5">
         <button
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+          className="block right-10 lg:mr-0 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
           onClick={() => setShowAddForm(true)}
         >
           Add Subject
@@ -65,7 +64,7 @@ export default function SubjectesPage() {
       </div>
 
       {showAddForm && (
-        <div className="w-lg mx-auto mb-6 p-4 border rounded-lg bg-gray-50">
+        <div className="w-full lg:w-lg mx-auto mb-6 p-4 border rounded-lg bg-gray-50">
           <form onSubmit={handleAddSubject} className="space-y-4">
             <div>
               <label
@@ -106,7 +105,7 @@ export default function SubjectesPage() {
         </div>
       )}
 
-      <div className="overflow-x-auto w-lg mx-auto">
+      <div className="overflow-x-scroll lg:overflow-x-auto lg:w-lg mx-auto">
         <table className="min-w-full bg-white border border-gray-300">
           <thead>
             <tr className="bg-gray-100">

@@ -56,10 +56,9 @@ export default function BatchesPage() {
 
   return (
     <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        {/* <h1 className="text-2xl font-bold">Batches</h1> */}
+      <div className="flex justify-end m-5">
         <button
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+          className="block right-10 lg:mr-0 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
           onClick={() => setShowAddForm(true)}
         >
           Add Batch
@@ -67,7 +66,7 @@ export default function BatchesPage() {
       </div>
 
       {showAddForm && (
-        <div className="w-lg mx-auto mb-6 p-4 border rounded-lg bg-gray-50">
+        <div className="w-full lg:w-lg mx-auto mb-6 p-4 border rounded-lg bg-gray-50">
           <form onSubmit={handleAddBatch} className="space-y-4">
             <div>
               <label
@@ -86,10 +85,10 @@ export default function BatchesPage() {
                 required
               />
             </div>
-            <div className="flex space-x-2">
+            <div className="flex justify-center space-x-10">
               <button
                 type="submit"
-                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+                className="bg-green-500 hover:bg-green-600 text-white px-8 py-2 rounded"
               >
                 Save
               </button>
@@ -99,7 +98,7 @@ export default function BatchesPage() {
                   setShowAddForm(false);
                   setNewBatchName("");
                 }}
-                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-2 rounded"
               >
                 Cancel
               </button>
@@ -108,7 +107,7 @@ export default function BatchesPage() {
         </div>
       )}
 
-      <div className="overflow-x-auto w-lg mx-auto">
+      <div className="overflow-x-scroll lg:overflow-x-auto lg:w-lg mx-auto">
         <table className="min-w-full bg-white border border-gray-300">
           <thead>
             <tr className="bg-gray-100">
