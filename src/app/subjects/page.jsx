@@ -1,29 +1,29 @@
-'use client';
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+"use client";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { axiosInstace } from "../../../lib/axios";
+import { toast } from "react-toastify";
 
 export default function SubjectesPage() {
   const [Subjectes, setSubjectes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [newSubjectName, setNewSubjectName] = useState('');
+  const [newSubjectName, setNewSubjectName] = useState("");
 
+  // This useEffect will be used to fetch data when the component mounts
   useEffect(() => {
     fetchSubjectes();
   }, []);
 
-  const API_BASE_URL = 'https://teacher-backend-fxy3.onrender.com/api/class/classes';
-
+  // Function to fetch Subjectes from API
   const fetchSubjectes = async () => {
     try {
       setLoading(true);
-      setError(null);
-      const response = await axios.get(API_BASE_URL);
+      s;
+      const response = await axiosInstace.get("/subject/get-subjects");
       setSubjectes(response.data);
     } catch (error) {
-      console.error('Error fetching Subjectes:', error);
-      setError('Failed to load Subjectes. Please try again.');
+      console.error("Error fetching Subjectes:", error);
     } finally {
       setLoading(false);
     }
@@ -34,16 +34,21 @@ export default function SubjectesPage() {
     if (!newSubjectName.trim()) return;
 
     try {
-      const response = await axios.post(API_BASE_URL, {
-        className: newSubjectName
+      const response = await axiosInstace.post("/subject/add-subject", {
+        subjectName: newSubjectName,
       });
-      
-      setSubjectes([...Subjectes, { id: response.data.id, name: response.data.className }]);
-      setNewSubjectName('');
-      setShowAddForm(false);
+
+      // If successful, add the new subject to the list
+      if (response.status === 200) {
+        toast.success("Subject added successfully!");
+        // setSubjectes([...Subjectes, response.data]);
+        // setNewSubjectName("");
+        // setShowAddForm(false);
+        // window.location.reload();
+      }
     } catch (error) {
-      console.error('Error adding Subject:', error);
-      setError('Failed to add Subject. Please try again.');
+      console.error("Error adding Subject:", error);
+      toast.error("Error adding Subject. Please try again.");
     }
   };
 
@@ -59,17 +64,14 @@ export default function SubjectesPage() {
         </button>
       </div>
 
-      {error && (
-        <div className="mb-4 text-red-500 font-medium bg-red-100 p-2 rounded">
-          {error}
-        </div>
-      )}
-
       {showAddForm && (
         <div className="w-lg mx-auto mb-6 p-4 border rounded-lg bg-gray-50">
           <form onSubmit={handleAddSubject} className="space-y-4">
             <div>
-              <label htmlFor="SubjectName" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="SubjectName"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Subject Name
               </label>
               <input
@@ -93,7 +95,7 @@ export default function SubjectesPage() {
                 type="button"
                 onClick={() => {
                   setShowAddForm(false);
-                  setNewSubjectName('');
+                  setNewSubjectName("");
                 }}
                 className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
               >
@@ -113,28 +115,27 @@ export default function SubjectesPage() {
             </tr>
           </thead>
           <tbody>
-  {loading ? (
-    <tr>
-      <td colSpan="2" className="border px-4 py-2 text-center">
-        Loading...
-      </td>
-    </tr>
-  ) : Subjectes.length === 0 ? (
-    <tr>
-      <td colSpan="2" className="border px-4 py-2 text-center">
-        No Subjectes found
-      </td>
-    </tr>
-  ) : (
-    Subjectes.map((Subject, index) => (
-      <tr key={Subject.id || `Subject-${index}`} className="hover:bg-gray-50">
-        <td className="border px-4 py-2">{index + 1}</td>
-        <td className="border px-4 py-2">{Subject.name}</td>
-      </tr>
-    ))
-  )}
-</tbody>
-
+            {loading ? (
+              <tr>
+                <td colSpan="2" className="border px-4 py-2 text-center">
+                  Loading...
+                </td>
+              </tr>
+            ) : Subjectes.length === 0 ? (
+              <tr>
+                <td colSpan="2" className="border px-4 py-2 text-center">
+                  No Subjectes found
+                </td>
+              </tr>
+            ) : (
+              Subjectes.map((Subject, index) => (
+                <tr key={Subject._id} className="hover:bg-gray-50">
+                  <td className="border px-4 py-2">{index + 1}</td>
+                  <td className="border px-4 py-2">{Subject.subjectName}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
         </table>
       </div>
     </div>
