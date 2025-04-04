@@ -4,6 +4,8 @@ import { axiosInstance } from "../../../lib/axios";
 import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
 import 'react-confirm-alert/src/react-confirm-alert.css';
+import { FaEdit } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
 
 export default function SubjectsPage() {
   const [subjects, setSubjects] = useState([]);
@@ -204,11 +206,11 @@ export default function SubjectsPage() {
 const ActionButtons = ({ subject, handleDelete, handleEdit }) => {
   return (
     <div className="flex space-x-4 justify-center">
-      <button onClick={() => handleEdit(subject._id, subject.subjectName)} className="px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded">
-        Edit
+      <button onClick={() => handleEdit(subject._id, subject.subjectName)} className="flex items-center gap-3 px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded">
+        <FaEdit />Edit
       </button>
-      <button onClick={() => handleDelete(subject._id)} className="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded">
-        Delete
+      <button onClick={() => handleDelete(subject._id)} className="flex items-center gap-3 px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded">
+        <MdDelete />Delete
       </button>
     </div>
   );

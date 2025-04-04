@@ -4,6 +4,9 @@ import { axiosInstance } from "../../../lib/axios";
 import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
 import 'react-confirm-alert/src/react-confirm-alert.css';
+import { FaEdit } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
+
 
 export default function BatchesPage() {
   const [batches, setBatches] = useState([]);
@@ -195,11 +198,11 @@ export default function BatchesPage() {
 const ActionButtons = ({ batch, handleDelete, handleEdit }) => {
   return (
     <div className="flex space-x-8 justify-center">
-      <button onClick={() => handleEdit(batch.id, batch.className)} className="px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded">
-        Edit
+      <button onClick={() => handleEdit(batch.id, batch.className)} className="flex items-center gap-3 px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded">
+        <FaEdit />Edit
       </button>
-      <button onClick={() => handleDelete(batch.id)} className="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded">
-        Delete
+      <button onClick={() => handleDelete(batch.id)} className="flex items-center gap-3 px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded">
+        <MdDelete />Delete
       </button>
     </div>
   );

@@ -9,6 +9,8 @@ import { GrNotes } from "react-icons/gr";
 import { IoMenu } from "react-icons/io5";
 import { FaFilePdf } from "react-icons/fa6";
 import { ImExit } from "react-icons/im";
+import { FaLink } from "react-icons/fa6";
+
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -78,6 +80,12 @@ const Sidebar = () => {
       label: "PDF",
       route: "/pdf",
       icon: <FaFilePdf />,
+    },
+    {
+      id: "link",
+      label: "Link",
+      route: "/link",
+      icon: <FaLink />,
     },
   ];
 
