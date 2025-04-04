@@ -74,7 +74,7 @@ export default function BatchesPage() {
           label: 'Yes',
           onClick: async () => {
             try {
-              const response = await axiosInstance.delete(`/delete-batch/${id}`);
+              const response = await axiosInstance.delete(`/classes/${id}`);
               if (response.status === 200) {
                 toast.success("Batch deleted successfully!");
                 fetchBatches();
@@ -103,7 +103,7 @@ export default function BatchesPage() {
     if (!editBatchName.trim()) return;
 
     try {
-      const response = await axiosInstance.put(`/update-batch/${editBatchId}`, {
+      const response = await axiosInstance.put(`/classes/${editBatchId}`, {
         className: editBatchName,
       });
 
