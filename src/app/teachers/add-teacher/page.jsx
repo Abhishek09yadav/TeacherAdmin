@@ -22,7 +22,7 @@ const FormComponent = () => {
     for (let i = 0; i < length; i++) {
       password += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    return password;
+    return `${formData.email}_${password}`;
   };
 
   const handleChange = (e) => {
@@ -90,7 +90,10 @@ const FormComponent = () => {
         <h2 className="text-2xl text-center mb-6">User Registration</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700"
+            >
               Name
             </label>
             <input
@@ -104,7 +107,10 @@ const FormComponent = () => {
             />
           </div>
           <div>
-            <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="phoneNumber"
+              className="block text-sm font-medium text-gray-700"
+            >
               Phone Number
             </label>
             <input
@@ -118,7 +124,10 @@ const FormComponent = () => {
             />
           </div>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
               Email
             </label>
             <input
@@ -132,7 +141,10 @@ const FormComponent = () => {
             />
           </div>
           <div>
-            <label htmlFor="aadhar" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="aadhar"
+              className="block text-sm font-medium text-gray-700"
+            >
               Aadhar Card Number
             </label>
             <input
@@ -146,7 +158,10 @@ const FormComponent = () => {
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
               Password
             </label>
             <input
@@ -168,7 +183,10 @@ const FormComponent = () => {
           </div>
 
           <div>
-            <label htmlFor="image" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="image"
+              className="block text-sm font-medium text-gray-700"
+            >
               Upload Image
             </label>
             <input
@@ -187,7 +205,10 @@ const FormComponent = () => {
               className="w-1/3 bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
             >
               {loading ? (
-                <div className="animate-spin border-t-2 border-white w-4 h-4 rounded-full"></div>
+                <div className="flex items-center flex-nowrap">
+                <span>Loading... </span>
+                  <div className="animate-spin border-t-2 border-white w-4 h-4 rounded-full"></div>
+                </div>
               ) : (
                 "Submit"
               )}
