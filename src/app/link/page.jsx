@@ -22,6 +22,7 @@ export default function LinksPage() {
       setLoading(true);
       const response = await axiosInstance.get("/links/links");
       if (response.status === 200) {
+        console.log(response.data);
         setLinks(response.data);
       }
     } catch (error) {
@@ -66,7 +67,8 @@ export default function LinksPage() {
     });
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = (id) => { 
+    console.log("delete",id);
     confirmAlert({
       title: 'Confirm Deletion',
       message: 'Are you sure you want to delete this link?',
@@ -75,7 +77,7 @@ export default function LinksPage() {
           label: 'Yes',
           onClick: async () => {
             try {
-              const response = await axiosInstance.delete(`/link/${id}`);
+              const response = await axiosInstance.delete(`/links/link/${id}`);
               if (response.status === 200) {
                 toast.success("Link deleted successfully!");
                 fetchLinks();
@@ -142,7 +144,7 @@ export default function LinksPage() {
                   <td className="border px-4 py-2">{index + 1}</td>
                   <td className="border px-4 py-2">
                     <button
-                      href={link.secure_url}
+                      onClick={() => window.open(link.secure_url, "_blank")}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded"

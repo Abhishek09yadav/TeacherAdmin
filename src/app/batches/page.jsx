@@ -97,6 +97,7 @@ export default function BatchesPage() {
 
   // Open Edit Popup
   const openEditPopup = (id, currentName) => {
+    // console.log("Editing Batch ID:", id);
     setEditBatchId(id);
     setEditBatchName(currentName);
     setShowEditForm(true);
@@ -200,15 +201,24 @@ export default function BatchesPage() {
 const ActionButtons = ({ batch, handleDelete, handleEdit }) => {
   return (
     <div className="flex space-x-8 justify-center">
-      <button onClick={() => handleEdit(batch.id, batch.className)} className="flex items-center gap-3 px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded">
-        <FaEdit />Edit
+      <button
+        onClick={() => handleEdit(batch._id, batch.className)}
+        className="flex items-center gap-3 px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded"
+      >
+        <FaEdit />
+        Edit
       </button>
-      <button onClick={() => handleDelete(batch._id)} className="flex items-center gap-3 px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded">
-        <MdDelete />Delete
+      <button
+        onClick={() => handleDelete(batch._id)}
+        className="flex items-center gap-3 px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded"
+      >
+        <MdDelete />
+        Delete
       </button>
     </div>
   );
 };
+
 
 // Reusable Modal for Add/Edit Batch
 const BatchForm = ({ title, batchName, setBatchName, onSave, onCancel }) => {
