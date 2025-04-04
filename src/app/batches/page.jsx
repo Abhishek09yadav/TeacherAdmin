@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { axiosInstace } from "../../../lib/axios";
+import { axiosInstance } from "../../../lib/axios";
 import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
@@ -19,7 +19,7 @@ export default function BatchesPage() {
   const fetchBatches = async () => {
     try {
       setLoading(true);
-      const response = await axiosInstace.get("/class/classes");
+      const response = await axiosInstance.get("/class/classes");
       if (response.status === 200) {
         setBatches(response.data);
       }
@@ -43,7 +43,7 @@ export default function BatchesPage() {
           label: 'Yes',
           onClick: async () => {
             try {
-              const response = await axiosInstace.post("/class/classes", {
+              const response = await axiosInstance.post("/class/classes", {
                 className: newBatchName,
               });
            

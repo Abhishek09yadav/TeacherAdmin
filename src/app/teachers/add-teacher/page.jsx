@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { axiosInstace } from "../../../../lib/axios";
+import { axiosInstance } from "../../../../lib/axios";
 import { toast } from "react-toastify";
 
 
@@ -47,7 +47,7 @@ const FormComponent = () => {
     e.preventDefault();
     setLoading(true);
 
-    axiosInstace
+    axiosInstance
       .post("/auth/signup", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
