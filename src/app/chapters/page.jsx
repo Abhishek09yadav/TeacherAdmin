@@ -1,80 +1,81 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { TabView, TabPanel } from "primereact/tabview";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { IoIosAddCircle, IoIosCloseCircle } from "react-icons/io";
+import { axiosInstance } from "../../../lib/axios";
 
 export default function ChaptersPage() {
+  const [subjects, setSubjects] = useState({});
   const [addChapterButton, setAddChapterButton] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState("");
   const [chapterName, setChapterName] = useState("");
-  const [subjects, setSubjects] = useState({
-    Maths: [
-      { chapter: "Algebra" },
-      { chapter: "Geometry" },
-      { chapter: "Calculus" },
-    ],
-    Physics: [
-      { chapter: "Mechanics" },
-      { chapter: "Thermodynamics" },
-      { chapter: "Electromagnetism" },
-    ],
-    Chemistry: [
-      { chapter: "Organic Chemistry" },
-      { chapter: "Inorganic Chemistry" },
-      { chapter: "Physical Chemistry" },
-    ],
-    Biology: [
-      { chapter: "Cell Biology" },
-      { chapter: "Genetics" },
-      { chapter: "Ecology" },
-    ],
-    Science: [
-      { chapter: "Cell Biology" },
-      { chapter: "Genetics" },
-      { chapter: "Ecology" },
-    ],
-  });
+  const [loading, setLoading] = useState(false);
 
-  const scrollableTabs = Object.keys(subjects).map((subject) => ({
-    title: subject,
-    content: subjects[subject],
-  }));
+  // Fetch subjects and chapters
+  const fetchSubjects = () => {
+    axiosInstance
+      .get("/subject/get-subjects")
+      .then((response) => {
+        const data = response.data;
+        const formattedSubjects = {};
 
-  const handleAddChapter = () => {
-    if (selectedSubject && chapterName) {
-      setSubjects((prevSubjects) => {
-        return {
-          ...prevSubjects,
-          [selectedSubject]: [
-            ...prevSubjects[selectedSubject],
-            { chapter: chapterName },
-          ],
-        };
-      });
-      setChapterName("");
-      setSelectedSubject("");
-      setAddChapterButton(false);
+        data.forEach((subject) => {
+          formattedSubjects[subject.subjectName] = subject.chapters.map(
+            (chapter) => ({
+              id: chapter._id,
+              chapter: chapter.chapterName,
+            })
+          );
+        });
+
+        setSubjects(formattedSubjects);
+      })
+      .catch((error) => console.error("Error fetching subjects:", error));
+  };
+
+  useEffect(() => {
+    fetchSubjects();
+  }, []);
+
+  // Add new chapter
+  const handleAddChapter = async () => {
+    if (!selectedSubject || !chapterName) return;
+
+    setLoading(true);
+    try {
+      const response = await axiosInstance.post(
+        "/subject/update-chapter",
+        {
+          subjectName: selectedSubject,
+          chapterName: chapterName,
+        },
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      if (
+        response.data.message === "Chapter added successfully to the subject"
+      ) {
+        fetchSubjects(); // Refresh subjects after adding a chapter
+        setChapterName("");
+        setSelectedSubject("");
+        setAddChapterButton(false);
+      }
+    } catch (error) {
+      console.error("Error adding chapter:", error);
     }
+    setLoading(false);
   };
 
   return (
     <div className="p-4 flex flex-col items-center relative top-15">
       <div className="card w-full md:w-2/3 lg:w-1/2 bg-white shadow-md relative">
         <TabView className="no-wrap" scrollable>
-          {scrollableTabs.map((tab) => (
-            <TabPanel
-              className="p-tabview-nav"
-              key={tab.title}
-              header={tab.title}
-            >
-              <DataTable
-                value={tab.content}
-                paginator
-                rows={5}
-                responsiveLayout="scroll"
-              >
+          {Object.keys(subjects).map((subject) => (
+            <TabPanel key={subject} header={subject}>
+              <DataTable value={subjects[subject]} paginator rows={5}>
                 <Column field="chapter" header="Chapter" />
               </DataTable>
             </TabPanel>
@@ -91,7 +92,6 @@ export default function ChaptersPage() {
           />
         ) : (
           <div className="flex text-2xl font-bold items-center gap-3">
-            {" "}
             Add Chapter
             <IoIosAddCircle
               onClick={() => setAddChapterButton(true)}
@@ -127,8 +127,9 @@ export default function ChaptersPage() {
             <button
               onClick={handleAddChapter}
               className="bg-blue-500 text-white rounded p-2 flex-1 mr-2"
+              disabled={loading}
             >
-              Add
+              {loading ? "Adding..." : "Add"}
             </button>
             <button
               onClick={() => setAddChapterButton(false)}
