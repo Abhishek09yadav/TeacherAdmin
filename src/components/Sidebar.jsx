@@ -1,4 +1,3 @@
-// components/Sidebar.jsx
 "use client";
 import { useEffect, useState } from "react";
 import { FiHome } from "react-icons/fi";
@@ -16,8 +15,8 @@ const Sidebar = () => {
   const router = useRouter();
   const [activeMenu, setActiveMenu] = useState("home");
   const [showTeacherSubmenu, setShowTeacherSubmenu] = useState(false); // State for submenu visibility
-
   const [checkLogin, setCheckLogin] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false); // State for confirmation dialog
 
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("teacher-admin-username");
@@ -83,10 +82,19 @@ const Sidebar = () => {
   ];
 
   const handleLogout = () => {
+    setShowConfirmDialog(true);
+  };
+
+  const confirmLogout = () => {
     localStorage.removeItem("teacher-admin-username");
     router.push("/login");
     setCheckLogin(false);
     setIsOpen(false);
+    setShowConfirmDialog(false);
+  };
+
+  const cancelLogout = () => {
+    setShowConfirmDialog(false);
   };
 
   return (
@@ -165,6 +173,28 @@ const Sidebar = () => {
       ) : (
         <div className="fixed text-2xl mt-4 ml-4">
           <IoMenu onClick={() => setIsOpen(!isOpen)} />
+        </div>
+      )}
+      {showConfirmDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
+          <div className="bg-white p-8 rounded shadow-lg text-center">
+            <h2 className="text-2xl mb-4">Confirm Logout</h2>
+            <p className="mb-6">Are you sure you want to log out?</p>
+            <div className="flex justify-center space-x-4">
+              <button
+                onClick={confirmLogout}
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+              >
+                Logout
+              </button>
+              <button
+                onClick={cancelLogout}
+                className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </>
