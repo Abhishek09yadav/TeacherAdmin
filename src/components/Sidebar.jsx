@@ -8,6 +8,8 @@ import { MdGroups } from "react-icons/md";
 import { FaBook } from "react-icons/fa";
 import { GrNotes } from "react-icons/gr";
 import { IoMenu } from "react-icons/io5";
+import { FaFilePdf } from "react-icons/fa6";
+
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -53,6 +55,12 @@ const Sidebar = () => {
       label: 'Chapters',
       route: '/chapters',
       icon: <GrNotes />,
+    },
+    {
+      id: 'pdf',
+      label: 'PDF',
+      route: '/pdf',
+      icon: <FaFilePdf />,
     },
   ];
 
