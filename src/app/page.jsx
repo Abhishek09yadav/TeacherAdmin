@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect } from "react";
-import axios from "axios"; // Import Axios
 import { DateRangePicker } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
