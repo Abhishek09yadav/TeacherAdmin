@@ -144,7 +144,7 @@ export default function PdfListPage() {
                   </td>
                   <td className="border px-4 py-2">
                     <button
-                      onClick={() => handleDelete(pdf.id)}
+                      onClick={() => handleDelete(pdf._id)}
                       className="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded"
                     >
                       Delete
