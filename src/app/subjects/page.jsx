@@ -104,6 +104,8 @@ export default function SubjectsPage() {
   };
 
   const handleDelete = (id) => {
+    console.log("wefewswr "+id);
+    
     confirmAlert({
       title: 'Confirm Deletion',
       message: 'Are you sure you want to delete this subject?',
@@ -112,7 +114,7 @@ export default function SubjectsPage() {
           label: 'Yes',
           onClick: async () => {
             try {
-              const response = await axiosInstance.delete(`/subject/delete-subject/${id}`);
+              const response = await axiosInstance.delete(`/subject/delete-subject?subjectId=${id}`);
               if (response.status === 200) {
                 toast.success("Subject deleted successfully!");
                 fetchSubjects();

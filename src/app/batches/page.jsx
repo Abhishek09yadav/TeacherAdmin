@@ -69,6 +69,8 @@ export default function BatchesPage() {
   };
 
   const handleDelete = (id) => {
+    console.log(id);
+    
     confirmAlert({
       title: 'Confirm Deletion',
       message: 'Are you sure you want to delete this batch?',
@@ -77,7 +79,7 @@ export default function BatchesPage() {
           label: 'Yes',
           onClick: async () => {
             try {
-              const response = await axiosInstance.delete(`/classes/${id}`);
+              const response = await axiosInstance.delete(`/class/classes/${id}`);
               if (response.status === 200) {
                 toast.success("Batch deleted successfully!");
                 fetchBatches();
@@ -106,7 +108,7 @@ export default function BatchesPage() {
     if (!editBatchName.trim()) return;
 
     try {
-      const response = await axiosInstance.put(`/classes/${editBatchId}`, {
+      const response = await axiosInstance.put(`/class/classes/${editBatchId}`, {
         className: editBatchName,
       });
 
@@ -201,7 +203,7 @@ const ActionButtons = ({ batch, handleDelete, handleEdit }) => {
       <button onClick={() => handleEdit(batch.id, batch.className)} className="flex items-center gap-3 px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded">
         <FaEdit />Edit
       </button>
-      <button onClick={() => handleDelete(batch.id)} className="flex items-center gap-3 px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded">
+      <button onClick={() => handleDelete(batch._id)} className="flex items-center gap-3 px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded">
         <MdDelete />Delete
       </button>
     </div>

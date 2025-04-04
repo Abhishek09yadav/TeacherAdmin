@@ -23,6 +23,8 @@ export default function PdfListPage() {
       setLoading(true);
       const response = await axiosInstance.get("/pdf/pdfs");
       if (response.status === 200) {
+        console.log(response.data);
+        
         setPdfs(response.data.map(pdf => ({
           ...pdf,
           url: `/${pdf.secure_url}`
@@ -36,6 +38,8 @@ export default function PdfListPage() {
   };
 
   const handleDelete = (id) => {
+    console.log(id);
+    
     confirmAlert({
       title: 'Confirm Deletion',
       message: 'Are you sure you want to delete this PDF?',
