@@ -1,19 +1,22 @@
-'use client';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const Login = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const router = useRouter();
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (username === 'admin' && password === 'admin@123') {
-     router.push('/');
+    if (username === "admin" && password === "admin@123") {
+      localStorage.setItem("teacher-admin-username", username);
+      // router.push("/");
+      window.location.href = "/";
+      //  window.location.reload('/'); 
     } else {
-      alert('Invalid username or password');
+      alert("Invalid username or password");
     }
   };
 
@@ -23,7 +26,12 @@ const Login = () => {
         <h2 className="text-2xl font-bold mb-6 text-center">Login Admin</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username:</label>
+            <label
+              htmlFor="username"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Username:
+            </label>
             <input
               type="text"
               id="username"
@@ -34,7 +42,12 @@ const Login = () => {
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password:</label>
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Password:
+            </label>
             <input
               type="password"
               id="password"
