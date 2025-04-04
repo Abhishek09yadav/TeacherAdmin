@@ -44,7 +44,7 @@ export default function PdfListPage() {
           label: 'Yes',
           onClick: async () => {
             try {
-              const response = await axiosInstance.delete(`/pdf/${id}`);
+              const response = await axiosInstance.delete(`/pdf/pdf/${id}`);
               if (response.status === 200) {
                 toast.success("PDF deleted successfully!");
                 fetchPdfs();
@@ -132,10 +132,10 @@ export default function PdfListPage() {
                   <td className="border px-4 py-2">{index + 1}</td>
                   <td className="border px-4 py-2">
                     <button
-                      onClick={() => window.open(pdf.url, "_blank")}
+                      onClick={() => window.open(`${process.env.NEXT_PUBLIC_PDF_URL}${pdf.url}`, "_blank")}
                       className="px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded"
                     >
-                      {pdf.name}
+                      {pdf.name}  
                     </button>
                   </td>
                   <td className="border px-4 py-2">

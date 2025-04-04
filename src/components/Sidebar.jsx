@@ -155,10 +155,10 @@ const Sidebar = () => {
               onClick={handleLogout}
               className="w-full flex items-center space-x-2 p-2 rounded hover:bg-gray-700 mt-4"
             >
-              <span>Logout</span>
               <span>
                 <ImExit />
               </span>
+              <span>Logout</span>
             </button>
           </nav>
         </div>
