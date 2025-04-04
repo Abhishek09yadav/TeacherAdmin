@@ -51,6 +51,11 @@ const Sidebar = () => {
           label: "Add Teacher",
           route: "/teachers/add-teacher",
         },
+        {
+          id: "view-teachers",
+          label: "View Teachers",
+          route: "/teachers/view-teachers",
+        },
         // You can add more submenu items here
       ],
     },
