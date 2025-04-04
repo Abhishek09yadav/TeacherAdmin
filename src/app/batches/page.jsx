@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 
+
 export default function BatchesPage() {
   const [batches, setBatches] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -89,6 +90,7 @@ export default function BatchesPage() {
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   Batch Name
+                  
                 </label>
                 <input
                   type="text"
