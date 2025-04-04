@@ -20,9 +20,11 @@ export default function Home() {
       key: "selection",
     },
   ]);
+  const [teacherList, setTeacherList] = useState([]);
 
   useEffect(() => {
     fetchTeachers();
+    fetchTeacherList();
   }, []);
 
   useEffect(() => {
@@ -69,6 +71,27 @@ export default function Home() {
     }
   };
 
+  // Fetch teacher list from the API
+  const fetchTeacherList = async () => {
+    try {
+      const response = await axiosInstance.get("/auth/users");
+      const usersData = response.data;
+
+      // Filter users to include only those with the role "user"
+      const filteredUsers = usersData.filter((user) => user.role === "user");
+
+      // Map over the users data to format it for the dropdown
+      const formattedUsers = filteredUsers.map((user) => ({
+        id: user._id,
+        name: user.name,
+      }));
+
+      setTeacherList(formattedUsers);
+    } catch (error) {
+      console.error("Error fetching teacher list:", error);
+    }
+  };
+
   const handleTeacherChange = (e) => {
     setSelectedTeacher(e.target.value);
   };
@@ -106,6 +129,11 @@ export default function Home() {
           className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
         >
           <option value="">All Teachers</option>
+          {teacherList.map((teacher) => (
+            <option key={teacher.id} value={teacher.name}>
+              {teacher.name}
+            </option>
+          ))}
         </select>
       </div>
 

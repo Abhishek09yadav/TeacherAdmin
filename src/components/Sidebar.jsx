@@ -9,7 +9,7 @@ import { FaBook } from "react-icons/fa";
 import { GrNotes } from "react-icons/gr";
 import { IoMenu } from "react-icons/io5";
 import { FaFilePdf } from "react-icons/fa6";
-
+import { ImExit } from "react-icons/im";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,21 +17,18 @@ const Sidebar = () => {
   const [activeMenu, setActiveMenu] = useState("home");
   const [showTeacherSubmenu, setShowTeacherSubmenu] = useState(false); // State for submenu visibility
 
-  const[checkLogin, setCheckLogin] = useState(false);
+  const [checkLogin, setCheckLogin] = useState(false);
 
-  
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem("teacher-admin-username"); 
+    const isLoggedIn = localStorage.getItem("teacher-admin-username");
     if (!isLoggedIn) {
       router.push("/login");
       setCheckLogin(false);
       setIsOpen(false);
-    }
-    else if(isLoggedIn) {
+    } else if (isLoggedIn) {
       setCheckLogin(true);
     }
   }, [router]);
-
 
   const menus = [
     {
@@ -73,12 +70,19 @@ const Sidebar = () => {
       icon: <GrNotes />,
     },
     {
-      id: 'pdf',
-      label: 'PDF',
-      route: '/pdf',
+      id: "pdf",
+      label: "PDF",
+      route: "/pdf",
       icon: <FaFilePdf />,
     },
   ];
+
+  const handleLogout = () => {
+    localStorage.removeItem("teacher-admin-username");
+    router.push("/login");
+    setCheckLogin(false);
+    setIsOpen(false);
+  };
 
   return (
     <>
@@ -142,6 +146,15 @@ const Sidebar = () => {
                 </li>
               ))}
             </ul>
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center space-x-2 p-2 rounded hover:bg-gray-700 mt-4"
+            >
+              <span>Logout</span>
+              <span>
+                <ImExit />
+              </span>
+            </button>
           </nav>
         </div>
       ) : (
