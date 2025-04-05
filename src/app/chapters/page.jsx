@@ -24,12 +24,13 @@ export default function ChaptersPage() {
         const formattedSubjects = {};
 
         data.forEach((subject) => {
-          formattedSubjects[subject.subjectName] = subject.chapters.map(
-            (chapter) => ({
+          formattedSubjects[subject.subjectName] = {
+            subjectId: subject._id,
+            chapters: subject.chapters.map((chapter) => ({
               id: chapter._id,
               chapter: chapter.chapterName,
-            })
-          );
+            })),
+          };
         });
 
         setSubjects(formattedSubjects);
@@ -50,7 +51,7 @@ export default function ChaptersPage() {
       const response = await axiosInstance.post(
         "/subject/update-chapter",
         {
-          subjectName: selectedSubject,
+          subjectId: selectedSubject,
           chapterName: chapterName,
         },
         { headers: { "Content-Type": "application/json" } }
@@ -70,17 +71,70 @@ export default function ChaptersPage() {
     setLoading(false);
   };
 
+  // Delete chapter
+  const handleDeleteChapter = async (subjectId, chapterId) => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.delete(
+        `/subject/delete-chapter?subjectId=${subjectId}&chapterId=${chapterId}`,
+        {
+          headers: { "Content-Type": "application/json" },
+      
+        }
+      );
+
+      if (response.data.message === "Chapter deleted successfully") {
+        fetchSubjects(); // Refresh subjects after deleting a chapter
+      }
+    } catch (error) {
+      console.error("Error deleting chapter:", error);
+    }
+    setLoading(false);
+  };
+
+  // Render delete button
+  const deleteChapterButton = (rowData, { rowData: subjectData }) => {
+    const subjectId = subjects[subjectData.subjectName].subjectId;
+    return (
+      <FaRegTrashAlt
+        onClick={() => handleDeleteChapter(subjectId, rowData.id)}
+        className="text-red-500 cursor-pointer hover:text-red-700 transition-colors duration-300"
+      />
+    );
+  };
+
+  // Render subject options
+  const renderSubjectOptions = () => {
+    return Object.keys(subjects).map((subjectName) => (
+      <option
+        key={subjects[subjectName].subjectId}
+        value={subjects[subjectName].subjectId}
+      >
+        {subjectName}
+      </option>
+    ));
+  };
+
   return (
     <div className="p-4 flex flex-col items-center relative top-15">
       <div className="card w-full md:w-2/3 lg:w-1/2 bg-white shadow-md relative">
         <TabView className="no-wrap" scrollable>
-          {Object.keys(subjects).map((subject) => (
-            <TabPanel key={subject} header={subject}>
-              <DataTable value={subjects[subject]} paginator rows={5}>
-                <Column field="chapter" header="Chapter" />
-              </DataTable>
-            </TabPanel>
-          ))}
+          {Object.keys(subjects).map((subjectName) => {
+            const { subjectId, chapters } = subjects[subjectName];
+            return (
+              <TabPanel key={subjectId} header={subjectName}>
+                <DataTable value={chapters} paginator rows={5}>
+                  <Column field="chapter" header="Chapter" />
+                  <Column
+                    body={(rowData) =>
+                      deleteChapterButton(rowData, { rowData: { subjectName } })
+                    }
+                    header="Actions"
+                  />
+                </DataTable>
+              </TabPanel>
+            );
+          })}
         </TabView>
       </div>
 
@@ -111,11 +165,7 @@ export default function ChaptersPage() {
             className="border rounded p-2 w-full"
           >
             <option value="">Select Subject</option>
-            {Object.keys(subjects).map((subject) => (
-              <option key={subject} value={subject}>
-                {subject}
-              </option>
-            ))}
+            {renderSubjectOptions()}
           </select>
           <input
             type="text"
