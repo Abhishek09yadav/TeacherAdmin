@@ -83,7 +83,7 @@ const handleAddChapter = async () => {
         }
       );
 
-      if (response.data.message === "Chapter deleted successfully") {
+      if (response.status === 200) {
         fetchSubjects(); 
 
     //  setSubjects((prevSubjects) => {
