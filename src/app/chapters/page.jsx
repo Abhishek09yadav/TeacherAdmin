@@ -43,33 +43,33 @@ export default function ChaptersPage() {
   }, []);
 
   // Add new chapter
-  const handleAddChapter = async () => {
-    if (!selectedSubject || !chapterName) return;
+const handleAddChapter = async () => {
+  if (!selectedSubject || !chapterName) return;
 
-    setLoading(true);
-    try {
-      const response = await axiosInstance.post(
-        "/subject/update-chapter",
-        {
-          subjectId: selectedSubject,
-          chapterName: chapterName,
-        },
-        { headers: { "Content-Type": "application/json" } }
-      );
+  setLoading(true);
+  try {
+    const response = await axiosInstance.post(
+      "/subject/update-chapter",
+      {
+        subjectName: selectedSubject,
+        chapterName: chapterName,
+      },
+      { headers: { "Content-Type": "application/json" } }
+    );
 
-      if (
-        response.data.message === "Chapter added successfully to the subject"
-      ) {
-        fetchSubjects(); // Refresh subjects after adding a chapter
-        setChapterName("");
-        setSelectedSubject("");
-        setAddChapterButton(false);
-      }
-    } catch (error) {
-      console.error("Error adding chapter:", error);
+    if (response.data.message === "Chapter added successfully to the subject") {
+      fetchSubjects(); // Refresh subjects after adding a chapter
+      setChapterName("");
+      setSelectedSubject("");
+      setAddChapterButton(false);
     }
-    setLoading(false);
-  };
+  } catch (error) {
+    console.error("Error adding chapter:", error);
+  }
+  setLoading(false);
+};
+
+
 
   // Delete chapter
   const handleDeleteChapter = async (subjectId, chapterId) => {
@@ -182,7 +182,11 @@ export default function ChaptersPage() {
             className="border rounded p-2 w-full"
           >
             <option value="">Select Subject</option>
-            {renderSubjectOptions()}
+            {Object.keys(subjects).map((subject) => (
+              <option key={subject} value={subject}>
+                {subject}
+              </option>
+            ))}
           </select>
           <input
             type="text"
