@@ -117,6 +117,7 @@ const BannerManager = () => {
         visible={showDialog}
         style={{ width: '90%', maxWidth: '500px' }}
         onHide={() => setShowDialog(false)}
+        draggable={false}
       >
         <div className="flex flex-col gap-4">
           <span className="p-float-label">
