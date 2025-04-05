@@ -74,14 +74,24 @@ export default function Home() {
 
     try {
       setLoading(true);
-      const response = await axiosInstance.get("/schedule/schedules", {
-        params: {
-          userId: teacher.id,
-          start: startDate.toISOString().split("T")[0],
-          end: endDate.toISOString().split("T")[0],
-        },
-      });
+      // const response = await axiosInstance.get(
+      //   `/schedule/schedules/user/date?userId=${teacher.id}&start=${
+      //     startDate.toISOString().split("T")[0]
+      //   }&end=${endDate.toISOString().split("T")[0]}`
+      // );
 
+      
+      const response = await axiosInstance.get(
+        `/schedule/schedules/user/date?userId=${teacher.id}&start=${
+          startDate.toISOString().split("T")[0]
+        }&end=${endDate.toISOString().split("T")[0]}`
+      );
+      console.log(
+        `payload -> teacher id: ${teacher.id} , start: ${
+          startDate.toISOString().split("T")[0]
+        } , end: ${endDate.toISOString().split("T")[0]}`
+      );
+      console.log("response", response.data);
       const data = response.data.map((item) => ({
         id: item._id,
         name: item.userId.name,
