@@ -84,7 +84,24 @@ export default function ChaptersPage() {
       );
 
       if (response.data.message === "Chapter deleted successfully") {
-        fetchSubjects(); // Refresh subjects after deleting a chapter
+        fetchSubjects(); 
+
+    //  setSubjects((prevSubjects) => {
+    //    const updatedSubjects = { ...prevSubjects };
+    //    const subject =
+    //      updatedSubjects[
+    //        Object.keys(updatedSubjects).find(
+    //          (key) => updatedSubjects[key].subjectId === subjectId
+    //        )
+    //      ];
+    //    if (subject) {
+    //      subject.chapters = subject.chapters.filter(
+    //        (chapter) => chapter.id !== chapterId
+    //      );
+    //    }
+    //    return updatedSubjects;
+       
+    //  });
       }
     } catch (error) {
       console.error("Error deleting chapter:", error);
