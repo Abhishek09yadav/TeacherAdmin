@@ -10,15 +10,15 @@ import { IoMenu } from "react-icons/io5";
 import { FaFilePdf } from "react-icons/fa6";
 import { ImExit } from "react-icons/im";
 import { FaLink } from "react-icons/fa6";
-
+import { IoMdPhotos } from "react-icons/io";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const [activeMenu, setActiveMenu] = useState("home");
-  const [showTeacherSubmenu, setShowTeacherSubmenu] = useState(false); // State for submenu visibility
+  const [showTeacherSubmenu, setShowTeacherSubmenu] = useState(false);
   const [checkLogin, setCheckLogin] = useState(false);
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false); // State for confirmation dialog
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("teacher-admin-username");
@@ -86,6 +86,12 @@ const Sidebar = () => {
       label: "Link",
       route: "/link",
       icon: <FaLink />,
+    },
+    {
+      id: "banner",
+      label: "Banner",
+      route: "/banner",
+      icon: <IoMdPhotos />,
     },
   ];
 
