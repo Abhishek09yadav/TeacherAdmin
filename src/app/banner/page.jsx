@@ -26,31 +26,33 @@ const BannerManager = () => {
   }, []);
 
   const handleSave = () => {
+    setShowDialog(false);
     const newBanner = {
       name: bannerName,
       image: URL.createObjectURL(bannerImage),
     };
-    confirmAlert({
-        title: 'Confirm to submit',
-        message: 'Are you sure to do this.',
-        buttons: [
-          {
-            label: 'Yes',
-            onClick: () => {
-                setBanners([...banners, newBanner]);
-                setShowDialog(false);
-                setBannerName('');
-                setBannerImage(null);
-                setPreviewImage(null);
-            }
-          },
-          {
-            label: 'No',
-            onClick: () => alert('Click No')
-          }
-        ]
-      });
 
+    confirmAlert({
+      title: 'Confirm to submit',
+      message: 'Are you sure to do this.',
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: () => {
+            setBanners([...banners, newBanner]);
+            setShowDialog(false);
+            setBannerName('');
+            setBannerImage(null);
+            setPreviewImage(null);
+            toast.success("Banner uploaded successfully!");
+          }
+        },
+        {
+          label: 'No',
+          onClick: () => toast.info("Uploading Cancelled !")
+        }
+      ]
+    });
   };
 
   const handleDelete = (index) => {
@@ -103,7 +105,7 @@ const BannerManager = () => {
     <div className="p-4 w-[95%] float-end">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Banners</h2>
-        <Button label="Add Banner" icon="pi pi-plus" onClick={() => setShowDialog(true)} />
+        <Button label="Add Banner" icon="pi pi-plus" onClick={() => {setShowDialog(true); setBannerName(''); setBannerImage(null); setPreviewImage(null);}} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -115,6 +117,7 @@ const BannerManager = () => {
         visible={showDialog}
         style={{ width: '90%', maxWidth: '500px' }}
         onHide={() => setShowDialog(false)}
+        draggable={false}
       >
         <div className="flex flex-col gap-4">
           <span className="p-float-label">

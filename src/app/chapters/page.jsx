@@ -1,12 +1,15 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import { TabView, TabPanel } from "primereact/tabview";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { IoIosAddCircle, IoIosCloseCircle } from "react-icons/io";
 import { axiosInstance } from "../../../lib/axios";
 import { FaRegTrashAlt } from "react-icons/fa";
+import { toast } from "react-toastify";
+import { Dialog } from "primereact/dialog";
 
 export default function ChaptersPage() {
   const [subjects, setSubjects] = useState({});
@@ -69,44 +72,58 @@ const handleAddChapter = async () => {
   setLoading(false);
 };
 
-
-
-  // Delete chapter
+// Delete chapter
   const handleDeleteChapter = async (subjectId, chapterId) => {
-    setLoading(true);
-    try {
-      const response = await axiosInstance.delete(
-        `/subject/delete-chapter?subjectId=${subjectId}&chapterId=${chapterId}`,
+    confirmAlert({
+      title: 'Confirm to submit',
+      message: 'Are you sure to do this.',
+      buttons: [
         {
-          headers: { "Content-Type": "application/json" },
-      
+          label: 'Yes',
+          onClick: async () => {
+            setLoading(true);
+            try {
+              const response = await axiosInstance.delete(
+                `/subject/delete-chapter?subjectId=${subjectId}&chapterId=${chapterId}`,
+                {
+                  headers: { "Content-Type": "application/json" },
+              
+                }
+              );
+        
+              if (response.status === 200) {
+                fetchSubjects(); 
+                toast.success("Chapter deleted successfully!");
+            //  setSubjects((prevSubjects) => {
+            //    const updatedSubjects = { ...prevSubjects };
+            //    const subject =
+            //      updatedSubjects[
+            //        Object.keys(updatedSubjects).find(
+            //          (key) => updatedSubjects[key].subjectId === subjectId
+            //        )
+            //      ];
+            //    if (subject) {
+            //      subject.chapters = subject.chapters.filter(
+            //        (chapter) => chapter.id !== chapterId
+            //      );
+            //    }
+            //    return updatedSubjects;
+               
+            //  });
+              }
+            } catch (error) {
+              console.error("Error deleting chapter:", error);
+            }
+            setLoading(false);
+          }
+        },
+        {
+          label: 'No',
+          onClick: () => toast.info("Deletion Cancelled !")
         }
-      );
+      ]
+    });
 
-      if (response.status === 200) {
-        fetchSubjects(); 
-
-    //  setSubjects((prevSubjects) => {
-    //    const updatedSubjects = { ...prevSubjects };
-    //    const subject =
-    //      updatedSubjects[
-    //        Object.keys(updatedSubjects).find(
-    //          (key) => updatedSubjects[key].subjectId === subjectId
-    //        )
-    //      ];
-    //    if (subject) {
-    //      subject.chapters = subject.chapters.filter(
-    //        (chapter) => chapter.id !== chapterId
-    //      );
-    //    }
-    //    return updatedSubjects;
-       
-    //  });
-      }
-    } catch (error) {
-      console.error("Error deleting chapter:", error);
-    }
-    setLoading(false);
   };
 
   // Render delete button
@@ -174,44 +191,55 @@ const handleAddChapter = async () => {
       </div>
 
       {/* Chapter Input Form */}
-      {addChapterButton && (
-        <div className="w-2/3 lg:w-full max-w-md bg-white p-4 rounded shadow-lg mt-8 flex flex-col gap-3 relative">
-          <select
-            value={selectedSubject}
-            onChange={(e) => setSelectedSubject(e.target.value)}
-            className="border rounded p-2 w-full"
-          >
-            <option value="">Select Subject</option>
-            {Object.keys(subjects).map((subject) => (
-              <option key={subject} value={subject}>
-                {subject}
-              </option>
-            ))}
-          </select>
-          <input
-            type="text"
-            value={chapterName}
-            onChange={(e) => setChapterName(e.target.value)}
-            placeholder="Enter Chapter Name"
-            className="border rounded p-2 w-full"
-          />
-          <div className="flex justify-between">
-            <button
-              onClick={handleAddChapter}
-              className="bg-blue-500 text-white rounded p-2 flex-1 mr-2"
-              disabled={loading}
-            >
-              {loading ? "Adding..." : "Add"}
-            </button>
-            <button
-              onClick={() => setAddChapterButton(false)}
-              className="bg-red-500 text-white rounded p-2 flex-1"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
+      <Dialog
+  header="Add Chapter"
+  visible={addChapterButton}
+  style={{ width: '30vw', maxWidth: '90vw' }}
+  onHide={() => setAddChapterButton(false)}
+  draggable={false}
+  resizable={false}
+  className="p-fluid"
+>
+  <div className="flex flex-col gap-3">
+    <select
+      value={selectedSubject}
+      onChange={(e) => setSelectedSubject(e.target.value)}
+      className="border rounded p-2 w-full"
+    >
+      <option value="">Select Subject</option>
+      {Object.keys(subjects).map((subject) => (
+        <option key={subject} value={subject}>
+          {subject}
+        </option>
+      ))}
+    </select>
+
+    <input
+      type="text"
+      value={chapterName}
+      onChange={(e) => setChapterName(e.target.value)}
+      placeholder="Enter Chapter Name"
+      className="border rounded p-2 w-full"
+    />
+
+    <div className="flex justify-between">
+      <button
+        onClick={handleAddChapter}
+        className="bg-blue-500 text-white rounded p-2 flex-1 mr-2"
+        disabled={loading}
+      >
+        {loading ? "Adding..." : "Add"}
+      </button>
+      <button
+        onClick={() => setAddChapterButton(false)}
+        className="bg-red-500 text-white rounded p-2 flex-1"
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+</Dialog>
+
     </div>
   );
 }
