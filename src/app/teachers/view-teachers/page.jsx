@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { IoIosSearch } from "react-icons/io";
+import { axiosInstance } from '../../../../lib/axios';
 
 const UserTable = () => {
   const [users, setUsers] = useState([]);
@@ -14,7 +15,7 @@ const UserTable = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get('http://localhost:8080/api/auth/users');
+        const res = await axiosInstance.get('/auth/users');
         setUsers(res.data);
         setFilteredUsers(res.data);
       } catch (error) {

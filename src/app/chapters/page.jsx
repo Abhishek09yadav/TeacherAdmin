@@ -6,6 +6,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { IoIosAddCircle, IoIosCloseCircle } from "react-icons/io";
 import { axiosInstance } from "../../../lib/axios";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 export default function ChaptersPage() {
   const [subjects, setSubjects] = useState({});
