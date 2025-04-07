@@ -109,7 +109,7 @@ const Sidebar = () => {
               />{" "}
               Admin Panel
             </h2>
-            <img className="w-50 mx-auto" src="/logo.png" alt="logo" />
+            <img className="w-50 mx-auto cursor-pointer" onClick={() => router.push("/")} src="/logo.png" alt="logo" />
           </div>
           <nav className="mt-4">
             <ul className="space-y-2">

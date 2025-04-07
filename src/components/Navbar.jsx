@@ -39,7 +39,7 @@ const Navbar = () => {
     <>
       <div className='bg-gray-900'>
         <div className='flex justify-between mx-auto items-center px-15 z-0'>
-          <div className='w-[15rem]'>
+          <div className='w-[15rem] cursor-pointer flex items-center' onClick={() => router.push('/')}> 
             <img src="/logo.png" alt="logo" />
           </div>
           {isLoggedIn && (
