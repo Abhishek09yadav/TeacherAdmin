@@ -48,7 +48,7 @@ export default function LinksPage() {
             try {
               const response = await axiosInstance.post("/links/link", {
                 name: newLinkName,
-                secure_url: newLinkUrl,
+                link: newLinkUrl,
               });
 
               if (response.status === 200) {
