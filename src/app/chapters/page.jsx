@@ -66,6 +66,7 @@ const handleAddChapter = async () => {
       setSelectedSubject("");
       setAddChapterButton(false);
     }
+    toast.success("Chapter added successfully!");
   } catch (error) {
     console.error("Error adding chapter:", error);
   }

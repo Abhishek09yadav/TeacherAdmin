@@ -4,6 +4,9 @@ import { axiosInstance } from "../../../lib/axios";
 import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
 import 'react-confirm-alert/src/react-confirm-alert.css';
+import { FaFilePdf } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
+
 
 export default function PdfListPage() {
   const [pdfs, setPdfs] = useState([]);
@@ -137,17 +140,17 @@ export default function PdfListPage() {
                   <td className="border px-4 py-2">
                     <button
                       onClick={() => window.open(`${process.env.NEXT_PUBLIC_PDF_URL}${pdf.url}`, "_blank")}
-                      className="px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded"
+                      className="flex gap-2 items-center px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded mx-auto"
                     >
-                      {pdf.name}  
+                      <FaFilePdf />{pdf.name}  
                     </button>
                   </td>
                   <td className="border px-4 py-2">
                     <button
                       onClick={() => handleDelete(pdf._id)}
-                      className="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded"
+                      className="flex gap-2 items-center px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded mx-auto"
                     >
-                      Delete
+                      <MdDelete /> Delete
                     </button>
                   </td>
                 </tr>

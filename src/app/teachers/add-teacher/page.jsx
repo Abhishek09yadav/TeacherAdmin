@@ -205,9 +205,9 @@ const FormComponent = () => {
               className="w-1/3 bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
             >
               {loading ? (
-                <div className="flex items-center flex-nowrap">
+                <div className="flex items-center justify-center flex-nowrap">
                 <span>Loading... </span>
-                  <div className="animate-spin border-t-2 border-white w-4 h-4 rounded-full"></div>
+                  <div className="mx-auto animate-spin border-t-2 border-white w-4 h-4 rounded-full"></div>
                 </div>
               ) : (
                 "Submit"

@@ -5,6 +5,7 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { axiosInstance } from "../../lib/axios";
 import { IoSearch } from "react-icons/io5";
+import { toast } from "react-toastify";
 
 
 export default function Home() {
