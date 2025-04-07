@@ -11,11 +11,12 @@ import { toast } from "react-toastify";
 export default function Home() {
   const [teacherList, setTeacherList] = useState([]);
   const [searchInput, setSearchInput] = useState("");
-  const [tempRange, setTempRange] = useState({
-    startDate: null,
-    endDate: null,
-    key: "selection",
-  });
+const [tempRange, setTempRange] = useState({
+  startDate: new Date(),
+  endDate: new Date(),
+  key: "selection",
+});
+
   const [dateRange, setDateRange] = useState({
     startDate: null,
     endDate: null,
