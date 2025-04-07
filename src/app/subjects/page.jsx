@@ -234,7 +234,7 @@ const SubjectForm = ({ title, subjectName, setSubjectName, onSave, onCancel }) =
           />
           <div className="flex justify-center space-x-10">
             <button type="submit" className="bg-green-500 hover:bg-green-600 text-white px-8 py-2 rounded">
-              Save
+              Update
             </button>
             <button type="button" onClick={onCancel} className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-2 rounded">
               Cancel

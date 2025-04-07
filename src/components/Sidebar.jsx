@@ -8,28 +8,31 @@ import { FaBook } from "react-icons/fa";
 import { GrNotes } from "react-icons/gr";
 import { IoMenu } from "react-icons/io5";
 import { FaFilePdf } from "react-icons/fa6";
-import { ImExit } from "react-icons/im";
 import { FaLink } from "react-icons/fa6";
 import { IoMdPhotos } from "react-icons/io";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
   const [activeMenu, setActiveMenu] = useState("home");
   const [showTeacherSubmenu, setShowTeacherSubmenu] = useState(false);
   const [checkLogin, setCheckLogin] = useState(false);
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
+    setHasMounted(true);
+
     const isLoggedIn = localStorage.getItem("teacher-admin-username");
     if (!isLoggedIn) {
       router.push("/login");
       setCheckLogin(false);
       setIsOpen(false);
-    } else if (isLoggedIn) {
+    } else {
       setCheckLogin(true);
     }
   }, [router]);
+
+  if (!hasMounted) return null;
 
   const menus = [
     {
@@ -54,7 +57,6 @@ const Sidebar = () => {
           label: "View Teachers",
           route: "/teachers/view-teachers",
         },
-        // You can add more submenu items here
       ],
     },
     {
@@ -95,29 +97,12 @@ const Sidebar = () => {
     },
   ];
 
-  const handleLogout = () => {
-    setShowConfirmDialog(true);
-  };
-
-  const confirmLogout = () => {
-    localStorage.removeItem("teacher-admin-username");
-    router.push("/login");
-    setCheckLogin(false);
-    setIsOpen(false);
-    setShowConfirmDialog(false);
-  };
-
-  const cancelLogout = () => {
-    setShowConfirmDialog(false);
-  };
-
   return (
     <>
       {isOpen && checkLogin ? (
         <div className="fixed w-64 h-screen bg-gray-900 text-white z-10">
           <div className="">
             <h2 className="text-2xl text-center">
-              {" "}
               <IoMenu
                 className="mt-4 ml-4"
                 onClick={() => setIsOpen(!isOpen)}
@@ -133,14 +118,14 @@ const Sidebar = () => {
                   <button
                     onClick={() => {
                       if (menu.id === "teachers") {
-                        setShowTeacherSubmenu(!showTeacherSubmenu); // Toggle submenu visibility
+                        setShowTeacherSubmenu(!showTeacherSubmenu);
                       } else {
                         router.push(menu.route);
                         setActiveMenu(menu.id);
                       }
                     }}
                     className={`w-full flex items-center space-x-2 p-2 rounded ${
-                      router.pathname === menu.route || activeMenu === menu.id
+                      activeMenu === menu.id
                         ? "bg-gray-700 text-white"
                         : "hover:bg-gray-700"
                     }`}
@@ -158,7 +143,6 @@ const Sidebar = () => {
                               setActiveMenu(subMenu.id);
                             }}
                             className={`w-full flex items-center space-x-2 p-2 rounded ${
-                              router.pathname === subMenu.route ||
                               activeMenu === subMenu.id
                                 ? "bg-gray-600 text-white"
                                 : "hover:bg-gray-600"
@@ -173,42 +157,11 @@ const Sidebar = () => {
                 </li>
               ))}
             </ul>
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center space-x-2 p-2 rounded hover:bg-gray-700 mt-4"
-            >
-              <span>
-                <ImExit />
-              </span>
-              <span>Logout</span>
-            </button>
           </nav>
         </div>
       ) : (
-        <div className="fixed text-2xl mt-4 ml-4">
+        <div className="fixed text-2xl mt-4 ml-4 text-white">
           <IoMenu onClick={() => setIsOpen(!isOpen)} />
-        </div>
-      )}
-      {showConfirmDialog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
-          <div className="bg-white p-8 rounded shadow-lg text-center">
-            <h2 className="text-2xl mb-4">Confirm Logout</h2>
-            <p className="mb-6">Are you sure you want to log out?</p>
-            <div className="flex justify-center space-x-4">
-              <button
-                onClick={confirmLogout}
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-              >
-                Logout
-              </button>
-              <button
-                onClick={cancelLogout}
-                className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
         </div>
       )}
     </>

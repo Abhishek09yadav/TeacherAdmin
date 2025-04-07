@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import { MdDelete } from "react-icons/md";
+import { FaLink } from "react-icons/fa";
+
 
 export default function LinksPage() {
   const [links, setLinks] = useState([]);
@@ -44,9 +46,9 @@ export default function LinksPage() {
           label: 'Yes',
           onClick: async () => {
             try {
-              const response = await axiosInstance.post("/link", {
+              const response = await axiosInstance.post("/links/link", {
                 name: newLinkName,
-                link: newLinkUrl,
+                secure_url: newLinkUrl,
               });
 
               if (response.status === 200) {
@@ -147,15 +149,15 @@ export default function LinksPage() {
                       onClick={() => window.open(link.secure_url, "_blank")}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded"
+                      className="flex items-center gap-3 px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded mx-auto"
                     >
-                      {link.title}
+                     <FaLink /> {link.title}
                     </button>
                   </td>
-                  <td className="border px-4 py-2 flex justify-center">
+                  <td className="border px-4 py-2 ">
                     <button
                       onClick={() => handleDelete(link._id)}
-                      className="flex items-center gap-3 px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded"
+                      className="flex items-center gap-3 px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded mx-auto"
                     >
                       <MdDelete />Delete
                     </button>
