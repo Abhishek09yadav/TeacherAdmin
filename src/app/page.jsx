@@ -78,7 +78,9 @@ export default function Home() {
     try {
       setLoading(true);
       const response = await axiosInstance.get(
-        `/schedule/schedules/user/date?userId=${teacher.id}&start=${startDate.toISOString().split("T")[0]}&end=${endDate.toISOString().split("T")[0]}`
+        `/schedule/schedules/user/date?userId=${teacher.id}&start=${
+          startDate.toLocaleDateString().split("T")[0]
+        }&end=${endDate.toLocaleDateString().split("T")[0]}`
       );
 
       const data = response.data.map((item) => ({
@@ -93,8 +95,24 @@ export default function Home() {
       setMessage(data.length === 0 ? "No data found" : "");
       setTeachersData(data);
     } catch (err) {
-      console.error("Error fetching data", err);
-      setMessage("Something went wrong");
+       if (err.response && err.response.status === 404) {
+         setMessage("No schedule found");
+          console.log("No schedule found:", err?.response?.data?.message);
+          toast.warning(err?.response?.data?.message, {
+            position: "top-center",
+          
+         
+            // draggable: true,
+            // progress: undefined,
+            theme: "light",
+            transition: Bounce,
+          });
+       } else {
+        //  toast.error("Something went wrong");
+         setMessage("Something went wrong");
+         toast.error("Something went wrong",err);
+         console.log('Error in feting schedules:', err);
+       }
     } finally {
       setLoading(false);
     }
@@ -191,7 +209,7 @@ export default function Home() {
           <thead>
             <tr className="bg-gray-200">
               <th className="border px-4 py-2 w-1/12">S.No.</th>
-              <th className="border px-4 py-2 w-2/12">Teacher Name</th>
+              {/* <th className="border px-4 py-2 w-2/12">Teacher Name</th> */}
               <th className="border px-4 py-2 w-2/12">Date</th>
               <th className="border px-4 py-2 w-2/12">Subject</th>
               <th className="border px-4 py-2 w-2/12">Chapter</th>
@@ -211,7 +229,7 @@ export default function Home() {
               teachersData.map((item, index) => (
                 <tr key={item.id} className="hover:bg-gray-100">
                   <td className="border px-4 py-2">{index + 1}</td>
-                  <td className="border px-4 py-2">{item.name}</td>
+                  {/* <td className="border px-4 py-2">{searchInput}</td> */}
                   <td className="border px-4 py-2">{item.date}</td>
                   <td className="border px-4 py-2">{item.subject}</td>
                   <td className="border px-4 py-2">{item.chapter}</td>
