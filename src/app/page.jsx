@@ -62,7 +62,7 @@ const [tempRange, setTempRange] = useState({
     );
     const { startDate, endDate } = dateRange;
 
-    console.log(teacher, startDate, endDate);
+    // console.log(teacher, startDate, endDate);
     
     if (!teacher) {
       setMessage("Please select a teacher");
@@ -98,11 +98,9 @@ const [tempRange, setTempRange] = useState({
     } catch (err) {
        if (err.response && err.response.status === 404) {
          setMessage("No schedule found");
-          console.log("No schedule found:", err?.response?.data?.message);
+          // console.log("No schedule found:", err?.response?.data?.message);
           toast.warning(err?.response?.data?.message, {
-            position: "top-center",
-          
-         
+            position: "top-center",   
             // draggable: true,
             // progress: undefined,
             theme: "light",
@@ -112,7 +110,7 @@ const [tempRange, setTempRange] = useState({
         //  toast.error("Something went wrong");
          setMessage("Something went wrong");
          toast.error("Something went wrong",err);
-         console.log('Error in feting schedules:', err);
+        //  console.log('Error in feting schedules:', err);
        }
     } finally {
       setLoading(false);
@@ -205,8 +203,8 @@ const [tempRange, setTempRange] = useState({
         </div>
       )}
 
-      <div className="w-full">
-        <table className="min-w-full table-fixed border border-gray-300 shadow-md rounded-lg text-center">
+      <div className="w-full overflow-x-auto">
+        <table className="min-w-full table-fixed border border-gray-300 shadow-md rounded-lg text-center whitespace-nowrap">
           <thead>
             <tr className="bg-gray-200">
               <th className="border px-4 py-2 w-1/12">S.No.</th>
