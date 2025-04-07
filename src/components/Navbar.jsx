@@ -22,9 +22,9 @@ const Navbar = () => {
 
   const confirmLogout = () => {
     localStorage.removeItem("teacher-admin-username");
-    router.push("/login");
-    setShowConfirmDialog(false);
     setIsLoggedIn(false);
+    setShowConfirmDialog(false);
+    router.push("/login");
     toast.success("Logged out successfully!");
   };
 
@@ -32,35 +32,34 @@ const Navbar = () => {
     setShowConfirmDialog(false);
   };
 
-  // Prevent rendering on server to avoid hydration mismatch
   if (!hasMounted) return null;
 
   return (
     <>
-      <div className='bg-gray-900'>
-        <div className='flex justify-between mx-auto items-center px-15 z-0'>
-          <div className='w-[15rem] cursor-pointer flex items-center' onClick={() => router.push('/')}> 
-            <img src="/logo.png" alt="logo" />
-          </div>
+      {/* Top Navbar */}
+      <nav className="bg-gray-900 h-[70px] w-full flex items-center px-4">
+
+        {/* Spacer to push logout to right */}
+        <div className="flex justify-end w-full">
           {isLoggedIn && (
-            <div>
-              <button
-                onClick={handleLogout}
-                className='text-white bg-red-500 w-30 h-10 flex justify-center items-center gap-4 rounded-lg'
-              >
-                <ImExit className='text-white' /> Logout
-              </button>
-            </div>
+            <button
+              onClick={handleLogout}
+              className="bg-red-500 text-white flex items-center gap-2 px-4 py-2 rounded-lg text-sm sm:text-base hover:bg-red-600 transition-all"
+            >
+              <ImExit className="text-white text-[16px]" />
+              <span>Logout</span>
+            </button>
           )}
         </div>
-      </div>
+      </nav>
 
+      {/* Confirmation Modal */}
       {showConfirmDialog && (
-        <div className="fixed inset-0 bg-black/70 bg-opacity-50 flex items-center justify-center z-20">
-          <div className="bg-white p-8 rounded shadow-lg text-center">
-            <h2 className="text-2xl mb-4">Confirm Logout</h2>
-            <p className="mb-6">Are you sure you want to log out?</p>
-            <div className="flex justify-center space-x-4">
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full text-center">
+            <h2 className="text-xl font-semibold mb-3">Confirm Logout</h2>
+            <p className="text-gray-600 mb-6">Are you sure you want to log out?</p>
+            <div className="flex justify-center gap-4">
               <button
                 onClick={confirmLogout}
                 className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
