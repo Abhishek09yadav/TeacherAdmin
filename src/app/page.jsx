@@ -4,18 +4,21 @@ import { DateRangePicker } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { axiosInstance } from "../../lib/axios";
+import { IoSearch } from "react-icons/io5";
+
 
 export default function Home() {
   const [teacherList, setTeacherList] = useState([]);
-  const [selectedTeacher, setSelectedTeacher] = useState(null);
   const [searchInput, setSearchInput] = useState("");
-  const [dateRange, setDateRange] = useState([
-    {
-      startDate: null,
-      endDate: null,
-      key: "selection",
-    },
-  ]);
+  const [tempRange, setTempRange] = useState({
+    startDate: null,
+    endDate: null,
+    key: "selection",
+  });
+  const [dateRange, setDateRange] = useState({
+    startDate: null,
+    endDate: null,
+  });
   const [teachersData, setTeachersData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [monthsToShow, setMonthsToShow] = useState(2);
@@ -24,11 +27,9 @@ export default function Home() {
 
   useEffect(() => {
     fetchTeacherList();
-
     const updateMonths = () => {
       setMonthsToShow(window.innerWidth < 768 ? 1 : 2);
     };
-
     updateMonths();
     window.addEventListener("resize", updateMonths);
     return () => window.removeEventListener("resize", updateMonths);
@@ -38,18 +39,18 @@ export default function Home() {
     try {
       const res = await axiosInstance.get("/auth/users");
       const users = res.data.filter((user) => user.role === "user");
-      const formatted = users.map((user) => ({
-        id: user._id,
-        name: user.name,
-      }));
+      const formatted = users.map((user) => ({ id: user._id, name: user.name }));
       setTeacherList(formatted);
     } catch (err) {
       console.error("Failed to fetch teachers", err);
     }
   };
 
-  const handleSelect = (ranges) => {
-    setDateRange([ranges.selection]);
+  const handleConfirm = () => {
+    setDateRange({
+      startDate: tempRange.startDate,
+      endDate: tempRange.endDate,
+    });
     setIsModalOpen(false);
   };
 
@@ -57,9 +58,10 @@ export default function Home() {
     const teacher = teacherList.find(
       (t) => t.name.toLowerCase() === searchInput.toLowerCase()
     );
+    const { startDate, endDate } = dateRange;
 
-    const { startDate, endDate } = dateRange[0];
-
+    console.log(teacher, startDate, endDate);
+    
     if (!teacher) {
       setMessage("Please select a teacher");
       setTeachersData([]);
@@ -74,24 +76,10 @@ export default function Home() {
 
     try {
       setLoading(true);
-      // const response = await axiosInstance.get(
-      //   `/schedule/schedules/user/date?userId=${teacher.id}&start=${
-      //     startDate.toISOString().split("T")[0]
-      //   }&end=${endDate.toISOString().split("T")[0]}`
-      // );
-
-      
       const response = await axiosInstance.get(
-        `/schedule/schedules/user/date?userId=${teacher.id}&start=${
-          startDate.toISOString().split("T")[0]
-        }&end=${endDate.toISOString().split("T")[0]}`
+        `/schedule/schedules/user/date?userId=${teacher.id}&start=${startDate.toISOString().split("T")[0]}&end=${endDate.toISOString().split("T")[0]}`
       );
-      console.log(
-        `payload -> teacher id: ${teacher.id} , start: ${
-          startDate.toISOString().split("T")[0]
-        } , end: ${endDate.toISOString().split("T")[0]}`
-      );
-      console.log("response", response.data);
+
       const data = response.data.map((item) => ({
         id: item._id,
         name: item.userId.name,
@@ -113,8 +101,7 @@ export default function Home() {
 
   return (
     <div className="p-6 flex flex-col items-center justify-center">
-      {/* Filter Controls */}
-      <div className="w-full max-w-5xl flex flex-wrap gap-4 items-end justify-center mb-6">
+      <div className="w-full max-w-7xl flex flex-wrap gap-4 items-end justify-center mb-6">
         <div className="flex flex-col w-full sm:w-1/4">
           <label className="mb-1 text-sm font-medium">Teacher</label>
           <input
@@ -132,34 +119,25 @@ export default function Home() {
           </datalist>
         </div>
 
-        <div className="flex flex-col w-full sm:w-1/4">
+        <div className="flex flex-col w-full sm:w-1/6">
           <label className="mb-1 text-sm font-medium">Start Date</label>
           <input
             type="text"
-            value={
-              dateRange[0].startDate
-                ? dateRange[0].startDate.toLocaleDateString()
-                : ""
-            }
+            value={dateRange.startDate ? dateRange.startDate.toLocaleDateString() : ""}
             className="p-2 border rounded-md bg-gray-100"
             readOnly
           />
         </div>
 
-        <div className="flex flex-col w-full sm:w-1/4">
+        <div className="flex flex-col w-full sm:w-1/6">
           <label className="mb-1 text-sm font-medium">End Date</label>
           <input
             type="text"
-            value={
-              dateRange[0].endDate
-                ? dateRange[0].endDate.toLocaleDateString()
-                : ""
-            }
+            value={dateRange.endDate ? dateRange.endDate.toLocaleDateString() : ""}
             className="p-2 border rounded-md bg-gray-100"
             readOnly
           />
         </div>
-
         <button
           onClick={() => setIsModalOpen(true)}
           className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
@@ -169,39 +147,44 @@ export default function Home() {
 
         <button
           onClick={handleSearch}
-          className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+          className="px-6 py-3 bg-green-500 text-white rounded-md hover:bg-green-600"
         >
-          Search
+          <IoSearch className="text-lg"/>
         </button>
       </div>
 
-      {/* Date Picker Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-4 rounded-md shadow-md">
             <DateRangePicker
               showSelectionPreview
               moveRangeOnFirstSelection={false}
-              ranges={dateRange}
+              retainEndDateOnFirstSelection={true}
+              onChange={(ranges) => setTempRange(ranges.selection)}
               months={monthsToShow}
               direction="horizontal"
-              onChange={handleSelect}
               rangeColors={["#3b82f6"]}
               editableDateInputs={true}
+              ranges={[tempRange]}
             />
-            <div className="mt-2 flex justify-end">
+            <div className="mt-2 flex justify-end gap-8">
               <button
-                onClick={() => setIsModalOpen(false)}
-                className="px-4 py-1 bg-gray-300 rounded hover:bg-gray-400"
+                onClick={() => {setIsModalOpen(false); setTempRange({startDate: null, endDate: null, key: "selection"})}}
+                className="px-5 py-2 text-white bg-red-600 rounded hover:bg-red-500"
               >
                 Close
+              </button>
+              <button
+                onClick={handleConfirm}
+                className="px-5 py-2 bg-green-600 text-white rounded hover:bg-green-500"
+              >
+                Confirm
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Table Section */}
       <div className="w-full">
         <table className="min-w-full table-fixed border border-gray-300 shadow-md rounded-lg text-center">
           <thead>
@@ -217,15 +200,11 @@ export default function Home() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="6" className="p-4">
-                  Loading...
-                </td>
+                <td colSpan="6" className="p-4">Loading...</td>
               </tr>
             ) : message ? (
               <tr>
-                <td colSpan="6" className="p-4 text-gray-600 font-medium">
-                  {message}
-                </td>
+                <td colSpan="6" className="p-4 text-gray-600 font-medium">{message}</td>
               </tr>
             ) : (
               teachersData.map((item, index) => (
