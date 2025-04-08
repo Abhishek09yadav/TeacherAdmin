@@ -167,7 +167,7 @@ const UserTable = () => {
             className="w-40 h-40 mt-4 rounded-full object-cover border-2 border-blue-400"
           />
         </div>
-  
+
         {/* Info */}
         <div className="text-center space-y-3">
           <p className="text-2xl font-semibold text-gray-800">{updateUser.name}</p>
