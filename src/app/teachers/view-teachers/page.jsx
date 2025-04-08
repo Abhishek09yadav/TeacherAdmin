@@ -50,33 +50,6 @@ const UserTable = () => {
     })
   };
 
-  const handleDelete = async (id) => {
-    confirmAlert({
-      title: 'Confirm to submit',
-      message: 'Are you sure you want to add this batch?',
-      buttons: [
-        {
-          label: 'Yes',
-          onClick: async () => {
-            try{
-              await axiosInstance.delete(`/auth/user/delete/${id}`);
-              setSelectedUser(null);
-              toast.success("User deleted successfully!");
-              fetchUsers();
-            }catch(e){
-              console.log(e);
-              toast.error("Error deleting user. Please try again.");
-            }
-          }
-        },
-        { 
-          label: 'No',
-          onClick: () => toast.info("Deletion Cancelled !") 
-        }
-      ]
-    });
-  }
-
   return (
     <div className="w-full max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-6 relative top-10">
     {/* Left side: Table */}
@@ -213,12 +186,8 @@ const UserTable = () => {
             >
               Save
             </button>
-          )} */}
-          <button 
-          style={{boxShadow:"inset 2px 2px 2px #ad2929, inset -2px -2px 3px #ff8e8e"}} 
-          className="flex items-center gap-3 px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded"
-          onClick={() => handleDelete(selectedUser._id)}
-        >
+          )}
+          <button className="flex items-center gap-3 px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded">
             Delete
           </button>
         </div>
