@@ -12,6 +12,7 @@ const UserTable = () => {
   const [update, setUpdate] = useState(false);
   const [updateUser, setUpdateUser] = useState(null);
 
+  
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -48,7 +49,12 @@ const UserTable = () => {
       phoneNumber: user.phoneNumber
     })
   };
-
+const handleDeleteUser = async (userId) => {
+  try {
+    axiosInstance.delete()
+  }
+  catch (error) {}
+}
   return (
     <div className="w-full max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-6 relative top-10">
     {/* Left side: Table */}
@@ -170,7 +176,7 @@ const UserTable = () => {
         </div>
   
         <div className="flex justify-center flex-wrap gap-4 my-6">
-          {!update ? (
+          {/* {!update ? (
             <button
               onClick={() => setUpdate(true)}
               className="flex items-center gap-3 px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded"
@@ -184,7 +190,7 @@ const UserTable = () => {
             >
               Save
             </button>
-          )}
+          )} */}
           <button className="flex items-center gap-3 px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded">
             Delete
           </button>
