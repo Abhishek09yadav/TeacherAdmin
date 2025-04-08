@@ -85,6 +85,7 @@ export default function Home() {
         name: item.userId.name,
         date: new Date(item.date).toLocaleDateString(),
         subject: item.subjectName,
+        batch: item.className,
         chapter: item.chapterName,
         topic: item.topic,
       }));
@@ -132,7 +133,11 @@ export default function Home() {
           <label className="mb-1 text-sm font-medium">Start Date</label>
           <input
             type="text"
-            value={dateRange.startDate ? dateRange.startDate.toLocaleDateString() : ""}
+            value={
+              dateRange.startDate
+                ? dateRange.startDate.toLocaleDateString()
+                : ""
+            }
             className="p-2 border rounded-md bg-gray-100"
             readOnly
           />
@@ -142,7 +147,9 @@ export default function Home() {
           <label className="mb-1 text-sm font-medium">End Date</label>
           <input
             type="text"
-            value={dateRange.endDate ? dateRange.endDate.toLocaleDateString() : ""}
+            value={
+              dateRange.endDate ? dateRange.endDate.toLocaleDateString() : ""
+            }
             className="p-2 border rounded-md bg-gray-100"
             readOnly
           />
@@ -166,41 +173,40 @@ export default function Home() {
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50">
-<div className="bg-white p-4 rounded-md shadow-md w-[95vw] sm:w-auto max-w-full overflow-auto">
-  <DateRangePicker
-    showSelectionPreview
-    moveRangeOnFirstSelection={false}
-    retainEndDateOnFirstSelection={true}
-    onChange={(ranges) => setTempRange(ranges.selection)}
-    months={monthsToShow}
-    direction={monthsToShow === 1 ? "vertical" : "horizontal"}
-    rangeColors={["#3b82f6"]}
-    editableDateInputs={true}
-    ranges={[tempRange]}
-  />
-  <div className="mt-2 flex justify-end gap-8">
-    <button
-      onClick={() => {
-        setIsModalOpen(false);
-        setTempRange({
-          startDate: new Date(),
-          endDate: new Date(),
-          key: "selection",
-        });
-      }}
-      className="px-5 py-2 text-white bg-red-600 rounded hover:bg-red-500"
-    >
-      Close
-    </button>
-    <button
-      onClick={handleConfirm}
-      className="px-5 py-2 bg-green-600 text-white rounded hover:bg-green-500"
-    >
-      Confirm
-    </button>
-  </div>
-</div>
-
+          <div className="bg-white p-4 rounded-md shadow-md w-[95vw] sm:w-auto max-w-full overflow-auto">
+            <DateRangePicker
+              showSelectionPreview
+              moveRangeOnFirstSelection={false}
+              retainEndDateOnFirstSelection={true}
+              onChange={(ranges) => setTempRange(ranges.selection)}
+              months={monthsToShow}
+              direction={monthsToShow === 1 ? "vertical" : "horizontal"}
+              rangeColors={["#3b82f6"]}
+              editableDateInputs={true}
+              ranges={[tempRange]}
+            />
+            <div className="mt-2 flex justify-end gap-8">
+              <button
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setTempRange({
+                    startDate: new Date(),
+                    endDate: new Date(),
+                    key: "selection",
+                  });
+                }}
+                className="px-5 py-2 text-white bg-red-600 rounded hover:bg-red-500"
+              >
+                Close
+              </button>
+              <button
+                onClick={handleConfirm}
+                className="px-5 py-2 bg-green-600 text-white rounded hover:bg-green-500"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -211,6 +217,7 @@ export default function Home() {
             <tr>
               <th className="border px-4 py-2 w-1/12">S.No.</th>
               <th className="border px-4 py-2 w-2/12">Date</th>
+              <th className="border px-4 py-2 w-2/12">Batch</th>
               <th className="border px-4 py-2 w-2/12">Subject</th>
               <th className="border px-4 py-2 w-2/12">Chapter</th>
               <th className="border px-4 py-2 w-3/12">Topic</th>
@@ -219,17 +226,22 @@ export default function Home() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="5" className="p-4">Loading...</td>
+                <td colSpan="5" className="p-4">
+                  Loading...
+                </td>
               </tr>
             ) : message ? (
               <tr>
-                <td colSpan="5" className="p-4 text-gray-600 font-medium">{message}</td>
+                <td colSpan="5" className="p-4 text-gray-600 font-medium">
+                  {message}
+                </td>
               </tr>
             ) : (
               teachersData.map((item, index) => (
                 <tr key={item.id} className="hover:bg-gray-100">
                   <td className="border px-4 py-2">{index + 1}</td>
                   <td className="border px-4 py-2">{item.date}</td>
+                  <td className="border px-4 py-2">{item.batch}</td>
                   <td className="border px-4 py-2">{item.subject}</td>
                   <td className="border px-4 py-2">{item.chapter}</td>
                   <td className="border px-4 py-2">{item.topic}</td>
