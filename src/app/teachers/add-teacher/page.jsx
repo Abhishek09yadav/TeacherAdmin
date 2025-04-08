@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { axiosInstance } from "../../../../lib/axios";
 import { toast } from "react-toastify";
-import DownloadProfile from "@/components/DownloadProfile";
+
 
 const FormComponent = () => {
   const [formData, setFormData] = useState({
@@ -13,15 +13,11 @@ const FormComponent = () => {
     password: "",
     image: null,
   });
-  const [isProfileDownloadModalOpen, setIsProfileDownloadModalOpen] =
-    useState(false);
-  const [downloadData, setDownloadData] = useState(null);
 
   const [loading, setLoading] = useState(false);
 
-  const generatePassword = (length = 4) => {
-    const chars =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const generatePassword = (length = 8) => {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     let password = "";
     for (let i = 0; i < length; i++) {
       password += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -60,9 +56,6 @@ const FormComponent = () => {
       .then((response) => {
         if (response.status === 201) {
           toast.success("User added successfully!");
-          setDownloadData(formData);
-          setIsProfileDownloadModalOpen(true);
-
           handleReset();
         }
       })
@@ -172,23 +165,19 @@ const FormComponent = () => {
               Password
             </label>
             <input
-              readOnly
               type="text"
               id="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="mt-1 block w-full border cursor-not-allowed bg-gray-200 border-gray-300 rounded-md shadow-sm p-2  "
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-500"
             />
             <button
               type="button"
               name="generatePassword"
               onClick={handleChange}
               className="mt-3 w-full sm:w-auto px-2 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-300"
-              style={{
-                boxShadow:
-                  "inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px",
-              }}
+              style={{boxShadow:'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px'}}
             >
               Generate Password
             </button>
@@ -215,14 +204,11 @@ const FormComponent = () => {
               type="submit"
               disabled={loading}
               className="w-1/3 bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
-              style={{
-                boxShadow:
-                  "inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px",
-              }}
+              style={{boxShadow:'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px'}}
             >
               {loading ? (
                 <div className="flex items-center justify-center flex-nowrap">
-                  <span>Loading... </span>
+                <span>Loading... </span>
                   <div className="mx-auto animate-spin border-t-2 border-white w-4 h-4 rounded-full"></div>
                 </div>
               ) : (
@@ -239,9 +225,6 @@ const FormComponent = () => {
           </div>
         </form>
       </div>
-      {isProfileDownloadModalOpen && (
-        <DownloadProfile formData={downloadData} />
-      )}
     </div>
   );
 };
