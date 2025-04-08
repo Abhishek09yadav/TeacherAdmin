@@ -16,7 +16,7 @@ const FormComponent = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const generatePassword = (length = 8) => {
+  const generatePassword = (length = 4) => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     let password = "";
     for (let i = 0; i < length; i++) {
