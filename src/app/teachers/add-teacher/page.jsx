@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { axiosInstance } from "../../../../lib/axios";
 import { toast } from "react-toastify";
+import DownloadProfile from "@/components/DownloadProfile";
 
 
 const FormComponent = () => {
@@ -56,6 +57,7 @@ const FormComponent = () => {
       .then((response) => {
         if (response.status === 201) {
           toast.success("User added successfully!");
+          <DownloadProfile formData={formData}/>
           handleReset();
         }
       })
