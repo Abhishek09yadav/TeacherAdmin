@@ -11,6 +11,7 @@ import { MdDelete } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
+import "./style.css"
 
 const BannerManager = () => {
   const [banners, setBanners] = useState([]);
@@ -77,13 +78,21 @@ const BannerManager = () => {
     });
   };
 
-  const bannerGrid = banners.map((banner, index) => (
-    <Card
+  const bannerGrid = banners.map((banner, index) => {
+
+   return (
+    <div
       key={index}
-      title={banner.name}
-      className="relative min-w-150 md:w-6 mb-4 md:mb-6"
+      className={`w-fit min-w-[400px] md:w-6 mb-4 md:mb-6 `}
       style={{ overflow: 'hidden' }}
     >
+      <div>
+        <p className='text-2xl font-bold'>
+          {banner.name}
+        </p>
+      </div>
+      <div className='relative'>
+
       <button
         className="absolute top-2 right-2 text-white hover:text-white z-10 px-5 py-3 bg-red-500 rounded-lg"
         onClick={() => handleDelete(index)}
@@ -91,15 +100,16 @@ const BannerManager = () => {
         <MdDelete size={20} />
       </button>
 
-      <div className="w-full h-50">
+      <div className="">
         <img
           src={banner.secure_url || banner.image}
           alt={banner.name}
-          className="w-full h-full object-cover rounded"
-        />
+          className="min-w-[400px] w-full h-auto object-cover rounded"
+          />
       </div>
-    </Card>
-  ));
+          </div>
+    </div>
+  )});
 
   return (
     <div className="p-4 w-[95%] float-end">
@@ -108,7 +118,7 @@ const BannerManager = () => {
         <Button label="Add Banner" icon="pi pi-plus" onClick={() => {setShowDialog(true); setBannerName(''); setBannerImage(null); setPreviewImage(null);}} />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="flex justify-center items-center gap-5 flex-row flex-wrap">
         {bannerGrid}
       </div>
 
