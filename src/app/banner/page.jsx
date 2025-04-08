@@ -26,15 +26,16 @@ const BannerManager = () => {
     axiosInstance
       .get("/banners/banners")
       .then((res) => setBanners(res.data))
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+        toast.error("Failed to fetch banners!");
+      });
   };
 
   const handleSave = () => {
     setShowDialog(false);
 
-    const formData = new FormData();
-    formData.append("name", bannerName);
-    formData.append("image", bannerImage);
+  
 
     confirmAlert({
       title: "Confirm to submit",
@@ -43,22 +44,7 @@ const BannerManager = () => {
         {
           label: "Yes",
           onClick: () => {
-            axiosInstance
-              .post("/banners/banner", formData, {
-                headers: {
-                  "Content-Type": "multipart/form-data",
-                },
-              })
-              .then((res) => {
-                if (res.status === 200) {
-                  fetchBanners();
-                  toast.success("Banner uploaded successfully!");
-                }
-              })
-              .catch((err) => {
-                console.error("Error uploading banner", err);
-                toast.error("Failed to upload banner!");
-              });
+            addBanner();
           },
         },
         {
@@ -68,7 +54,29 @@ const BannerManager = () => {
       ],
     });
   };
+  const addBanner = () => {
+  const formData = new FormData();
+  formData.append("name", bannerName);
+  formData.append("image", bannerImage);
+  toast.info("Uploading Banner...");
+    axiosInstance
+      .post("/banners/banner", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((res) => {
+        fetchBanners();
+        toast.success("Banner uploaded successfully!");
+        console.log("Banner uploaded successfully", res);
+      })
+      .catch((err) => {
+        console.error("Error uploading banner", err);
+        toast.error("Failed to upload banner!");
+      });
 
+
+  }
   const deleteBanner = (index) => {
     // const updated = [...banners];
     // updated.splice(index, 1);
@@ -98,7 +106,7 @@ const BannerManager = () => {
       buttons: [
         {
           label: "Yes",
-            onClick: () => {
+          onClick: () => {
             deleteBanner(index);
           },
         },
