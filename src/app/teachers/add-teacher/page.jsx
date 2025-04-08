@@ -4,7 +4,6 @@ import { axiosInstance } from "../../../../lib/axios";
 import { toast } from "react-toastify";
 import DownloadProfile from "@/components/DownloadProfile";
 
-
 const FormComponent = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -14,11 +13,15 @@ const FormComponent = () => {
     password: "",
     image: null,
   });
+  const [isProfileDownloadModalOpen, setIsProfileDownloadModalOpen] =
+    useState(false);
+  const [downloadData, setDownloadData] = useState(null);
 
   const [loading, setLoading] = useState(false);
 
   const generatePassword = (length = 4) => {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const chars =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     let password = "";
     for (let i = 0; i < length; i++) {
       password += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -57,7 +60,9 @@ const FormComponent = () => {
       .then((response) => {
         if (response.status === 201) {
           toast.success("User added successfully!");
-          <DownloadProfile formData={formData}/>
+          setDownloadData(formData);
+          setIsProfileDownloadModalOpen(true);
+
           handleReset();
         }
       })
@@ -234,6 +239,9 @@ const FormComponent = () => {
           </div>
         </form>
       </div>
+      {isProfileDownloadModalOpen && (
+        <DownloadProfile formData={downloadData} />
+      )}
     </div>
   );
 };
