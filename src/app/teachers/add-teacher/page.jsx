@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { axiosInstance } from "../../../../lib/axios";
 import { toast } from "react-toastify";
 import DownloadProfile from "@/components/DownloadProfile";
+import { AiOutlineClose } from "react-icons/ai";
 
 const FormComponent = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ const FormComponent = () => {
     password: "",
     image: null,
   });
+
   const [isProfileDownloadModalOpen, setIsProfileDownloadModalOpen] =
     useState(false);
   const [downloadData, setDownloadData] = useState(null);
@@ -240,7 +242,20 @@ const FormComponent = () => {
         </form>
       </div>
       {isProfileDownloadModalOpen && (
-        <DownloadProfile formData={downloadData} />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 bg-opacity-50">
+          <div className="relative bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+            {/* Close Icon */}
+            <button
+              onClick={() => setIsProfileDownloadModalOpen(false)}
+              className="absolute top-2 right-2 text-gray-600 hover:text-red-500"
+            >
+              <AiOutlineClose size={20} />
+            </button>
+
+            {/* DownloadProfile Content */}
+            <DownloadProfile formData={downloadData} />
+          </div>
+        </div>
       )}
     </div>
   );
