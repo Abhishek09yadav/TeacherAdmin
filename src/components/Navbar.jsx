@@ -37,7 +37,7 @@ const Navbar = () => {
   return (
     <>
       {/* Top Navbar */}
-      <nav className="bg-gray-900 h-[70px] w-full flex items-center px-4">
+      <nav className=" bg-gray-900 h-[70px] w-full flex items-center px-4">
 
         {/* Spacer to push logout to right */}
         <div className="flex justify-end w-full">
@@ -63,6 +63,9 @@ const Navbar = () => {
               <button
                 onClick={confirmLogout}
                 className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                style={{
+                  boxShadow:"inset 2px 2px 2px #ad2929, inset -2px -2px 3px #ff8e8e"
+                }}
               >
                 Logout
               </button>

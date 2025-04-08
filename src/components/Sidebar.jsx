@@ -104,9 +104,9 @@ const Sidebar = () => {
           <div className="">
             <h2 className="text-2xl text-center">
               <IoMenu
-                className="mt-4 ml-4"
+                className="mt-4 ml-4 cursor-pointer"
                 onClick={() => setIsOpen(!isOpen)}
-              />{" "}
+              />
               Admin Panel
             </h2>
             <img className="w-50 mx-auto cursor-pointer" onClick={() => router.push("/")} src="/logo.png" alt="logo" />

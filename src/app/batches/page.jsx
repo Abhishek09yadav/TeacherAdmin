@@ -130,6 +130,7 @@ export default function BatchesPage() {
         <button
           className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
           onClick={() => setShowAddForm(true)}
+          style={{boxShadow:'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px'}}
         >
           Add Batch
         </button>
@@ -140,6 +141,7 @@ export default function BatchesPage() {
         <BatchForm 
           title="Add New Batch"
           batchName={newBatchName}
+          submitLabel="Add"
           setBatchName={setNewBatchName}
           onSave={handleAddBatch}
           onCancel={() => setShowAddForm(false)}
@@ -151,6 +153,7 @@ export default function BatchesPage() {
         <BatchForm 
           title="Edit Batch"
           batchName={editBatchName}
+          submitLabel="Update"
           setBatchName={setEditBatchName}
           onSave={handleEditBatch}
           onCancel={() => setShowEditForm(false)}
@@ -204,6 +207,7 @@ const ActionButtons = ({ batch, handleDelete, handleEdit }) => {
       <button
         onClick={() => handleEdit(batch._id, batch.className)}
         className="flex items-center gap-3 px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded"
+        style={{boxShadow:'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px'}}
       >
         <FaEdit />
         Edit
@@ -211,6 +215,9 @@ const ActionButtons = ({ batch, handleDelete, handleEdit }) => {
       <button
         onClick={() => handleDelete(batch._id)}
         className="flex items-center gap-3 px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded"
+        style={{
+          boxShadow:"inset 2px 2px 2px #ad2929, inset -2px -2px 3px #ff8e8e"
+        }}
       >
         <MdDelete />
         Delete
@@ -221,7 +228,7 @@ const ActionButtons = ({ batch, handleDelete, handleEdit }) => {
 
 
 // Reusable Modal for Add/Edit Batch
-const BatchForm = ({ title, batchName, setBatchName, onSave, onCancel }) => {
+const BatchForm = ({ title, batchName, setBatchName, onSave, onCancel,submitLabel }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50">
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-lg">
@@ -237,7 +244,7 @@ const BatchForm = ({ title, batchName, setBatchName, onSave, onCancel }) => {
           />
           <div className="flex justify-center space-x-10">
             <button type="submit" className="bg-green-500 hover:bg-green-600 text-white px-8 py-2 rounded">
-              Update
+              {submitLabel}
             </button>
             <button type="button" onClick={onCancel} className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-2 rounded">
               Cancel

@@ -101,6 +101,7 @@ export default function LinksPage() {
         <button
           className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
           onClick={() => setShowAddForm(true)}
+          style={{boxShadow:'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px'}}
         >
           Add Link
         </button>
@@ -150,6 +151,7 @@ export default function LinksPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-3 px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded mx-auto"
+                      style={{boxShadow:'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px'}}
                     >
                      <FaLink /> {link.title}
                     </button>
@@ -158,6 +160,9 @@ export default function LinksPage() {
                     <button
                       onClick={() => handleDelete(link._id)}
                       className="flex items-center gap-3 px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded mx-auto"
+                      style={{
+                        boxShadow:"inset 2px 2px 2px #ad2929, inset -2px -2px 3px #ff8e8e"
+                      }}
                     >
                       <MdDelete />Delete
                     </button>

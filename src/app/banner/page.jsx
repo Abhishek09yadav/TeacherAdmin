@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
-import { Card } from 'primereact/card';
 import { FileUpload } from 'primereact/fileupload';
 import { axiosInstance } from '../../../lib/axios';
 import { MdDelete } from 'react-icons/md';
@@ -95,9 +94,11 @@ const BannerManager = () => {
 
       <button
         className="absolute top-2 right-2 text-white hover:text-white z-10 px-5 py-3 bg-red-500 rounded-lg"
-        onClick={() => handleDelete(index)}
+        onClick={() => handleDelete(index)} style={{
+          boxShadow:"inset 2px 2px 2px #ad2929, inset -2px -2px 3px #ff8e8e"
+        }}
       >
-        <MdDelete size={20} />
+        <MdDelete  size={20} />
       </button>
 
       <div className="">
@@ -115,7 +116,7 @@ const BannerManager = () => {
     <div className="p-4 w-[95%] float-end">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Banners</h2>
-        <Button label="Add Banner" icon="pi pi-plus" onClick={() => {setShowDialog(true); setBannerName(''); setBannerImage(null); setPreviewImage(null);}} />
+        <Button style={{boxShadow:'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px'}} label="Add Banner" icon="pi pi-plus" onClick={() => {setShowDialog(true); setBannerName(''); setBannerImage(null); setPreviewImage(null);}} />
       </div>
 
       <div className="flex justify-center items-center gap-5 flex-row flex-wrap">

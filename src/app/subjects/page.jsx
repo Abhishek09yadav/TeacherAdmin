@@ -136,6 +136,7 @@ export default function SubjectsPage() {
         <button
           className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
           onClick={() => setShowAddForm(true)}
+          style={{boxShadow:'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px'}}
         >
           Add Subject
         </button>
@@ -147,6 +148,7 @@ export default function SubjectsPage() {
           subjectName={newSubjectName}
           setSubjectName={setNewSubjectName}
           onSave={handleAddSubject}
+          submitLabel="Add"
           onCancel={() => {
             setShowAddForm(false);
             setNewSubjectName("");
@@ -159,6 +161,7 @@ export default function SubjectsPage() {
           title="Edit Subject"
           subjectName={editSubjectName}
           setSubjectName={setEditSubjectName}
+          submitLabel="Update"
           onSave={(e) => {
             e.preventDefault();
             handleEdit(editSubjectId, editSubjectName);
@@ -208,17 +211,19 @@ export default function SubjectsPage() {
 const ActionButtons = ({ subject, handleDelete, handleEdit }) => {
   return (
     <div className="flex space-x-4 justify-center">
-      <button onClick={() => handleEdit(subject._id, subject.subjectName)} className="flex items-center gap-3 px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded">
+      <button style={{boxShadow:'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px'}} onClick={() => handleEdit(subject._id, subject.subjectName)} className="flex items-center gap-3 px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded">
         <FaEdit />Edit
       </button>
-      <button onClick={() => handleDelete(subject._id)} className="flex items-center gap-3 px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded">
+      <button style={{
+          boxShadow:"inset 2px 2px 2px #ad2929, inset -2px -2px 3px #ff8e8e"
+        }} onClick={() => handleDelete(subject._id)} className="flex items-center gap-3 px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded">
         <MdDelete />Delete
       </button>
     </div>
   );
 };
 
-const SubjectForm = ({ title, subjectName, setSubjectName, onSave, onCancel }) => {
+const SubjectForm = ({ title, subjectName, setSubjectName, onSave, onCancel, submitLabel }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50">
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-lg">
@@ -234,7 +239,7 @@ const SubjectForm = ({ title, subjectName, setSubjectName, onSave, onCancel }) =
           />
           <div className="flex justify-center space-x-10">
             <button type="submit" className="bg-green-500 hover:bg-green-600 text-white px-8 py-2 rounded">
-              Update
+              {submitLabel}
             </button>
             <button type="button" onClick={onCancel} className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-2 rounded">
               Cancel
@@ -245,3 +250,4 @@ const SubjectForm = ({ title, subjectName, setSubjectName, onSave, onCancel }) =
     </div>
   );
 };
+

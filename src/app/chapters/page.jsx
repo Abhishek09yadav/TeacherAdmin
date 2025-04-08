@@ -181,7 +181,7 @@ const handleAddChapter = async () => {
             className="text-5xl bg-white rounded-full shadow-lg cursor-pointer hover:scale-110 transition-all duration-300"
           />
         ) : (
-          <div className="flex text-2xl font-bold items-center gap-3">
+          <div className="flex text-2xl font-bold items-center gap-3" >
             Add Chapter
             <IoIosAddCircle
               onClick={() => setAddChapterButton(true)}
@@ -228,12 +228,16 @@ const handleAddChapter = async () => {
         onClick={handleAddChapter}
         className="bg-blue-500 text-white rounded p-2 flex-1 mr-2"
         disabled={loading}
+        style={{boxShadow:'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px'}}
       >
         {loading ? "Adding..." : "Add"}
       </button>
       <button
         onClick={() => setAddChapterButton(false)}
         className="bg-red-500 text-white rounded p-2 flex-1"
+        style={{
+          boxShadow:"inset 2px 2px 2px #ad2929, inset -2px -2px 3px #ff8e8e"
+        }}
       >
         Cancel
       </button>

@@ -3,6 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { IoCloseOutline } from "react-icons/io5";
 import { IoIosSearch } from "react-icons/io";
 import { axiosInstance } from '../../../../lib/axios';
+import { toast } from 'react-toastify';
+import { confirmAlert } from "react-confirm-alert";
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 const UserTable = () => {
   const [users, setUsers] = useState([]);
@@ -11,18 +14,16 @@ const UserTable = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [update, setUpdate] = useState(false);
   const [updateUser, setUpdateUser] = useState(null);
-
+  const fetchUsers = async () => {
+    try {
+      const res = await axiosInstance.get('/auth/users');
+      setUsers(res.data);
+      setFilteredUsers(res.data);
+    } catch (error) {
+      console.error('Failed to fetch users:', error);
+    }
+  };
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await axiosInstance.get('/auth/users');
-        setUsers(res.data);
-        setFilteredUsers(res.data);
-      } catch (error) {
-        console.error('Failed to fetch users:', error);
-      }
-    };
-
     fetchUsers();
   }, []);
 
@@ -49,6 +50,33 @@ const UserTable = () => {
     })
   };
 
+  const handleDelete = async (id) => {
+    confirmAlert({
+      title: 'Confirm to submit',
+      message: 'Are you sure you want to add this batch?',
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: async () => {
+            try{
+              await axiosInstance.delete(`/auth/user/delete/${id}`);
+              setSelectedUser(null);
+              toast.success("User deleted successfully!");
+              fetchUsers();
+            }catch(e){
+              console.log(e);
+              toast.error("Error deleting user. Please try again.");
+            }
+          }
+        },
+        { 
+          label: 'No',
+          onClick: () => toast.info("Deletion Cancelled !") 
+        }
+      ]
+    });
+  }
+
   return (
     <div className="w-full max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-6 relative top-10">
     {/* Left side: Table */}
@@ -69,7 +97,7 @@ const UserTable = () => {
       </div>
   
       {/* Table */}
-      <div className="w-full sm:w-11/12 md:w-3/4 overflow-x-auto">
+      <div className="w-full sm:w-11/12 md:w-3/4 overflow-x-auto mb-10">
         <table className="min-w-full divide-y divide-gray-200 shadow-sm border rounded-lg text-sm">
           <thead className="bg-blue-100 text-blue-700">
             <tr>
@@ -88,6 +116,7 @@ const UserTable = () => {
                     <button
                       onClick={() => handleSelectedUser(user)}
                       className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded-md"
+                      style={{ boxShadow: 'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px'}}
                     >
                       View
                     </button>
@@ -170,7 +199,7 @@ const UserTable = () => {
         </div>
   
         <div className="flex justify-center flex-wrap gap-4 my-6">
-          {!update ? (
+          {/* {!update ? (
             <button
               onClick={() => setUpdate(true)}
               className="flex items-center gap-3 px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded"
@@ -184,8 +213,12 @@ const UserTable = () => {
             >
               Save
             </button>
-          )}
-          <button className="flex items-center gap-3 px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded">
+          )} */}
+          <button 
+          style={{boxShadow:"inset 2px 2px 2px #ad2929, inset -2px -2px 3px #ff8e8e"}} 
+          className="flex items-center gap-3 px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded"
+          onClick={() => handleDelete(selectedUser._id)}
+        >
             Delete
           </button>
         </div>

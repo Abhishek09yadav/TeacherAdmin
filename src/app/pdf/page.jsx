@@ -109,6 +109,7 @@ export default function PdfListPage() {
         <button
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           onClick={() => setShowModal(true)}
+          style={{boxShadow:'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px'}}
         >
           Add PDF
         </button>
@@ -141,6 +142,7 @@ export default function PdfListPage() {
                     <button
                       onClick={() => window.open(`${process.env.NEXT_PUBLIC_PDF_URL}${pdf.url}`, "_blank")}
                       className="flex gap-2 items-center px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded mx-auto"
+                      style={{boxShadow:'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px'}}
                     >
                       <FaFilePdf />{pdf.name}  
                     </button>
@@ -149,6 +151,9 @@ export default function PdfListPage() {
                     <button
                       onClick={() => handleDelete(pdf._id)}
                       className="flex gap-2 items-center px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded mx-auto"
+                      style={{
+                        boxShadow:"inset 2px 2px 2px #ad2929, inset -2px -2px 3px #ff8e8e"
+                      }}
                     >
                       <MdDelete /> Delete
                     </button>

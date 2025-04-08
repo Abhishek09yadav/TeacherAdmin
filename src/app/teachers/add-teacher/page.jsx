@@ -177,6 +177,7 @@ const FormComponent = () => {
               name="generatePassword"
               onClick={handleChange}
               className="mt-3 w-full sm:w-auto px-2 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-300"
+              style={{boxShadow:'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px'}}
             >
               Generate Password
             </button>
@@ -203,6 +204,7 @@ const FormComponent = () => {
               type="submit"
               disabled={loading}
               className="w-1/3 bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
+              style={{boxShadow:'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px'}}
             >
               {loading ? (
                 <div className="flex items-center justify-center flex-nowrap">
