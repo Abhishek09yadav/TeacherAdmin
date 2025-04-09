@@ -119,7 +119,7 @@ export default function Home() {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder="Type to search..."
-            className="p-2 border rounded-md"
+            className="p-2 border rounded-md bg-white"
             list="teacher-list"
           />
           <datalist id="teacher-list">
