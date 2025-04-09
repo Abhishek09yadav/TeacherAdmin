@@ -1,5 +1,6 @@
 import React from "react";
 
+
 const DownloadProfile = ({ formData, onClose }) => {
   return (
     <div className="w-full flex items-center justify-center bg-gray-100 p-4">
