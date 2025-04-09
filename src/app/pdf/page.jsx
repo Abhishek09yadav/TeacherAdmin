@@ -85,6 +85,7 @@ export default function PdfListPage() {
     uploadData.append("name", formData.name);
     uploadData.append("pdf", formData.file);
 
+    
     try {
       const response = await axiosInstance.post("/pdf/pdf", uploadData, {
         headers: { "Content-Type": "multipart/form-data" },
