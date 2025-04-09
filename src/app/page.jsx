@@ -239,12 +239,12 @@ export default function Home() {
             ) : (
               teachersData.map((item, index) => (
                 <tr key={item.id} className="hover:bg-gray-100">
-                  <td className="border px-4 py-2">{index + 1}</td>
-                  <td className="border px-4 py-2">{item.date}</td>
-                  <td className="border px-4 py-2">{item.batch}</td>
-                  <td className="border px-4 py-2">{item.subject}</td>
-                  <td className="border px-4 py-2">{item.chapter}</td>
-                  <td className="border px-4 py-2">{item.topic}</td>
+                  <td className="border px-4 py-2 bg-white">{index + 1}</td>
+                  <td className="border px-4 py-2 bg-white">{item.date}</td>
+                  <td className="border px-4 py-2 bg-white">{item.batch}</td>
+                  <td className="border px-4 py-2 bg-white">{item.subject}</td>
+                  <td className="border px-4 py-2 bg-white">{item.chapter}</td>
+                  <td className="border px-4 py-2 bg-white">{item.topic}</td>
                 </tr>
               ))
             )}
