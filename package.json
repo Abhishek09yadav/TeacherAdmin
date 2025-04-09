@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "axios": "^1.8.4",
+    "html2pdf.js": "^0.10.3",
     "next": "15.2.4",
     "primeflex": "^4.0.0",
     "primeicons": "^7.0.0",

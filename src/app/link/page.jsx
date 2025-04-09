@@ -123,9 +123,9 @@ export default function LinksPage() {
         <table className="min-w-full bg-white border border-gray-300">
           <thead>
             <tr className="bg-gray-100">
-              <th className="border px-4 py-2 text-left">S.No.</th>
-              <th className="border px-4 py-2 text-left">Name</th>
-              <th className="border px-4 py-2 text-left">Action</th>
+              <th className="border px-4 py-2 text-center">S.No.</th>
+              <th className="border px-4 py-2 text-center">Name</th>
+              <th className="border px-4 py-2 text-center">Action</th>
             </tr>
           </thead>
           <tbody>

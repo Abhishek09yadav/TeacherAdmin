@@ -165,9 +165,9 @@ export default function BatchesPage() {
         <table className="min-w-full bg-white border border-gray-300">
           <thead>
             <tr className="bg-gray-100">
-              <th className="border px-4 py-2 text-left">S.No.</th>
-              <th className="border px-4 py-2 text-left">Batch Name</th>
-              <th className="border px-4 py-2 text-left">Actions</th>
+              <th className="border px-4 py-2 text-center">S.No.</th>
+              <th className="border px-4 py-2 text-center">Batch Name</th>
+              <th className="border px-4 py-2 text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -225,7 +225,6 @@ const ActionButtons = ({ batch, handleDelete, handleEdit }) => {
     </div>
   );
 };
-
 
 // Reusable Modal for Add/Edit Batch
 const BatchForm = ({ title, batchName, setBatchName, onSave, onCancel,submitLabel }) => {

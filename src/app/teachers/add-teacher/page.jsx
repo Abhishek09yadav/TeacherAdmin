@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { axiosInstance } from "../../../../lib/axios";
 import { toast } from "react-toastify";
 import DownloadProfile from "@/components/DownloadProfile";
-import { AiOutlineClose } from "react-icons/ai";
 
 const FormComponent = () => {
   const [formData, setFormData] = useState({
@@ -51,6 +50,19 @@ const FormComponent = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (
+      !formData.name ||
+      !formData.phoneNumber ||
+      !formData.email ||
+      !formData.aadhar ||
+      !formData.password ||
+      !formData.image
+    ) {
+      toast.warning("Enter all details carefully !");
+      return;
+    }
+
     setLoading(true);
 
     axiosInstance
@@ -64,8 +76,9 @@ const FormComponent = () => {
           toast.success("User added successfully!");
           setDownloadData(formData);
           setIsProfileDownloadModalOpen(true);
-
           handleReset();
+        }else{
+          toast.error("Enter all details")
         }
       })
       .catch((error) => {
@@ -186,7 +199,7 @@ const FormComponent = () => {
               type="button"
               name="generatePassword"
               onClick={handleChange}
-              className="mt-3 w-full sm:w-auto px-2 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-300"
+              className="mt-3 w-full sm:w-auto px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-300"
               style={{
                 boxShadow:
                   "inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px",
@@ -223,9 +236,9 @@ const FormComponent = () => {
               }}
             >
               {loading ? (
-                <div className="flex items-center justify-center flex-nowrap">
+                <div className="flex items-center justify-center flex-nowrap mx-auto">
                   <span>Loading... </span>
-                  <div className="mx-auto animate-spin border-t-2 border-white w-4 h-4 rounded-full"></div>
+                  <div className=" animate-spin border-t-2 border-white w-4 h-4 rounded-full"></div>
                 </div>
               ) : (
                 "Submit"
@@ -241,22 +254,33 @@ const FormComponent = () => {
           </div>
         </form>
       </div>
-      {isProfileDownloadModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      {/* {isProfileDownloadModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 bg-opacity-50">
           <div className="relative bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
             {/* Close Icon */}
-            <button
+      {/* <button
               onClick={() => setIsProfileDownloadModalOpen(false)}
               className="absolute top-2 right-2 text-gray-600 hover:text-red-500"
             >
               <AiOutlineClose size={20} />
-            </button>
+            </button> */}
 
-            {/* DownloadProfile Content */}
-            <DownloadProfile formData={downloadData} />
+      {/* DownloadProfile Content */}
+      {/* <DownloadProfile formData={downloadData} />
+          </div>
+        </div>
+      )} */}
+      {isProfileDownloadModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 bg-opacity-50">
+          <div className="relative bg-white p-6 rounded-lg shadow-lg w-fit">
+            <DownloadProfile
+              formData={downloadData}
+              onClose={() => setIsProfileDownloadModalOpen(false)}
+            />
           </div>
         </div>
       )}
+
     </div>
   );
 };

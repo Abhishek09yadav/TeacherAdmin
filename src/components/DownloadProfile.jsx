@@ -1,9 +1,9 @@
 import React from "react";
 
-const DownloadProfile = ({ formData }) => {
+const DownloadProfile = ({ formData, onClose }) => {
   return (
-    <div className=" flex items-center justify-center bg-gray-100 p-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-lg p-6 space-y-4">
+    <div className="w-full flex items-center justify-center bg-gray-100 p-4">
+      <div className=" w-full bg-white rounded-2xl shadow-lg p-6 space-y-4">
         <div className="text-center">
           {formData.image && (
             <img
@@ -18,21 +18,21 @@ const DownloadProfile = ({ formData }) => {
 
         <div className="space-y-2">
           <div className="flex justify-between">
-            <span className="font-medium text-gray-700">Phone:</span>
+            <span className="font-medium text-gray-700 mr-3">Phone:</span>
             <span>{formData.phoneNumber}</span>
           </div>
           <div className="flex justify-between">
-            <span className="font-medium text-gray-700">Aadhar:</span>
+            <span className="font-medium text-gray-700 mr-3">Aadhar:</span>
             <span>{formData.aadhar}</span>
           </div>
           <div className="flex justify-between">
-            <span className="font-medium text-gray-700">Password:</span>
+            <span className="font-medium text-gray-700 mr-3">Password:</span>
             <span>{formData.password}</span>
           </div>
         </div>
         <div>
           <button
-            onClick={() => window.print()}
+            onClick={() => {window.print(); onClose();}}
             className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-200"
           >
             Download Profile

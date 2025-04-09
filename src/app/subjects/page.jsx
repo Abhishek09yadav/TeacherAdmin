@@ -174,9 +174,9 @@ export default function SubjectsPage() {
         <table className="min-w-full bg-white border border-gray-300">
           <thead>
             <tr className="bg-gray-100">
-              <th className="border px-4 py-2 text-left">S.No.</th>
-              <th className="border px-4 py-2 text-left">Subject Name</th>
-              <th className="border px-4 py-2 text-left">Actions</th>
+              <th className="border px-4 py-2 text-center">S.No.</th>
+              <th className="border px-4 py-2 text-center">Subject Name</th>
+              <th className="border px-4 py-2 text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -193,9 +193,9 @@ export default function SubjectsPage() {
             ) : (
               subjects.map((subject, index) => (
                 <tr key={subject._id} className="hover:bg-gray-50">
-                  <td className="border px-4 py-2">{index + 1}</td>
-                  <td className="border px-4 py-2">{subject.subjectName}</td>
-                  <td className="border px-4 py-2">
+                  <td className="border px-4 py-2 text-center">{index + 1}</td>
+                  <td className="border px-4 py-2 text-center">{subject.subjectName}</td>
+                  <td className="border px-4 py-2 text-center">
                     <ActionButtons subject={subject} handleDelete={handleDelete} handleEdit={openEditPopup} />
                   </td>
                 </tr>
