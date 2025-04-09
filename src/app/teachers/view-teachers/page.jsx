@@ -80,7 +80,7 @@ const UserTable = () => {
   }
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-6 relative top-10">
+    <div className="w-full max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-6 relative top-10 ">
       {/* Left side: Table */}
       <div className="flex-1 flex flex-col justify-center items-center">
         <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">
@@ -88,7 +88,7 @@ const UserTable = () => {
         </h2>
 
         {/* Search */}
-        <div className="mb-6 flex border border-gray-300 rounded-md shadow-sm w-full sm:w-3/4 md:w-2/3">
+        <div className="mb-6 flex border border-gray-300 rounded-md shadow-sm w-full sm:w-3/4 md:w-2/3 bg-white">
           <IoIosSearch className="text-gray-400 m-3 text-2xl" />
           <input
             value={searchTerm}

@@ -107,7 +107,7 @@ const FormComponent = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen ">
       <div className="max-w-md w-full p-6 bg-white rounded-lg shadow-md">
         <h2 className="text-2xl text-center mb-6">User Registration</h2>
         <form onSubmit={handleSubmit} className="space-y-4">

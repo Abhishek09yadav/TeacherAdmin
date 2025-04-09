@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
   return (
     <PrimeReactProvider>
       <html lang="en">
-        <body
+        <body style={{backgroundImage:"url(/background.svg)"}}
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <Sidebar />
