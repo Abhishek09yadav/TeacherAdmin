@@ -31,9 +31,12 @@ const DownloadProfile = ({ formData }) => {
           </div>
         </div>
         <div>
-            <button onClick={() => window.print()} className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-200">
-                Download Profile
-            </button>
+          <button
+            onClick={() => window.print()}
+            className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-200"
+          >
+            Download Profile
+          </button>
         </div>
       </div>
     </div>
