@@ -80,8 +80,8 @@ export default function PdfListPage() {
       toast.error("Please provide both name and file.");
       return;
     }
-
     const uploadData = new FormData();
+    toast.info("Uploading PDF...");
     uploadData.append("name", formData.name);
     uploadData.append("pdf", formData.file);
 
