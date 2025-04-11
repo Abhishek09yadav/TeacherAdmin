@@ -35,16 +35,19 @@ export default function Home() {
     return () => window.removeEventListener("resize", updateMonths);
   }, []);
 
-  const fetchTeacherList = async () => {
-    try {
-      const res = await axiosInstance.get("/auth/users");
-      const users = res.data.filter((user) => user.role === "user");
-      const formatted = users.map((user) => ({ id: user._id, name: user.name }));
-      setTeacherList(formatted);
-    } catch (err) {
-      console.error("Failed to fetch teachers", err);
-    }
-  };
+const fetchTeacherList = async () => {
+  try {
+    const res = await axiosInstance.get("/auth/users");
+    const formatted = res.data.map((user) => ({
+      id: user._id,
+      name: user.name,
+    }));
+    setTeacherList(formatted);
+  } catch (err) {
+    console.error("Failed to fetch teachers", err);
+  }
+};
+
 
   const handleConfirm = () => {
     setDateRange({
