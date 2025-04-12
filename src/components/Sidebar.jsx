@@ -57,6 +57,11 @@ const Sidebar = () => {
           label: "View Teachers",
           route: "/teachers/view-teachers",
         },
+        {
+          id: "reset-password",
+          label: "Reset Password",
+          route: "/teachers/reset-password",
+        },
       ],
     },
     {
