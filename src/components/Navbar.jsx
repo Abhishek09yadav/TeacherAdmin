@@ -24,7 +24,8 @@ const Navbar = () => {
     localStorage.removeItem("teacher-admin-username");
     setIsLoggedIn(false);
     setShowConfirmDialog(false);
-    router.push("/login");
+    // router.push("/login");
+        window.location.href = "/login";
     toast.success("Logged out successfully!");
   };
 
