@@ -60,7 +60,7 @@ const Sidebar = () => {
         {
           id: "reset-password",
           label: "Reset Password",
-          route: "/teachers/reset-password",
+          route: "/teachers/reset-password?redirectToLogin=false",
         },
       ],
     },

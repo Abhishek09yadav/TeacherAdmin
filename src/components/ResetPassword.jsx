@@ -2,8 +2,9 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { axiosInstance } from "../../lib/axios";
+import { useRouter } from "next/navigation";
 
-const ResetPassword = () => {
+const ResetPassword = ({ redirectToLogin}) => {
   const [aadhar, setAadhar] = useState("");
 
   const [userDetails, setUserDetails] = useState("");
@@ -11,7 +12,7 @@ const ResetPassword = () => {
   const [verified, setVerified] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
+  const router = useRouter();
   const handleVerify = async () => {
     if (!aadhar || !phoneNumber) return toast.info("Please fill all details");
 
@@ -49,6 +50,11 @@ const ResetPassword = () => {
         setPassword("");
         setConfirmPassword("");
         setUserDetails("");
+        console.log("redirect to login response:", redirectToLogin);
+        if (redirectToLogin ==='true') {
+          // toast.success("Redirecting to login page...");
+          router.push("/login");
+        }
       }
     } catch (err) {
       toast.error("Password reset failed");
