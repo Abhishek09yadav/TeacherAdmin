@@ -5,7 +5,8 @@ import { axiosInstance } from "../../lib/axios";
 
 const ResetPassword = () => {
   const [aadhar, setAadhar] = useState("");
-  const [name, setName] = useState("");
+
+  const [userDetails, setUserDetails] = useState("");
   const [phoneNumber, setphoneNumber] = useState("");
   const [verified, setVerified] = useState(false);
   const [password, setPassword] = useState("");
@@ -19,8 +20,9 @@ const ResetPassword = () => {
 
       if (res.status === 200) {
         setVerified(true);
-        console.log("Verify response:", res.data.message.name);
-        setName(res.data.message.name);
+        console.log("Verify response:", res);
+        setUserDetails(res.data.message);
+     
         toast.success("User verified. You can reset your password now.");
       }
     } catch (err) {
@@ -32,13 +34,13 @@ const ResetPassword = () => {
     if (password !== confirmPassword) {
       return toast.error("Passwords do not match");
     }
-
+  
     try {
-      const res = await axiosInstance.post("/auth/reset-password", {
-        aadhar,
-        phoneNumber,
-        password,
+      const res = await axiosInstance.post("/auth/new-password", {
+        userId:userDetails._id,
+       newpassword: password, // use the key expected by your backend
       });
+  
       if (res.status === 200) {
         toast.success("Password reset successful!");
         setVerified(false);
@@ -46,12 +48,13 @@ const ResetPassword = () => {
         setphoneNumber("");
         setPassword("");
         setConfirmPassword("");
-        setName("");
+        setUserDetails("");
       }
     } catch (err) {
       toast.error("Password reset failed");
     }
   };
+  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4 py-10 sm:px-6 lg:px-8">
@@ -83,9 +86,9 @@ const ResetPassword = () => {
           Verify
         </button>
 
-        {verified && name && (
+        {verified && userDetails.name && (
           <p className="text-green-600 text-center mb-4 text-sm sm:text-base">
-            {name} verified. You can reset your password now.
+            {userDetails.name} verified. You can reset your password now.
           </p>
         )}
 
