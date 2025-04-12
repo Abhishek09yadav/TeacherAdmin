@@ -20,12 +20,12 @@
 .p-tabview-title {
   margin-right: 10px; /* Space between tab titles */
 }
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-}
+} */
 
 body {
   background: var(--background);
