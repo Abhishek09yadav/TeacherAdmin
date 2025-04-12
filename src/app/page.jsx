@@ -40,7 +40,7 @@ export default function Home() {
     setLoading(true);
     try {
       const response = await axiosInstance.get("/schedule/all-schedules-today");
-
+      console.log("res data", response.data);
       const data = response.data.map((item) => ({
         id: item._id,
         name: item.userId.name,
@@ -114,7 +114,7 @@ export default function Home() {
           startDate.toLocaleDateString().split("T")[0]
         }&end=${endDate.toLocaleDateString().split("T")[0]}`
       );
-
+ console.log("res data of schedule", response.data);
       const data = response.data.map((item) => ({
         id: item._id,
         name: item.userId.name,
@@ -253,7 +253,6 @@ export default function Home() {
               <th className="border px-4 py-2 w-1/12">S.No.</th>
               <th className="border px-4 py-2 w-2/12">Date</th>
               <th className="border px-4 py-2 w-2/12">Teacher</th>
-
               <th className="border px-4 py-2 w-2/12">Batch</th>
               <th className="border px-4 py-2 w-2/12">Subject</th>
               <th className="border px-4 py-2 w-2/12">Chapter</th>
@@ -278,7 +277,7 @@ export default function Home() {
                 <tr key={item.id} className="hover:bg-gray-100">
                   <td className="border px-4 py-2 bg-white">{index + 1}</td>
                   <td className="border px-4 py-2 bg-white">{item.date}</td>
-                  <td className="border px-4 py-2 bg-white">{item.userId?.name}</td>
+                  <td className="border px-4 py-2 bg-white">{item.name}</td>
                   <td className="border px-4 py-2 bg-white">{item.batch}</td>
                   <td className="border px-4 py-2 bg-white">{item.subject}</td>
                   <td className="border px-4 py-2 bg-white">{item.chapter}</td>
