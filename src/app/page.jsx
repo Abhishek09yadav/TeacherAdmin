@@ -27,6 +27,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchTeacherList();
+    dailySchedule();
     const updateMonths = () => {
       setMonthsToShow(window.innerWidth < 768 ? 1 : 2);
     };
@@ -35,19 +36,50 @@ export default function Home() {
     return () => window.removeEventListener("resize", updateMonths);
   }, []);
 
-const fetchTeacherList = async () => {
-  try {
-    const res = await axiosInstance.get("/auth/users");
-    const formatted = res.data.map((user) => ({
-      id: user._id,
-      name: user.name,
-    }));
-    setTeacherList(formatted);
-  } catch (err) {
-    console.error("Failed to fetch teachers", err);
-  }
-};
+  const dailySchedule = async () => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.get("/schedule/all-schedules-today");
 
+      const data = response.data.map((item) => ({
+        id: item._id,
+        name: item.userId.name,
+        date: new Date(item.date).toLocaleDateString(),
+        subject: item.subjectName,
+        batch: item.className,
+        chapter: item.chapterName,
+        topic: item.topic,
+      }));
+
+      setMessage(data.length === 0 ? "No data found" : "");
+      setTeachersData(data);
+    } catch (err) {
+      if (err.response && err.response.status === 404) {
+        setMessage("No schedule found");
+        toast.warning(err?.response?.data?.message, {
+          position: "top-center",
+          theme: "light",
+        });
+      } else {
+        setMessage("Something went wrong");
+        toast.error("Something went wrong", err);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+  const fetchTeacherList = async () => {
+    try {
+      const res = await axiosInstance.get("/auth/users");
+      const formatted = res.data.map((user) => ({
+        id: user._id,
+        name: user.name,
+      }));
+      setTeacherList(formatted);
+    } catch (err) {
+      console.error("Failed to fetch teachers", err);
+    }
+  };
 
   const handleConfirm = () => {
     setDateRange({
@@ -220,6 +252,8 @@ const fetchTeacherList = async () => {
             <tr>
               <th className="border px-4 py-2 w-1/12">S.No.</th>
               <th className="border px-4 py-2 w-2/12">Date</th>
+              <th className="border px-4 py-2 w-2/12">Teacher</th>
+
               <th className="border px-4 py-2 w-2/12">Batch</th>
               <th className="border px-4 py-2 w-2/12">Subject</th>
               <th className="border px-4 py-2 w-2/12">Chapter</th>
@@ -244,6 +278,7 @@ const fetchTeacherList = async () => {
                 <tr key={item.id} className="hover:bg-gray-100">
                   <td className="border px-4 py-2 bg-white">{index + 1}</td>
                   <td className="border px-4 py-2 bg-white">{item.date}</td>
+                  <td className="border px-4 py-2 bg-white">{item.userId?.name}</td>
                   <td className="border px-4 py-2 bg-white">{item.batch}</td>
                   <td className="border px-4 py-2 bg-white">{item.subject}</td>
                   <td className="border px-4 py-2 bg-white">{item.chapter}</td>
