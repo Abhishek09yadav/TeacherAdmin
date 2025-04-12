@@ -117,7 +117,8 @@ export default function Home() {
  console.log("res data of schedule", response.data);
       const data = response.data.map((item) => ({
         id: item._id,
-        name: item.userId.name,
+        // name: item.userId.name,
+        name: teacher.name,
         date: new Date(item.date).toLocaleDateString(),
         subject: item.subjectName,
         batch: item.className,
