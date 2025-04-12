@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { axiosInstance } from "../../lib/axios";
 
@@ -55,8 +54,8 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
-      <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4 py-10 sm:px-6 lg:px-8">
+      <div className="bg-white shadow-lg rounded-2xl p-6 sm:p-8 w-full max-w-md">
         <h2 className="text-2xl font-semibold mb-6 text-center text-gray-800">
           Reset Password
         </h2>
@@ -83,8 +82,9 @@ const ResetPassword = () => {
         >
           Verify
         </button>
+
         {verified && name && (
-          <p className="text-green-600 text-center mb-4">
+          <p className="text-green-600 text-center mb-4 text-sm sm:text-base">
             {name} verified. You can reset your password now.
           </p>
         )}
@@ -95,10 +95,11 @@ const ResetPassword = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           disabled={!verified}
-          className={`w-full px-4 py-2 mb-4 border rounded-lg focus:outline-none focus:ring-2 ${verified
+          className={`w-full px-4 py-2 mb-4 border rounded-lg focus:outline-none focus:ring-2 ${
+            verified
               ? "focus:ring-green-500"
               : "bg-gray-100 text-gray-400 cursor-not-allowed"
-            }`}
+          }`}
         />
 
         <input
@@ -107,19 +108,21 @@ const ResetPassword = () => {
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           disabled={!verified}
-          className={`w-full px-4 py-2 mb-6 border rounded-lg focus:outline-none focus:ring-2 ${verified
+          className={`w-full px-4 py-2 mb-6 border rounded-lg focus:outline-none focus:ring-2 ${
+            verified
               ? "focus:ring-green-500"
               : "bg-gray-100 text-gray-400 cursor-not-allowed"
-            }`}
+          }`}
         />
 
         <button
           onClick={handleResetPassword}
           disabled={!verified}
-          className={`w-full py-2 rounded-lg text-white transition ${verified
+          className={`w-full py-2 rounded-lg text-white transition ${
+            verified
               ? "bg-green-600 hover:bg-green-700"
               : "bg-gray-400 cursor-not-allowed"
-            }`}
+          }`}
         >
           Reset Password
         </button>

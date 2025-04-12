@@ -26,9 +26,15 @@ export default function RootLayout({ children }) {
         <body style={{backgroundImage:"url(/background.svg)"}}
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <Sidebar />
-          <Navbar />
-          {children}
+          <div className="md:flex h-screen">
+            <Sidebar />
+            <div className="md:flex-1 flex flex-col">
+              <Navbar />
+              <main className="flex-1 overflow-auto">
+                {children}
+              </main>
+            </div>
+          </div>
           <ToastContainer />
         </body>
       </html>
