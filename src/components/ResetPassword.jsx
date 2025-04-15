@@ -135,6 +135,15 @@ const ResetPassword = ({ redirectToLogin}) => {
         >
           Reset Password
         </button>
+        
+      { redirectToLogin === 'true' && (<div className="text-end mt-4">
+        <a
+          onClick={() => router.push('/login')}
+          className="rounded-lg text-blue-700 transition mt-4 hover:cursor-pointer"
+        >
+          Back to Login
+        </a>
+        </div>)}
       </div>
     </div>
   );
