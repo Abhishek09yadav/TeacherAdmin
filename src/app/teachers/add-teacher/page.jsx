@@ -20,14 +20,15 @@ const FormComponent = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const generatePassword = (length = 4) => {
+  const generatePassword = () => {
     const chars =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     let password = "";
+    const length = 8; // Ensuring password is always 8 characters
     for (let i = 0; i < length; i++) {
       password += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    return `${formData.email}_${password}`;
+    return password;
   };
 
   const handleChange = (e) => {
@@ -37,10 +38,7 @@ const FormComponent = () => {
       setFormData({ ...formData, [name]: files[0] });
     } else if (name === "generatePassword") {
       // Check if the email is filled and valid before generating the password
-      if (!formData.email || !validateEmail(formData.email)) {
-        toast.error("Please enter a valid email first.");
-        return;
-      }
+
       const newPassword = generatePassword();
       setFormData({ ...formData, password: newPassword });
     } else {
@@ -51,6 +49,7 @@ const FormComponent = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // Validate all fields
     if (
       !formData.name ||
       !formData.phoneNumber ||
@@ -59,7 +58,19 @@ const FormComponent = () => {
       !formData.password ||
       !formData.image
     ) {
-      toast.warning("Enter all details carefully !");
+      toast.warning("Enter all details carefully!");
+      return;
+    }
+
+    // Validate Aadhar
+    if (!validateAadhar(formData.aadhar)) {
+      toast.error("Please enter a valid 12-digit Aadhar number");
+      return;
+    }
+
+    // Validate Password
+    if (!validatePassword(formData.password)) {
+      toast.error("Password must be at least 6 characters long");
       return;
     }
 
@@ -77,8 +88,8 @@ const FormComponent = () => {
           setDownloadData(formData);
           setIsProfileDownloadModalOpen(true);
           handleReset();
-        }else{
-          toast.error("Enter all details")
+        } else {
+          toast.error("Enter all details");
         }
       })
       .catch((error) => {
@@ -104,6 +115,15 @@ const FormComponent = () => {
   const validateEmail = (email) => {
     const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return regex.test(email);
+  };
+
+  const validateAadhar = (aadhar) => {
+    const regex = /^\d{12}$/; // Exactly 12 digits
+    return regex.test(aadhar);
+  };
+
+  const validatePassword = (password) => {
+    return password.length >= 6;
   };
 
   return (
@@ -174,10 +194,22 @@ const FormComponent = () => {
               id="aadhar"
               name="aadhar"
               value={formData.aadhar}
-              onChange={handleChange}
+              onChange={(e) => {
+                // Only allow digits
+                const value = e.target.value.replace(/\D/g, "");
+                if (value.length <= 12) {
+                  setFormData({ ...formData, aadhar: value });
+                }
+              }}
               required
+              maxLength="12"
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-500"
             />
+            {formData.aadhar && !validateAadhar(formData.aadhar) && (
+              <p className="text-red-500 text-sm mt-1">
+                Please enter 12 digits for Aadhar number
+              </p>
+            )}
           </div>
           <div>
             <label
@@ -187,13 +219,12 @@ const FormComponent = () => {
               Password
             </label>
             <input
-              readOnly
               type="text"
               id="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="mt-1 block w-full border cursor-not-allowed bg-gray-200 border-gray-300 rounded-md shadow-sm p-2  "
+              className="mt-1 block w-full border bg-gray-200 border-gray-300 rounded-md shadow-sm p-2  "
             />
             <button
               type="button"
@@ -254,22 +285,6 @@ const FormComponent = () => {
           </div>
         </form>
       </div>
-      {/* {isProfileDownloadModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 bg-opacity-50">
-          <div className="relative bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-            {/* Close Icon */}
-      {/* <button
-              onClick={() => setIsProfileDownloadModalOpen(false)}
-              className="absolute top-2 right-2 text-gray-600 hover:text-red-500"
-            >
-              <AiOutlineClose size={20} />
-            </button> */}
-
-      {/* DownloadProfile Content */}
-      {/* <DownloadProfile formData={downloadData} />
-          </div>
-        </div>
-      )} */}
       {isProfileDownloadModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 bg-opacity-50">
           <div className="relative bg-white p-6 rounded-lg shadow-lg w-fit">
@@ -280,7 +295,6 @@ const FormComponent = () => {
           </div>
         </div>
       )}
-
     </div>
   );
 };

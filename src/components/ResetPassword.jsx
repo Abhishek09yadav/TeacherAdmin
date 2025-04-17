@@ -70,7 +70,7 @@ const ResetPassword = ({ redirectToLogin}) => {
         </h2>
 
         <input
-          type="text"
+          type="number"
           placeholder="Aadhar Number"
           value={aadhar}
           onChange={(e) => setAadhar(e.target.value)}

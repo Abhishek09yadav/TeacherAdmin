@@ -1,10 +1,12 @@
 import React from "react";
+import { IoClose } from "react-icons/io5";
 
 
 const DownloadProfile = ({ formData, onClose }) => {
   return (
     <div className="w-full flex items-center justify-center bg-gray-100 p-4">
       <div className=" w-full bg-white rounded-2xl shadow-lg p-6 space-y-4">
+        <div className="flex justify-end hover:cursor-pointer hover:text-red-600"><IoClose size={25} onClick={onClose} /></div>
         <div className="text-center">
           {formData.image && (
             <img
@@ -33,10 +35,15 @@ const DownloadProfile = ({ formData, onClose }) => {
         </div>
         <div>
           <button
-            onClick={() => {window.print(); onClose();}}
+            onClick={() => {
+              window.onafterprint = () => {
+                onClose();
+              };
+              window.print();
+            }}
             className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-200"
           >
-            Download & Close 
+            Download & Close
           </button>
         </div>
       </div>
