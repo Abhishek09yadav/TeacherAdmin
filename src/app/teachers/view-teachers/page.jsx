@@ -133,7 +133,7 @@ const UserTable = () => {
               ) : (
                 <tr>
                   <td colSpan="3" className="text-center text-gray-500 py-6">
-                    No users found.
+                    Loading...
                   </td>
                 </tr>
               )}

@@ -34,10 +34,7 @@ const Login = () => {
                 } else {
                     toast.error("Invalid username or password");
                 }
-            })
-
-            .catch((error) => {
-                console.error("Error logging in:", error.response.data.error);
+            }).catch((error) => {
                 toast.error(`${error.response.data.error}`);
             });
         // if (username === "admin" && password === "admin@123") {
