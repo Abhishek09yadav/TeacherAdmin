@@ -7,8 +7,7 @@ import { MdGroups } from "react-icons/md";
 import { FaBook } from "react-icons/fa";
 import { GrNotes } from "react-icons/gr";
 import { IoMenu } from "react-icons/io5";
-import { FaFilePdf } from "react-icons/fa6";
-import { FaLink } from "react-icons/fa6";
+import { FaFilePdf, FaBuilding, FaLink } from "react-icons/fa6";
 import { IoMdPhotos } from "react-icons/io";
 
 const Sidebar = () => {
@@ -99,6 +98,12 @@ const Sidebar = () => {
       label: "Banner",
       route: "/banner",
       icon: <IoMdPhotos />,
+    },
+    {
+      id: "center",
+      label: "Center",
+      route: "/center",
+      icon: <FaBuilding />,
     },
   ];
 
