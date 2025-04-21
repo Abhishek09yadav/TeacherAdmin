@@ -46,6 +46,7 @@ export default function Home() {
         name: item.userId.name,
         date: new Date(item.date).toLocaleDateString(),
         subject: item.subjectName,
+        center: item.centerName ?? 'no center found',
         batch: item.className,
         chapter: item.chapterName,
         topic: item.topic,
@@ -122,6 +123,7 @@ export default function Home() {
         date: new Date(item.date).toLocaleDateString(),
         subject: item.subjectName,
         batch: item.className,
+        center: item.centerName ?? "no center found",
         chapter: item.chapterName,
         topic: item.topic,
       }));
@@ -254,6 +256,7 @@ export default function Home() {
               <th className="border px-4 py-2 w-1/12">S.No.</th>
               <th className="border px-4 py-2 w-2/12">Date</th>
               <th className="border px-4 py-2 w-2/12">Teacher</th>
+              <th className="border px-4 py-2 w-2/12">Center</th>
               <th className="border px-4 py-2 w-2/12">Batch</th>
               <th className="border px-4 py-2 w-2/12">Subject</th>
               <th className="border px-4 py-2 w-2/12">Chapter</th>
@@ -279,6 +282,7 @@ export default function Home() {
                   <td className="border px-4 py-2 bg-white">{index + 1}</td>
                   <td className="border px-4 py-2 bg-white">{item.date}</td>
                   <td className="border px-4 py-2 bg-white">{item.name}</td>
+                  <td className="border px-4 py-2 bg-white">{item.center}</td>
                   <td className="border px-4 py-2 bg-white">{item.batch}</td>
                   <td className="border px-4 py-2 bg-white">{item.subject}</td>
                   <td className="border px-4 py-2 bg-white">{item.chapter}</td>
