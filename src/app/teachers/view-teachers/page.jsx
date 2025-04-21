@@ -1,27 +1,27 @@
-'use client';
-import React, { useEffect, useState } from 'react';
+"use client";
+import React, { useEffect, useState } from "react";
 import { IoCloseOutline } from "react-icons/io5";
 import { IoIosSearch } from "react-icons/io";
-import { axiosInstance } from '../../../../lib/axios';
-import { toast } from 'react-toastify';
+import { axiosInstance } from "../../../../lib/axios";
+import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
-import 'react-confirm-alert/src/react-confirm-alert.css';
+import "react-confirm-alert/src/react-confirm-alert.css";
 
 const UserTable = () => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [update, setUpdate] = useState(false);
   const [updateUser, setUpdateUser] = useState(null);
   const fetchUsers = async () => {
     try {
-      const res = await axiosInstance.get('/auth/users');
+      const res = await axiosInstance.get("/auth/users");
       console.log("Fetched users:", res);
       setUsers(res.data);
       setFilteredUsers(res.data);
     } catch (error) {
-      console.error('Failed to fetch users:', error);
+      console.error("Failed to fetch users:", error);
     }
   };
   useEffect(() => {
@@ -60,24 +60,28 @@ const UserTable = () => {
         {
           label: 'Yes',
           onClick: async () => {
-            try{
-              await axiosInstance.delete(`/auth/user/delete/${id}`);
-              setSelectedUser(null);
-              toast.success("User deleted successfully!");
-              fetchUsers();
-            }catch(e){
+            try {
+              if (selectedUser.role !== "admin") {
+                await axiosInstance.delete(`/auth/user/delete/${id}`);
+                setSelectedUser(null);
+                toast.success("User deleted successfully!");
+                fetchUsers();
+              } else {
+                toast.error("Cannot Delete Admin.");
+              }
+            } catch (e) {
               console.log(e);
               toast.error("Error deleting user. Please try again.");
             }
-          }
+          },
         },
-        { 
-          label: 'No',
-          onClick: () => toast.info("Deletion Cancelled !") 
-        }
-      ]
+        {
+          label: "No",
+          onClick: () => toast.info("Deletion Cancelled !"),
+        },
+      ],
     });
-  }
+  };
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-6 relative top-10 ">
