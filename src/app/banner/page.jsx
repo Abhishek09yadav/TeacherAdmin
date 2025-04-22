@@ -85,13 +85,13 @@ const BannerManager = () => {
     axiosInstance
       .delete(`/banners/banner/${banners[index]._id}`)
       .then((res) => {
-        if (res.status === 200) {
+     
           toast.success("Banner deleted successfully!");
           // fetchBanners();
           const updated = [...banners];
           updated.splice(index, 1);
           setBanners(updated);
-        }
+       
       })
       .catch((err) => {
         console.log("could not delete banner", err);

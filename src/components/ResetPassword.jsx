@@ -19,13 +19,13 @@ const ResetPassword = ({ redirectToLogin}) => {
     try {
       const res = await axiosInstance.post("/auth/reset-password", { aadhar, phoneNumber });
 
-      if (res.status === 200) {
+      
         setVerified(true);
         console.log("Verify response:", res);
         setUserDetails(res.data.message);
      
         toast.success("User verified. You can reset your password now.");
-      }
+    
     } catch (err) {
       toast.error("Verification failed. Please check details.");
     }
@@ -42,7 +42,7 @@ const ResetPassword = ({ redirectToLogin}) => {
        newpassword: password, // use the key expected by your backend
       });
   
-      if (res.status === 200) {
+      
         toast.success("Password reset successful!");
         setVerified(false);
         setAadhar("");
@@ -55,7 +55,7 @@ const ResetPassword = ({ redirectToLogin}) => {
           // toast.success("Redirecting to login page...");
           router.push("/login");
         }
-      }
+ 
     } catch (err) {
       toast.error("Password reset failed");
     }
