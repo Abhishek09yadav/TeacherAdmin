@@ -55,12 +55,12 @@ export default function SubjectsPage() {
               const response = await axiosInstance.post("/subject/add-subject", {
                 subjectName: newSubjectName,
               });
-              if (response.status === 200 || response.status === 201) {
+             
                 toast.success("Subject added successfully!");
                 setNewSubjectName("");
                 setToggleSubjects(prev => !prev);
                 setShowAddForm(false);
-              }
+              
             } catch (error) {
               console.error("Error adding subject:", error);
               toast.error("Error adding subject. Please try again.");
