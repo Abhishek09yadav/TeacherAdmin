@@ -120,10 +120,10 @@ export default function SubjectsPage() {
               const response = await axiosInstance.delete(
                 `/subject/delete-subject?subjectId=${id}`
               );
-              if (response.status === 200) {
+        
                 toast.success("Subject deleted successfully!");
                 fetchSubjects();
-              }
+              
             } catch (error) {
               console.error("Error deleting subject:", error);
               toast.error("Error deleting subject. Please try again.");

@@ -25,14 +25,14 @@ export default function PdfListPage() {
     try {
       setLoading(true);
       const response = await axiosInstance.get("/pdf/pdfs");
-      if (response.status === 200) {
+      
         setPdfs(
           response.data.map((pdf) => ({
             ...pdf,
             url: `/${pdf.secure_url}`,
           }))
         );
-      }
+      
     } catch (error) {
       console.error("Error fetching PDFs:", error);
     } finally {
@@ -50,10 +50,10 @@ export default function PdfListPage() {
           onClick: async () => {
             try {
               const response = await axiosInstance.delete(`/pdf/pdf/${id}`);
-              if (response.status === 200) {
+             
                 toast.success("PDF deleted successfully!");
                 fetchPdfs();
-              }
+              
             } catch (error) {
               console.error("Error deleting PDF:", error);
               toast.error("Error deleting PDF. Please try again.");
@@ -90,12 +90,12 @@ export default function PdfListPage() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      if (response.status === 201 || response.status === 200) {
+      
         toast.success("PDF uploaded successfully!");
         setShowModal(false);
         setFormData({ name: "", file: null });
         fetchPdfs();
-      }
+      
     } catch (error) {
       console.error("Upload error:", error);
       toast.error("Failed to upload PDF.");

@@ -93,7 +93,7 @@ export default function ChaptersPage() {
                 }
               );
 
-              if (response.status === 200) {
+            
                 fetchSubjects();
                 toast.success("Chapter deleted successfully!");
                 //  setSubjects((prevSubjects) => {
@@ -112,7 +112,7 @@ export default function ChaptersPage() {
                 //    return updatedSubjects;
 
                 //  });
-              }
+              
             } catch (error) {
               console.error("Error deleting chapter:", error);
             }

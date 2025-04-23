@@ -23,10 +23,10 @@ export default function LinksPage() {
     try {
       setLoading(true);
       const response = await axiosInstance.get("/links/links");
-      if (response.status === 200) {
+   
         console.log(response.data);
         setLinks(response.data);
-      }
+      
     } catch (error) {
       console.error("Error fetching links:", error);
     } finally {
@@ -51,13 +51,13 @@ export default function LinksPage() {
                 link: newLinkUrl,
               });
 
-              if (response.status === 200) {
+             
                 toast.success("Link added successfully!");
                 setNewLinkName("");
                 setNewLinkUrl("");
                 setShowAddForm(false);
                 fetchLinks();
-              }
+              
             } catch (error) {
               console.error("Error adding link:", error);
               toast.error("Error adding link. Please try again.");
@@ -80,10 +80,10 @@ export default function LinksPage() {
           onClick: async () => {
             try {
               const response = await axiosInstance.delete(`/links/link/${id}`);
-              if (response.status === 200) {
+            
                 toast.success("Link deleted successfully!");
                 fetchLinks();
-              }
+              
             } catch (error) {
               console.error("Error deleting link:", error);
               toast.error("Error deleting link. Please try again.");
