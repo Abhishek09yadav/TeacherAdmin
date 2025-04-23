@@ -117,7 +117,7 @@ export default function ChaptersPage() {
   };
 
   return (
-    <div className="p-2 sm:p-4 flex flex-col items-center w-full min-h-screen bg-gray-50">
+    <div className="p-2 sm:p-4 flex flex-col items-center w-full min-h-screen bg-transparent">
       <div
         className="w-full max-w-full md:max-w-2xl lg:max-w-3xl bg-white shadow-md rounded-md relative"
         style={{ marginTop: "1rem" }}
