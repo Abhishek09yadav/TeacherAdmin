@@ -40,18 +40,16 @@ export default function Home() {
     setLoading(true);
     try {
       const response = await axiosInstance.get("/schedule/all-schedules-today");
-      console.log("res data", response.data);
       const data = response.data.map((item) => ({
         id: item._id,
         name: item.userId.name,
         date: new Date(item.date).toLocaleDateString(),
         subject: item.subjectName,
-        center: item.centerName ?? 'no center found',
+        center: item.centerName ?? "no center found",
         batch: item.className,
         chapter: item.chapterName,
         topic: item.topic,
       }));
-
       setMessage(data.length === 0 ? "No data found" : "");
       setTeachersData(data);
     } catch (err) {
@@ -69,6 +67,7 @@ export default function Home() {
       setLoading(false);
     }
   };
+
   const fetchTeacherList = async () => {
     try {
       const res = await axiosInstance.get("/auth/users");
@@ -115,10 +114,8 @@ export default function Home() {
           startDate.toLocaleDateString().split("T")[0]
         }&end=${endDate.toLocaleDateString().split("T")[0]}`
       );
- console.log("res data of schedule", response.data);
       const data = response.data.map((item) => ({
         id: item._id,
-        // name: item.userId.name,
         name: teacher.name,
         date: new Date(item.date).toLocaleDateString(),
         subject: item.subjectName,
@@ -127,7 +124,6 @@ export default function Home() {
         chapter: item.chapterName,
         topic: item.topic,
       }));
-
       setMessage(data.length === 0 ? "No data found" : "");
       setTeachersData(data);
     } catch (err) {
@@ -149,7 +145,7 @@ export default function Home() {
   return (
     <div className="px-4 sm:px-6 py-6 flex flex-col items-center justify-center">
       {/* Filter Section */}
-      <div className="w-full max-w-7xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 items-end mb-6">
+      <div className="w-full max-w-7xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
         <div className="flex flex-col">
           <label className="mb-1 text-sm font-medium">Teacher</label>
           <input
@@ -171,11 +167,7 @@ export default function Home() {
           <label className="mb-1 text-sm font-medium">Start Date</label>
           <input
             type="text"
-            value={
-              dateRange.startDate
-                ? dateRange.startDate.toLocaleDateString()
-                : ""
-            }
+            value={dateRange.startDate ? dateRange.startDate.toLocaleDateString() : ""}
             className="p-2 border rounded-md bg-gray-100"
             readOnly
           />
@@ -185,33 +177,35 @@ export default function Home() {
           <label className="mb-1 text-sm font-medium">End Date</label>
           <input
             type="text"
-            value={
-              dateRange.endDate ? dateRange.endDate.toLocaleDateString() : ""
-            }
+            value={dateRange.endDate ? dateRange.endDate.toLocaleDateString() : ""}
             className="p-2 border rounded-md bg-gray-100"
             readOnly
           />
         </div>
 
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-        >
-          Select Date
-        </button>
+        <div className="flex flex-col justify-end">
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          >
+            Select Date
+          </button>
+        </div>
 
-        <button
-          onClick={handleSearch}
-          className="w-full sm:w-auto px-6 py-3 bg-green-500 text-white rounded-md hover:bg-green-600 flex justify-center items-center"
-        >
-          <IoSearch className="text-lg" />
-        </button>
+        <div className="flex flex-col justify-end">
+          <button
+            onClick={handleSearch}
+            className="w-full px-6 py-3 bg-green-500 text-white rounded-md hover:bg-green-600 flex justify-center items-center"
+          >
+            <IoSearch className="text-lg" />
+          </button>
+        </div>
       </div>
 
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50">
-          <div className="bg-white p-4 rounded-md shadow-md w-[95vw] sm:w-auto max-w-full overflow-auto">
+          <div className="bg-white p-4 rounded-md shadow-md w-[95vw] max-w-full overflow-auto">
             <DateRangePicker
               showSelectionPreview
               moveRangeOnFirstSelection={false}
@@ -223,7 +217,7 @@ export default function Home() {
               editableDateInputs={true}
               ranges={[tempRange]}
             />
-            <div className="mt-2 flex justify-end gap-8">
+            <div className="mt-2 flex flex-col sm:flex-row justify-end gap-4">
               <button
                 onClick={() => {
                   setIsModalOpen(false);
@@ -249,50 +243,51 @@ export default function Home() {
       )}
 
       {/* Table Section */}
-      <div className="w-full overflow-x-auto">
-        <table className="min-w-full table-auto sm:table-fixed border border-gray-300 shadow-md rounded-lg text-center whitespace-nowrap text-sm">
-          <thead className="sticky top-0 bg-gray-200">
-            <tr>
-              <th className="border px-4 py-2 w-1/12">S.No.</th>
-              <th className="border px-4 py-2 w-2/12">Date</th>
-              <th className="border px-4 py-2 w-2/12">Teacher</th>
-              <th className="border px-4 py-2 w-2/12">Center</th>
-              <th className="border px-4 py-2 w-2/12">Batch</th>
-              <th className="border px-4 py-2 w-2/12">Subject</th>
-              <th className="border px-4 py-2 w-2/12">Chapter</th>
-              <th className="border px-4 py-2 w-3/12">Topic</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan="5" className="p-4">
-                  Loading...
-                </td>
-              </tr>
-            ) : message ? (
-              <tr>
-                <td colSpan="5" className="p-4 text-gray-600 font-medium">
-                  {message}
-                </td>
-              </tr>
-            ) : (
-              teachersData.map((item, index) => (
-                <tr key={item.id} className="hover:bg-gray-100">
-                  <td className="border px-4 py-2 bg-white">{index + 1}</td>
-                  <td className="border px-4 py-2 bg-white">{item.date}</td>
-                  <td className="border px-4 py-2 bg-white">{item.name}</td>
-                  <td className="border px-4 py-2 bg-white">{item.center}</td>
-                  <td className="border px-4 py-2 bg-white">{item.batch}</td>
-                  <td className="border px-4 py-2 bg-white">{item.subject}</td>
-                  <td className="border px-4 py-2 bg-white">{item.chapter}</td>
-                  <td className="border px-4 py-2 bg-white">{item.topic}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      <div className="w-full max-w-7xl overflow-x-auto">
+  <table className="w-full table-fixed border border-gray-300 shadow-md rounded-lg text-sm text-center">
+    <thead className="sticky top-0 bg-gray-200">
+      <tr>
+        <th className="border px-2 py-2">S.No.</th>
+        <th className="border px-2 py-2">Date</th>
+        <th className="border px-2 py-2">Teacher</th>
+        <th className="border px-2 py-2">Center</th>
+        <th className="border px-2 py-2">Batch</th>
+        <th className="border px-2 py-2">Subject</th>
+        <th className="border px-2 py-2">Chapter</th>
+        <th className="border px-2 py-2">Topic</th>
+      </tr>
+    </thead>
+    <tbody>
+      {loading ? (
+        <tr>
+          <td colSpan={8} className="p-4">
+            Loading...
+          </td>
+        </tr>
+      ) : message ? (
+        <tr>
+          <td colSpan={8} className="p-4 text-gray-600 font-medium">
+            {message}
+          </td>
+        </tr>
+      ) : (
+        teachersData.map((item, index) => (
+          <tr key={item.id} className="hover:bg-gray-100">
+            <td className="border px-2 py-2 truncate">{index + 1}</td>
+            <td className="border px-2 py-2 truncate">{item.date}</td>
+            <td className="border px-2 py-2 truncate">{item.name}</td>
+            <td className="border px-2 py-2 truncate">{item.center}</td>
+            <td className="border px-2 py-2 truncate">{item.batch}</td>
+            <td className="border px-2 py-2 truncate">{item.subject}</td>
+            <td className="border px-2 py-2 truncate">{item.chapter}</td>
+            <td className="border px-2 py-2 truncate">{item.topic}</td>
+          </tr>
+        ))
+      )}
+    </tbody>
+  </table>
+</div>
+
     </div>
   );
 }
