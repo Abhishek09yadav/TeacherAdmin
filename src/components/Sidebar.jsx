@@ -110,7 +110,7 @@ const Sidebar = () => {
   return (
     <>
       {isOpen && checkLogin ? (
-        <div className="md:w-64 w-64 h-screen bg-gray-900 text-white overflow-auto transition-all duration-300 ease-in-out fixed md:relative z-10">
+        <div className="md:min-w-64  w-64 h-screen bg-gray-900 text-white overflow-auto transition-all duration-300 ease-in-out fixed md:relative z-10">
           <div className="">
             <h2 className="text-2xl text-center">
               <IoMenu
@@ -170,7 +170,7 @@ const Sidebar = () => {
           </nav>
         </div>
       ) : (
-        <div className="md:w-0 w-0 h-screen bg-gray-900 text-white overflow-auto transition-all duration-300 ease-in-out fixed md:relative">
+        <div className="md:w-0 w-0 h-screen bg-gray-900 text-white overflow-auto transition-all duration-300 ease-in-out fixed md:relative z-10">
           <div className="fixed text-2xl mt-1 ml-1 text-white p-3 bg-gray-900 rounded-full">
             <IoMenu className="cursor-pointer" onClick={() => setIsOpen(!isOpen)} />
           </div>
