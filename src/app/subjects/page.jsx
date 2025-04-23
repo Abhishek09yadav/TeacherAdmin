@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { axiosInstance } from "../../../lib/axios";
 import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
-import 'react-confirm-alert/src/react-confirm-alert.css';
+import "react-confirm-alert/src/react-confirm-alert.css";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 
@@ -26,14 +26,12 @@ export default function SubjectsPage() {
     try {
       setLoading(true);
       const response = await axiosInstance.get("/subject/get-subjects");
-      if (response.status === 200 && Array.isArray(response.data)) {
-        setSubjects(response.data);
-      } else {
-        console.warn("Unexpected response:", response);
-        setSubjects([]);
-      }
+      setSubjects(response.data);
     } catch (error) {
-      console.error("Error fetching subjects:", error.response?.data || error.message);
+      console.error(
+        "Error fetching subjects:",
+        error.response?.data || error.message
+      );
       toast.error("Failed to load subjects. Please try again.");
     } finally {
       setLoading(false);
@@ -52,15 +50,17 @@ export default function SubjectsPage() {
           label: "Yes",
           onClick: async () => {
             try {
-              const response = await axiosInstance.post("/subject/add-subject", {
-                subjectName: newSubjectName,
-              });
-             
-                toast.success("Subject added successfully!");
-                setNewSubjectName("");
-                setToggleSubjects(prev => !prev);
-                setShowAddForm(false);
-              
+              const response = await axiosInstance.post(
+                "/subject/add-subject",
+                {
+                  subjectName: newSubjectName,
+                }
+              );
+
+              toast.success("Subject added successfully!");
+              setNewSubjectName("");
+              setToggleSubjects((prev) => !prev);
+              setShowAddForm(false);
             } catch (error) {
               console.error("Error adding subject:", error);
               toast.error("Error adding subject. Please try again.");
@@ -88,15 +88,18 @@ export default function SubjectsPage() {
     }
 
     try {
-      const response = await axiosInstance.put(`/subject/update-subject/${id}`, {
-        subjectName: newName,
-      });
+      const response = await axiosInstance.put(
+        `/subject/update-subject/${id}`,
+        {
+          subjectName: newName,
+        }
+      );
 
-      if (response.status === 200) {
+    
         toast.success("Subject updated successfully!");
-        setToggleSubjects(prev => !prev);
+        setToggleSubjects((prev) => !prev);
         setShowEditForm(false);
-      }
+    
     } catch (error) {
       console.error("Error updating subject:", error);
       toast.error("Error updating subject. Please try again.");
@@ -104,17 +107,19 @@ export default function SubjectsPage() {
   };
 
   const handleDelete = (id) => {
-    console.log("wefewswr "+id);
-    
+    console.log("wefewswr " + id);
+
     confirmAlert({
-      title: 'Confirm Deletion',
-      message: 'Are you sure you want to delete this subject?',
+      title: "Confirm Deletion",
+      message: "Are you sure you want to delete this subject?",
       buttons: [
         {
-          label: 'Yes',
+          label: "Yes",
           onClick: async () => {
             try {
-              const response = await axiosInstance.delete(`/subject/delete-subject?subjectId=${id}`);
+              const response = await axiosInstance.delete(
+                `/subject/delete-subject?subjectId=${id}`
+              );
               if (response.status === 200) {
                 toast.success("Subject deleted successfully!");
                 fetchSubjects();
@@ -123,10 +128,10 @@ export default function SubjectsPage() {
               console.error("Error deleting subject:", error);
               toast.error("Error deleting subject. Please try again.");
             }
-          }
+          },
         },
-        { label: 'No' }
-      ]
+        { label: "No" },
+      ],
     });
   };
 
@@ -136,7 +141,10 @@ export default function SubjectsPage() {
         <button
           className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
           onClick={() => setShowAddForm(true)}
-          style={{boxShadow:'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px'}}
+          style={{
+            boxShadow:
+              "inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px",
+          }}
         >
           Add Subject
         </button>
@@ -188,15 +196,23 @@ export default function SubjectsPage() {
               </tr>
             ) : subjects.length === 0 ? (
               <tr>
-                <td colSpan="3" className="border px-4 py-2 text-center">No subjects found</td>
+                <td colSpan="3" className="border px-4 py-2 text-center">
+                  No subjects found
+                </td>
               </tr>
             ) : (
               subjects.map((subject, index) => (
                 <tr key={subject._id} className="hover:bg-gray-50">
                   <td className="border px-4 py-2 text-center">{index + 1}</td>
-                  <td className="border px-4 py-2 text-center">{subject.subjectName}</td>
                   <td className="border px-4 py-2 text-center">
-                    <ActionButtons subject={subject} handleDelete={handleDelete} handleEdit={openEditPopup} />
+                    {subject.subjectName}
+                  </td>
+                  <td className="border px-4 py-2 text-center">
+                    <ActionButtons
+                      subject={subject}
+                      handleDelete={handleDelete}
+                      handleEdit={openEditPopup}
+                    />
                   </td>
                 </tr>
               ))
@@ -211,19 +227,39 @@ export default function SubjectsPage() {
 const ActionButtons = ({ subject, handleDelete, handleEdit }) => {
   return (
     <div className="flex space-x-4 justify-center">
-      <button style={{boxShadow:'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px'}} onClick={() => handleEdit(subject._id, subject.subjectName)} className="flex items-center gap-3 px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded">
-        <FaEdit />Edit
+      <button
+        style={{
+          boxShadow:
+            "inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px",
+        }}
+        onClick={() => handleEdit(subject._id, subject.subjectName)}
+        className="flex items-center gap-3 px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded"
+      >
+        <FaEdit />
+        Edit
       </button>
-      <button style={{
-          boxShadow:"inset 2px 2px 2px #ad2929, inset -2px -2px 3px #ff8e8e"
-        }} onClick={() => handleDelete(subject._id)} className="flex items-center gap-3 px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded">
-        <MdDelete />Delete
+      <button
+        style={{
+          boxShadow: "inset 2px 2px 2px #ad2929, inset -2px -2px 3px #ff8e8e",
+        }}
+        onClick={() => handleDelete(subject._id)}
+        className="flex items-center gap-3 px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded"
+      >
+        <MdDelete />
+        Delete
       </button>
     </div>
   );
 };
 
-const SubjectForm = ({ title, subjectName, setSubjectName, onSave, onCancel, submitLabel }) => {
+const SubjectForm = ({
+  title,
+  subjectName,
+  setSubjectName,
+  onSave,
+  onCancel,
+  submitLabel,
+}) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50">
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-lg">
@@ -238,10 +274,17 @@ const SubjectForm = ({ title, subjectName, setSubjectName, onSave, onCancel, sub
             required
           />
           <div className="flex justify-center space-x-10">
-            <button type="submit" className="bg-green-500 hover:bg-green-600 text-white px-8 py-2 rounded">
+            <button
+              type="submit"
+              className="bg-green-500 hover:bg-green-600 text-white px-8 py-2 rounded"
+            >
               {submitLabel}
             </button>
-            <button type="button" onClick={onCancel} className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-2 rounded">
+            <button
+              type="button"
+              onClick={onCancel}
+              className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-2 rounded"
+            >
               Cancel
             </button>
           </div>
@@ -250,4 +293,3 @@ const SubjectForm = ({ title, subjectName, setSubjectName, onSave, onCancel, sub
     </div>
   );
 };
-
