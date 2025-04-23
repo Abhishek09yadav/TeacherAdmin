@@ -3,10 +3,9 @@ import { useState, useEffect } from "react";
 import { axiosInstance } from "../../../lib/axios";
 import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
-import 'react-confirm-alert/src/react-confirm-alert.css';
+import "react-confirm-alert/src/react-confirm-alert.css";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
-
 
 export default function BatchesPage() {
   const [batches, setBatches] = useState([]);
@@ -25,9 +24,8 @@ export default function BatchesPage() {
     try {
       setLoading(true);
       const response = await axiosInstance.get("/class/classes");
-      if (response.status === 200) {
-        setBatches(response.data);
-      }
+
+      setBatches(response.data);
     } catch (error) {
       console.error("Error fetching batches:", error);
     } finally {
@@ -40,11 +38,11 @@ export default function BatchesPage() {
     if (!newBatchName.trim()) return;
 
     confirmAlert({
-      title: 'Confirm to submit',
-      message: 'Are you sure you want to add this batch?',
+      title: "Confirm to submit",
+      message: "Are you sure you want to add this batch?",
       buttons: [
         {
-          label: 'Yes',
+          label: "Yes",
           onClick: async () => {
             try {
               const response = await axiosInstance.post("/class/classes", {
@@ -61,37 +59,38 @@ export default function BatchesPage() {
               console.error("Error adding batch:", error);
               toast.error("Error adding batch. Please try again.");
             }
-          }
+          },
         },
-        { label: 'No' }
-      ]
+        { label: "No" },
+      ],
     });
   };
 
   const handleDelete = (id) => {
     console.log(id);
-    
+
     confirmAlert({
-      title: 'Confirm Deletion',
-      message: 'Are you sure you want to delete this batch?',
+      title: "Confirm Deletion",
+      message: "Are you sure you want to delete this batch?",
       buttons: [
         {
-          label: 'Yes',
+          label: "Yes",
           onClick: async () => {
             try {
-              const response = await axiosInstance.delete(`/class/classes/${id}`);
-              if (response.status === 200) {
-                toast.success("Batch deleted successfully!");
-                fetchBatches();
-              }
+              const response = await axiosInstance.delete(
+                `/class/classes/${id}`
+              );
+
+              toast.success("Batch deleted successfully!");
+              fetchBatches();
             } catch (error) {
               console.error("Error deleting batch:", error);
               toast.error("Error deleting batch. Please try again.");
             }
-          }
+          },
         },
-        { label: 'No' }
-      ]
+        { label: "No" },
+      ],
     });
   };
 
@@ -109,15 +108,16 @@ export default function BatchesPage() {
     if (!editBatchName.trim()) return;
 
     try {
-      const response = await axiosInstance.put(`/class/classes/${editBatchId}`, {
-        className: editBatchName,
-      });
+      const response = await axiosInstance.put(
+        `/class/classes/${editBatchId}`,
+        {
+          className: editBatchName,
+        }
+      );
 
-      if (response.status === 200) {
-        toast.success("Batch updated successfully!");
-        setShowEditForm(false);
-        fetchBatches();
-      }
+      toast.success("Batch updated successfully!");
+      setShowEditForm(false);
+      fetchBatches();
     } catch (error) {
       console.error("Error updating batch:", error);
       toast.error("Error updating batch. Please try again.");
@@ -130,7 +130,10 @@ export default function BatchesPage() {
         <button
           className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
           onClick={() => setShowAddForm(true)}
-          style={{boxShadow:'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px'}}
+          style={{
+            boxShadow:
+              "inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px",
+          }}
         >
           Add Batch
         </button>
@@ -138,7 +141,7 @@ export default function BatchesPage() {
 
       {/* Add Batch Modal */}
       {showAddForm && (
-        <BatchForm 
+        <BatchForm
           title="Add New Batch"
           batchName={newBatchName}
           submitLabel="Add"
@@ -150,7 +153,7 @@ export default function BatchesPage() {
 
       {/* Edit Batch Modal */}
       {showEditForm && (
-        <BatchForm 
+        <BatchForm
           title="Edit Batch"
           batchName={editBatchName}
           submitLabel="Update"
@@ -185,11 +188,18 @@ export default function BatchesPage() {
               </tr>
             ) : (
               batches.map((batch, index) => (
-                <tr key={batch.id || index} className="hover:bg-gray-50 text-center">
+                <tr
+                  key={batch.id || index}
+                  className="hover:bg-gray-50 text-center"
+                >
                   <td className="border px-4 py-2">{index + 1}</td>
                   <td className="border px-4 py-2">{batch.className}</td>
                   <td className="border px-4 py-2">
-                    <ActionButtons batch={batch} handleDelete={handleDelete} handleEdit={openEditPopup} />
+                    <ActionButtons
+                      batch={batch}
+                      handleDelete={handleDelete}
+                      handleEdit={openEditPopup}
+                    />
                   </td>
                 </tr>
               ))
@@ -207,7 +217,10 @@ const ActionButtons = ({ batch, handleDelete, handleEdit }) => {
       <button
         onClick={() => handleEdit(batch._id, batch.className)}
         className="flex items-center gap-3 px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded"
-        style={{boxShadow:'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px'}}
+        style={{
+          boxShadow:
+            "inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px",
+        }}
       >
         <FaEdit />
         Edit
@@ -216,7 +229,7 @@ const ActionButtons = ({ batch, handleDelete, handleEdit }) => {
         onClick={() => handleDelete(batch._id)}
         className="flex items-center gap-3 px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded"
         style={{
-          boxShadow:"inset 2px 2px 2px #ad2929, inset -2px -2px 3px #ff8e8e"
+          boxShadow: "inset 2px 2px 2px #ad2929, inset -2px -2px 3px #ff8e8e",
         }}
       >
         <MdDelete />
@@ -227,7 +240,14 @@ const ActionButtons = ({ batch, handleDelete, handleEdit }) => {
 };
 
 // Reusable Modal for Add/Edit Batch
-const BatchForm = ({ title, batchName, setBatchName, onSave, onCancel,submitLabel }) => {
+const BatchForm = ({
+  title,
+  batchName,
+  setBatchName,
+  onSave,
+  onCancel,
+  submitLabel,
+}) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50">
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-lg">
@@ -242,10 +262,17 @@ const BatchForm = ({ title, batchName, setBatchName, onSave, onCancel,submitLabe
             required
           />
           <div className="flex justify-center space-x-10">
-            <button type="submit" className="bg-green-500 hover:bg-green-600 text-white px-8 py-2 rounded">
+            <button
+              type="submit"
+              className="bg-green-500 hover:bg-green-600 text-white px-8 py-2 rounded"
+            >
               {submitLabel}
             </button>
-            <button type="button" onClick={onCancel} className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-2 rounded">
+            <button
+              type="button"
+              onClick={onCancel}
+              className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-2 rounded"
+            >
               Cancel
             </button>
           </div>
