@@ -6,6 +6,7 @@ import "react-date-range/dist/theme/default.css";
 import { axiosInstance } from "../../lib/axios";
 import { IoSearch } from "react-icons/io5";
 import { toast } from "react-toastify";
+import { useRef } from "react";
 
 export default function Home() {
   const [teacherList, setTeacherList] = useState([]);
@@ -24,7 +25,12 @@ export default function Home() {
   const [monthsToShow, setMonthsToShow] = useState(2);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [message, setMessage] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const inputRef = useRef();
 
+  const filteredTeachers = teacherList.filter((t) =>
+    t.name.toLowerCase().includes(searchInput.toLowerCase())
+  );
   useEffect(() => {
     fetchTeacherList();
     dailySchedule();
@@ -56,7 +62,7 @@ export default function Home() {
       if (err.response && err.response.status === 404) {
         setMessage("No schedule found");
         toast.warning(err?.response?.data?.message, {
-          position: "top-center",
+          position: "bottom-left",
           theme: "light",
         });
       } else {
@@ -148,7 +154,7 @@ export default function Home() {
       <div className="w-full max-w-7xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
         <div className="flex flex-col">
           <label className="mb-1 text-sm font-medium">Teacher</label>
-          <input
+          {/* <input
             type="text"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
@@ -160,7 +166,38 @@ export default function Home() {
             {teacherList.map((teacher) => (
               <option key={teacher.id} value={teacher.name} />
             ))}
-          </datalist>
+          </datalist> */}
+          <div className="relative">
+            <input
+              ref={inputRef}
+              type="text"
+              value={searchInput}
+              onChange={(e) => {
+                setSearchInput(e.target.value);
+                setShowDropdown(true);
+              }}
+              onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+              onFocus={() => setTimeout(() => setShowDropdown(true), 200)}
+              placeholder="Type to search..."
+              className="p-2 border rounded-md bg-white w-full"
+            />
+            {showDropdown && filteredTeachers.length > 0 && (
+              <ul className="absolute z-10 bg-white border mt-1 rounded-md shadow max-h-40 overflow-auto text-sm w-full">
+                {filteredTeachers.map((teacher) => (
+                  <li
+                    key={teacher.id}
+                    className="px-3 py-1 hover:bg-blue-100 cursor-pointer"
+                    onMouseDown={() => {
+                      setSearchInput(teacher.name);
+                      setShowDropdown(false);
+                    }}
+                  >
+                    {teacher.name}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
 
         <div className="flex flex-col">
