@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { confirmAlert } from 'react-confirm-alert'; // Import
-import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
 import { TabView, TabPanel } from "primereact/tabview";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -62,7 +62,7 @@ export default function ChaptersPage() {
       );
 
       if (response.data.message === "Chapter added successfully to the subject") {
-        fetchSubjects(); // Refresh subjects after adding a chapter
+        fetchSubjects();
         setChapterName("");
         setSelectedSubject("");
         setAddChapterButton(false);
@@ -85,34 +85,12 @@ export default function ChaptersPage() {
           onClick: async () => {
             setLoading(true);
             try {
-              const response = await axiosInstance.delete(
+              await axiosInstance.delete(
                 `/subject/delete-chapter?subjectId=${subjectId}&chapterId=${chapterId}`,
-                {
-                  headers: { "Content-Type": "application/json" },
-
-                }
+                { headers: { "Content-Type": "application/json" } }
               );
-
-            
-                fetchSubjects();
-                toast.success("Chapter deleted successfully!");
-                //  setSubjects((prevSubjects) => {
-                //    const updatedSubjects = { ...prevSubjects };
-                //    const subject =
-                //      updatedSubjects[
-                //        Object.keys(updatedSubjects).find(
-                //          (key) => updatedSubjects[key].subjectId === subjectId
-                //        )
-                //      ];
-                //    if (subject) {
-                //      subject.chapters = subject.chapters.filter(
-                //        (chapter) => chapter.id !== chapterId
-                //      );
-                //    }
-                //    return updatedSubjects;
-
-                //  });
-              
+              fetchSubjects();
+              toast.success("Chapter deleted successfully!");
             } catch (error) {
               console.error("Error deleting chapter:", error);
             }
@@ -125,7 +103,6 @@ export default function ChaptersPage() {
         }
       ]
     });
-
   };
 
   // Render delete button
@@ -139,37 +116,36 @@ export default function ChaptersPage() {
     );
   };
 
-  // Render subject options
-  const renderSubjectOptions = () => {
-    return Object.keys(subjects).map((subjectName) => (
-      <option
-        key={subjects[subjectName].subjectId}
-        value={subjects[subjectName].subjectId}
-      >
-        {subjectName}
-      </option>
-    ));
-  };
-
   return (
-    <div className="p-4 flex flex-col items-center relative top-15">
-      <div className="card w-full md:w-2/3 lg:w-1/2 bg-white shadow-md relative ">
+    <div className="p-2 sm:p-4 flex flex-col items-center w-full bg-gray-50">
+      <div
+        className="w-full max-w-full md:max-w-2xl lg:max-w-3xl bg-white shadow-md rounded-md relative"
+        style={{ marginTop: "1rem" }}
+      >
         <TabView className="no-wrap" scrollable>
           {Object.keys(subjects).map((subjectName) => {
             const { subjectId, chapters } = subjects[subjectName];
             return (
               <TabPanel key={subjectId} header={subjectName}>
-                <DataTable value={chapters} paginator rows={5}>
-                  <Column field="chapter" header="Chapter" />
-                  <Column
-                    body={(rowData) =>
-                      deleteChapterButton(rowData, { rowData: { subjectName } })
-                    }
-                    header="Actions"
-                    headerClassName="text-center"
-                    bodyClassName="text-center"
-                  />
-                </DataTable>
+                <div className="overflow-x-auto">
+                  <DataTable
+                    value={chapters}
+                    paginator
+                    rows={5}
+                    className="min-w-[300px] sm:min-w-[400px]"
+                    responsiveLayout="scroll"
+                  >
+                    <Column field="chapter" header="Chapter" />
+                    <Column
+                      body={(rowData) =>
+                        deleteChapterButton(rowData, { rowData: { subjectName } })
+                      }
+                      header="Actions"
+                      headerClassName="text-center"
+                      bodyClassName="text-center"
+                    />
+                  </DataTable>
+                </div>
               </TabPanel>
             );
           })}
@@ -177,15 +153,15 @@ export default function ChaptersPage() {
       </div>
 
       {/* Floating Action Button */}
-      <div className="fixed bottom-6 right-6 md:right-10">
+      <div className="fixed bottom-6 right-4 sm:right-8 z-50">
         {addChapterButton ? (
           <IoIosCloseCircle
             onClick={() => setAddChapterButton(false)}
             className="text-5xl bg-white rounded-full shadow-lg cursor-pointer hover:scale-110 transition-all duration-300"
           />
         ) : (
-          <div className="flex text-2xl font-bold items-center gap-3" >
-            Add Chapter
+          <div className="flex text-lg sm:text-2xl font-bold items-center gap-2 sm:gap-3">
+            <span className="hidden sm:inline">Add Chapter</span>
             <IoIosAddCircle
               onClick={() => setAddChapterButton(true)}
               className="text-5xl bg-white rounded-full shadow-lg cursor-pointer hover:scale-110 transition-all duration-300"
@@ -198,7 +174,7 @@ export default function ChaptersPage() {
       <Dialog
         header="Add Chapter"
         visible={addChapterButton}
-        style={{ width: '30vw', maxWidth: '90vw' }}
+        style={{ width: '90vw', maxWidth: '400px' }}
         onHide={() => setAddChapterButton(false)}
         draggable={false}
         resizable={false}
@@ -226,10 +202,10 @@ export default function ChaptersPage() {
             className="border rounded p-2 w-full"
           />
 
-          <div className="flex justify-between">
+          <div className="flex flex-col sm:flex-row gap-2">
             <button
               onClick={handleAddChapter}
-              className="bg-blue-500 text-white rounded p-2 flex-1 mr-2"
+              className="bg-blue-500 text-white rounded p-2 flex-1"
               disabled={loading}
               style={{ boxShadow: 'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px' }}
             >

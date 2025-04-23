@@ -109,73 +109,77 @@ const Sidebar = () => {
 
   return (
     <>
-      {isOpen && checkLogin ? (
-        <div className="md:w-64 w-64 h-screen bg-gray-900 text-white overflow-auto transition-all duration-300 ease-in-out fixed md:relative z-10">
-          <div className="">
-            <h2 className="text-2xl text-center">
-              <IoMenu
-                className="mt-4 ml-4 cursor-pointer"
-                onClick={() => setIsOpen(!isOpen)}
-              />
-              Admin Panel
-            </h2>
-            <img className="w-50 mx-auto cursor-pointer" onClick={() => router.push("/")} src="/logo.png" alt="logo" />
+      <div className={`
+        fixed z-20 top-0 left-0 h-full bg-gray-900 text-white transition-all duration-300
+        ${isOpen ? "w-64" : "w-0"}
+        md:relative md:w-64
+      `}>
+        {isOpen && checkLogin ? (
+          <div className="md:w-64 w-64 min-h-screen bg-gray-900 text-white overflow-auto transition-all duration-300 ease-in-out fixed md:relative z-10">
+            <div className="">
+              <h2 className="text-2xl text-center">
+                <IoMenu
+                  className="mt-4 ml-4 cursor-pointer"
+                  onClick={() => setIsOpen(!isOpen)}
+                />
+                Admin Panel
+              </h2>
+              <img className="w-50 mx-auto cursor-pointer" onClick={() => router.push("/")} src="/logo.png" alt="logo" />
+            </div>
+            <nav className="mt-4">
+              <ul className="space-y-2">
+                {menus.map((menu) => (
+                  <li key={menu.id}>
+                    <button
+                      onClick={() => {
+                        if (menu.id === "teachers") {
+                          setShowTeacherSubmenu(!showTeacherSubmenu);
+                        } else {
+                          router.push(menu.route);
+                          setActiveMenu(menu.id);
+                        }
+                      }}
+                      className={`w-full flex items-center space-x-2 p-2 rounded ${
+                        activeMenu === menu.id
+                          ? "bg-gray-700 text-white"
+                          : "hover:bg-gray-700"
+                      }`}
+                    >
+                      <span className="text-lg">{menu.icon}</span>
+                      <span>{menu.label}</span>
+                    </button>
+                    {menu.submenu && showTeacherSubmenu && (
+                      <ul className="ml-4 mt-2 space-y-1">
+                        {menu.submenu.map((subMenu) => (
+                          <li key={subMenu.id}>
+                            <button
+                              onClick={() => {
+                                router.push(subMenu.route);
+                                setActiveMenu(subMenu.id);
+                              }}
+                              className={`w-full flex items-center space-x-2 p-2 rounded ${
+                                activeMenu === subMenu.id
+                                  ? "bg-gray-600 text-white"
+                                  : "hover:bg-gray-600"
+                              }`}
+                            >
+                              <span>{subMenu.label}</span>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </div>
-          <nav className="mt-4">
-            <ul className="space-y-2">
-              {menus.map((menu) => (
-                <li key={menu.id}>
-                  <button
-                    onClick={() => {
-                      if (menu.id === "teachers") {
-                        setShowTeacherSubmenu(!showTeacherSubmenu);
-                      } else {
-                        router.push(menu.route);
-                        setActiveMenu(menu.id);
-                      }
-                    }}
-                    className={`w-full flex items-center space-x-2 p-2 rounded ${
-                      activeMenu === menu.id
-                        ? "bg-gray-700 text-white"
-                        : "hover:bg-gray-700"
-                    }`}
-                  >
-                    <span className="text-lg">{menu.icon}</span>
-                    <span>{menu.label}</span>
-                  </button>
-                  {menu.submenu && showTeacherSubmenu && (
-                    <ul className="ml-4 mt-2 space-y-1">
-                      {menu.submenu.map((subMenu) => (
-                        <li key={subMenu.id}>
-                          <button
-                            onClick={() => {
-                              router.push(subMenu.route);
-                              setActiveMenu(subMenu.id);
-                            }}
-                            className={`w-full flex items-center space-x-2 p-2 rounded ${
-                              activeMenu === subMenu.id
-                                ? "bg-gray-600 text-white"
-                                : "hover:bg-gray-600"
-                            }`}
-                          >
-                            <span>{subMenu.label}</span>
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
-      ) : (
-        <div className="md:w-0 w-0 h-screen bg-gray-900 text-white overflow-auto transition-all duration-300 ease-in-out fixed md:relative">
+        ) : (
           <div className="fixed text-2xl mt-1 ml-1 text-white p-3 bg-gray-900 rounded-full">
             <IoMenu className="cursor-pointer" onClick={() => setIsOpen(!isOpen)} />
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </>
   );
 };
