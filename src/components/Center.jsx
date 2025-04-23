@@ -167,7 +167,25 @@ const fetchCenters = async () => {
           submitLabel="Update"
           onSave={(e) => {
             e.preventDefault();
-            handleEdit(editCenterId, editCenterName, editCenterDescription);
+            confirmAlert({
+              title: "Confirm Update",
+              message: "Are you sure you want to update this center?",
+              buttons: [
+                {
+                  label: "Yes",
+                  onClick: () =>
+                    handleEdit(
+                      editCenterId,
+                      editCenterName,
+                      editCenterDescription
+                    ),
+                },
+                {
+                  label: "No",
+                  onClick: () => toast.info("Update cancelled."),
+                },
+              ],
+            });
           }}
           onCancel={() => setShowEditForm(false)}
         />
