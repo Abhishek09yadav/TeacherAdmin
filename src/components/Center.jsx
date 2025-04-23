@@ -3,45 +3,48 @@ import { useState, useEffect } from "react";
 
 import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
-import 'react-confirm-alert/src/react-confirm-alert.css';
+import "react-confirm-alert/src/react-confirm-alert.css";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
-import { axiosInstance } from "../../lib/axios";
+import {
+  addCenter,
+  deleteCenter,
+  getAllCenters,
+  updateCenter,
+} from "../../server/common";
 
 export default function Center() {
-  const [subjects, setSubjects] = useState([]);
+  const [centers, setCenters] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [toggleSubjects, setToggleSubjects] = useState(false);
-  const [newSubjectName, setNewSubjectName] = useState("");
+  const [toggleCenters, setToggleCenters] = useState(false);
+  const [newCenterName, setNewCenterName] = useState("");
+  const [newCenterDescription, setNewCenterDescription] = useState("");
 
   const [showEditForm, setShowEditForm] = useState(false);
-  const [editSubjectId, setEditSubjectId] = useState(null);
-  const [editSubjectName, setEditSubjectName] = useState("");
+  const [editCenterId, setEditCenterId] = useState(null);
+  const [editCenterName, setEditCenterName] = useState("");
+  const [editCenterDescription, setEditCenterDescription] = useState("");
 
   useEffect(() => {
-    fetchSubjects();
-  }, [toggleSubjects]);
+    fetchCenters();
+  }, [toggleCenters]);
 
-  const fetchSubjects = async () => {
-    try {
-      setLoading(true);
-      const response = await axiosInstance.get("/subject/get-subjects");
-      if (response.status === 200 && Array.isArray(response.data)) {
-        setSubjects(response.data);
-      } else {
-        setSubjects([]);
-      }
-    } catch (error) {
-      toast.error("Failed to load subjects. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+const fetchCenters = async () => {
+  try {
+    const response = await getAllCenters();
+    setCenters(response || []);
+  } catch (error) {
+    toast.error("Error fetching centers. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
 
-  const handleAddSubject = async (e) => {
+
+  const handleAddCenter = async (e) => {
     e.preventDefault();
-    if (!newSubjectName.trim()) return;
+    if (!newCenterName.trim()) return;
 
     confirmAlert({
       title: "Confirm Submission",
@@ -51,17 +54,18 @@ export default function Center() {
           label: "Yes",
           onClick: async () => {
             try {
-              const response = await axiosInstance.post("/subject/add-subject", {
-                subjectName: newSubjectName,
-              });
-              if (response.status === 200 || response.status === 201) {
-                toast.success("Center added successfully!");
-                setNewSubjectName("");
-                setToggleSubjects(prev => !prev);
-                setShowAddForm(false);
-              }
+              await addCenter(newCenterName, newCenterDescription);
+              toast.success("Center added successfully!");
+              setToggleCenters((prev) => !prev);
+              setShowAddForm(false);
+              setNewCenterName("");
+              setNewCenterDescription("");
             } catch (error) {
-              toast.error("Error adding center. Please try again.");
+              // toast.error("Error adding center. Please try again.");
+              toast.error(
+                error?.response?.data?.message || "Error adding center."
+              );
+
             }
           },
         },
@@ -73,28 +77,27 @@ export default function Center() {
     });
   };
 
-  const openEditPopup = (id, currentName) => {
-    setEditSubjectId(id);
-    setEditSubjectName(currentName);
+  const openEditPopup = (id, currentName, currentDescription) => {
+    setEditCenterId(id);
+    setEditCenterName(currentName);
+    setEditCenterDescription(currentDescription);
     setShowEditForm(true);
   };
 
-  const handleEdit = async (id, newName) => {
-    if (!newName || newName.trim() === "") {
+  const handleEdit = async (id, newName, newDescription) => {
+    if (!newName.trim()) {
       toast.warning("Center name cannot be empty.");
       return;
     }
 
     try {
-      const response = await axiosInstance.put(`/subject/update-subject/${id}`, {
-        subjectName: newName,
+      const response = await updateCenter(id, {
+        name: newName,
+        description: newDescription,
       });
-
-      if (response.status === 200) {
         toast.success("Center updated successfully!");
-        setToggleSubjects(prev => !prev);
+        setToggleCenters((prev) => !prev);
         setShowEditForm(false);
-      }
     } catch (error) {
       toast.error("Error updating center. Please try again.");
     }
@@ -102,25 +105,23 @@ export default function Center() {
 
   const handleDelete = (id) => {
     confirmAlert({
-      title: 'Confirm Deletion',
-      message: 'Are you sure you want to delete this center?',
+      title: "Confirm Deletion",
+      message: "Are you sure you want to delete this center?",
       buttons: [
         {
-          label: 'Yes',
+          label: "Yes",
           onClick: async () => {
             try {
-              const response = await axiosInstance.delete(`/subject/delete-subject?subjectId=${id}`);
-              if (response.status === 200) {
-                toast.success("Center deleted successfully!");
-                fetchSubjects();
-              }
+              const response = await deleteCenter(id);
+              toast.success("Center deleted successfully!");
+              setToggleCenters((prev) => !prev);
             } catch (error) {
               toast.error("Error deleting center. Please try again.");
             }
-          }
+          },
         },
-        { label: 'No' }
-      ]
+        { label: "No" },
+      ],
     });
   };
 
@@ -130,35 +131,43 @@ export default function Center() {
         <button
           className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
           onClick={() => setShowAddForm(true)}
-          style={{boxShadow:'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px'}}
+          style={{
+            boxShadow:
+              "inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px",
+          }}
         >
           Add Center
         </button>
       </div>
 
       {showAddForm && (
-        <SubjectForm
+        <CenterForm
           title="Add New Center"
-          subjectName={newSubjectName}
-          setSubjectName={setNewSubjectName}
-          onSave={handleAddSubject}
+          centerName={newCenterName}
+          setCenterName={setNewCenterName}
+          centerDescription={newCenterDescription}
+          setCenterDescription={setNewCenterDescription}
+          onSave={handleAddCenter}
           submitLabel="Add"
           onCancel={() => {
             setShowAddForm(false);
-            setNewSubjectName("");
+            setNewCenterName("");
+            setNewCenterDescription("");
           }}
         />
       )}
 
       {showEditForm && (
-        <SubjectForm
+        <CenterForm
           title="Edit Center"
-          subjectName={editSubjectName}
-          setSubjectName={setEditSubjectName}
+          centerName={editCenterName}
+          setCenterName={setEditCenterName}
+          centerDescription={editCenterDescription}
+          setCenterDescription={setEditCenterDescription}
           submitLabel="Update"
           onSave={(e) => {
             e.preventDefault();
-            handleEdit(editSubjectId, editSubjectName);
+            handleEdit(editCenterId, editCenterName, editCenterDescription);
           }}
           onCancel={() => setShowEditForm(false)}
         />
@@ -170,65 +179,66 @@ export default function Center() {
             <tr className="bg-gray-100">
               <th className="border px-4 py-2 text-center">S.No.</th>
               <th className="border px-4 py-2 text-center">Center Name</th>
-              <th className="border px-4 py-2 text-center">Center Description</th>
+              <th className="border px-4 py-2 text-center">
+                Center Description
+              </th>
               <th className="border px-4 py-2 text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="3" className="border px-4 py-2 text-center">
+                <td colSpan="4" className="border px-4 py-2 text-center">
                   <span className="animate-pulse">Loading...</span>
                 </td>
               </tr>
-            ) : subjects.length === 0 ? (
+            ) : centers.length === 0 ? (
               <tr>
-                <td colSpan="3" className="border px-4 py-2 text-center">No centers found</td>
+                <td colSpan="4" className="border px-4 py-2 text-center">
+                  No centers found
+                </td>
               </tr>
             ) : (
-              subjects.map((subject, index) => (
-                <tr key={subject._id} className="hover:bg-gray-50">
+              centers.map((center, index) => (
+                <tr key={center._id} className="hover:bg-gray-50">
                   <td className="border px-4 py-2 text-center">{index + 1}</td>
                   <td className="border px-4 py-2 text-center">
-                    <span className="flex items-center justify-center gap-2">
-                      {subject.subjectName}
+                    {center.name}
+                  </td>
+                  <td className="border px-4 py-2 text-center">
+                    {center.description}
+                  </td>
+                  <td className="border px-4 py-2 text-center">
+                    <div className="flex justify-center gap-2">
                       <button
                         style={{
-                          boxShadow: "inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px"
+                          boxShadow:
+                            "inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px",
                         }}
-                        onClick={() => openEditPopup(subject._id, subject.subjectName)}
+                        onClick={() =>
+                          openEditPopup(
+                            center._id,
+                            center.name,
+                            center.description
+                          )
+                        }
                         className="flex items-center gap-1 px-2 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded text-xs"
                         title="Edit"
                       >
-                        <FaEdit size={16} />
+                        Edit <FaEdit size={16} />
                       </button>
-                    </span>
-                  </td>
-                  <td className="border px-4 py-2 text-center">
-                    <span className="flex items-center justify-center gap-2">
-                      {subject.subjectName}
                       <button
                         style={{
-                          boxShadow: "inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px"
+                          boxShadow:
+                            "inset 2px 2px 2px #ad2929, inset -2px -2px 3px #ff8e8e",
                         }}
-                        onClick={() => openEditPopup(subject._id, subject.subjectName)}
-                        className="flex items-center gap-1 px-2 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded text-xs"
-                        title="Edit"
+                        onClick={() => handleDelete(center._id)}
+                        className="flex items-center gap-1 px-2 py-2 text-white bg-red-500 hover:bg-red-600 rounded text-xs"
+                        title="Delete"
                       >
-                        <FaEdit size={16} />
+                        Delete <MdDelete size={16} />
                       </button>
-                    </span>
-                  </td>
-                  <td className="border px-4 py-2 text-center">
-                    <button
-                      style={{
-                        boxShadow:"inset 2px 2px 2px #ad2929, inset -2px -2px 3px #ff8e8e"
-                      }}
-                      onClick={() => handleDelete(subject._id)}
-                      className="flex mx-auto items-center gap-3 px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded"
-                    >
-                      <MdDelete />Delete
-                    </button>
+                    </div>
                   </td>
                 </tr>
               ))
@@ -240,7 +250,16 @@ export default function Center() {
   );
 }
 
-const SubjectForm = ({ title, subjectName, setSubjectName, onSave, onCancel, submitLabel }) => {
+const CenterForm = ({
+  title,
+  centerName,
+  setCenterName,
+  centerDescription,
+  setCenterDescription,
+  onSave,
+  onCancel,
+  submitLabel,
+}) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50">
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-lg">
@@ -248,17 +267,30 @@ const SubjectForm = ({ title, subjectName, setSubjectName, onSave, onCancel, sub
         <form onSubmit={onSave} className="space-y-4">
           <input
             type="text"
-            value={subjectName}
-            onChange={(e) => setSubjectName(e.target.value)}
+            value={centerName}
+            onChange={(e) => setCenterName(e.target.value)}
             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Enter center name"
             required
           />
+          <textarea
+            value={centerDescription}
+            onChange={(e) => setCenterDescription(e.target.value)}
+            placeholder="Enter center description"
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
           <div className="flex justify-center space-x-10">
-            <button type="submit" className="bg-green-500 hover:bg-green-600 text-white px-8 py-2 rounded">
+            <button
+              type="submit"
+              className="bg-green-500 hover:bg-green-600 text-white px-8 py-2 rounded"
+            >
               {submitLabel}
             </button>
-            <button type="button" onClick={onCancel} className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-2 rounded">
+            <button
+              type="button"
+              onClick={onCancel}
+              className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-2 rounded"
+            >
               Cancel
             </button>
           </div>
@@ -266,4 +298,4 @@ const SubjectForm = ({ title, subjectName, setSubjectName, onSave, onCancel, sub
       </div>
     </div>
   );
-}
+};

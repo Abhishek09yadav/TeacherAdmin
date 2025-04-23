@@ -99,12 +99,12 @@ const Sidebar = () => {
       route: "/banner",
       icon: <IoMdPhotos />,
     },
-    // {
-    //   id: "center",
-    //   label: "Center",
-    //   route: "/center",
-    //   icon: <FaBuilding />,
-    // },
+    {
+      id: "center",
+      label: "Center",
+      route: "/center",
+      icon: <FaBuilding />,
+    },
   ];
 
   return (
