@@ -9,24 +9,24 @@ const Login = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(true);
+    const [loginLoading, setLoginLoading] = useState(false); // Add this line
 
     const router = useRouter();
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setLoginLoading(true); // Start loader
         axiosInstance
             .post("/auth/login", { email: username, password })
             .then((response) => {
                 if (response.data) {
                     if (response.data.user.role === "admin") {
-                        console.log(response.data);
                         localStorage.setItem(
                             "teacher-admin-username",
                             response.data.user._id
                         );
                         window.location.href = "/";
                     } else {
-                        console.log(response.data);
                         toast.error(
                             "You are not authorized to access this page. Only admins can log in."
                         );
@@ -34,17 +34,13 @@ const Login = () => {
                 } else {
                     toast.error("Invalid username or password");
                 }
-            }).catch((error) => {
-                toast.error(`${error.response.data.error}`);
+            })
+            .catch((error) => {
+                toast.error(`${error.response?.data?.error || "Login failed"}`);
+            })
+            .finally(() => {
+                setLoginLoading(false); // Stop loader
             });
-        // if (username === "admin" && password === "admin@123") {
-        //   localStorage.setItem("teacher-admin-username", username);
-        //   // router.push("/");
-        //   window.location.href = "/";
-
-        // } else {
-        //   alert("Invalid username or password");
-        // }
     };
     useEffect(() => {
         axiosInstance
@@ -112,9 +108,17 @@ const Login = () => {
               </div>
               <button
                 type="submit"
-                className="w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition"
+                className="w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition flex items-center justify-center"
+                disabled={loginLoading}
               >
-                Login
+                {loginLoading ? (
+                  <>
+                    <FiLoader className="animate-spin mr-2" />
+                    Logging in...
+                  </>
+                ) : (
+                  "Login"
+                )}
               </button>
             </form>
           )}
