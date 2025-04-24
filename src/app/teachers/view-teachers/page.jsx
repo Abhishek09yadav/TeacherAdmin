@@ -127,6 +127,7 @@ const UserTable = () => {
     // console.log(selectedUser._id, selectedCenter);
     const object = {userId:selectedUser._id, centerName:selectedCenter};
    const data = await updateUserCenter(object);
+   fetchUsers();
   //  console.log(data);
   
   const updatedUser = users.map((user) => {
