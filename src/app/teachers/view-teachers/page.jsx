@@ -9,6 +9,7 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 import { getAllCenters, getAllUsers, updateUserCenter } from "../../../../server/common";
 import { CiEdit } from "react-icons/ci";
 import { IoMdSave } from "react-icons/io";
+import Pagination from "@/components/Pagination";
 
 const UserTable = () => {
   const [users, setUsers] = useState([]);
@@ -17,7 +18,8 @@ const UserTable = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedCenter, setSelectedCenter] = useState("");
   const [update, setUpdate] = useState(false);
-  // const [updateUser, setUpdateUser] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [usersPerPage] = useState(10);
   const [centers, setCenters] = useState([]);
 
   const fetchUsers = async () => {
@@ -49,7 +51,7 @@ const UserTable = () => {
         const res = await getAllCenters();
         setCenters(res && res.data ? res.data : []);
         console.log("Fetched centers:", res.data);
-        
+
       } catch (error) {
         console.error("Error fetching centers:", error);
         setCenters([]);
@@ -61,7 +63,7 @@ const UserTable = () => {
   const handleSearch = (e) => {
     const value = e.target.value.toLowerCase();
     setSearchTerm(value);
-
+    setCurrentPage(1);
     const filtered = users.filter(
       (user) =>
         user.name.toLowerCase().includes(value) ||
@@ -70,14 +72,14 @@ const UserTable = () => {
 
     setFilteredUsers(filtered);
   };
-// console.log(selectedUser);
+  // console.log(selectedUser);
 
   // const handleSelectedUser = (user) => {
   //   console.log(user);
-    
+
   //   setSelectedUser(user._id);
   //   console.log(selectedUser);
-    
+
   //   setUpdateUser({
   //     name: user.name,
   //     email: user.email,
@@ -123,27 +125,35 @@ const UserTable = () => {
     // console.log("Updating center for user:", selectedUser._id, selectedUser.centerName);
     // setUpdate(false)
     try {
-    // setUpdateUser({ ...updateUser, centerName: e.target.value })
-    // console.log(selectedUser._id, selectedCenter);
-    const object = {userId:selectedUser._id, centerName:selectedCenter};
-   const data = await updateUserCenter(object);
-   fetchUsers();
-  //  console.log(data);
-  
-  const updatedUser = users.map((user) => {
-    if (user._id === selectedUser._id) {
-      return { ...user, centerName: selectedCenter };
-    }
-    return user;
-  });
+      // setUpdateUser({ ...updateUser, centerName: e.target.value })
+      // console.log(selectedUser._id, selectedCenter);
+      const object = { userId: selectedUser._id, centerName: selectedCenter };
+      const data = await updateUserCenter(object);
+      fetchUsers();
+      //  console.log(data);
 
-   setUsers(updatedUser);
-     
-    toast.success("Center updated!");
+      const updatedUser = users.map((user) => {
+        if (user._id === selectedUser._id) {
+          return { ...user, centerName: selectedCenter };
+        }
+        return user;
+      });
+
+      setUsers(updatedUser);
+
+      toast.success("Center updated!");
     } catch (error) {
       toast.error("Error updating center.");
-    }    
+    }
   }
+
+  // Get current users
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-6 relative top-10 ">
@@ -167,25 +177,25 @@ const UserTable = () => {
         {/* Table */}
         <div className="w-full sm:w-11/12 md:w-3/4 overflow-x-auto mb-10">
           <table className="min-w-full divide-y divide-gray-200 shadow-sm border rounded-lg text-sm">
-            <thead className="bg-blue-100 text-blue-700">
-              <tr>
-                <th className="px-4 py-3 text-left font-semibold">S. No</th>
-                <th className="px-4 py-3 text-left font-semibold">Name</th>
-                <th className="px-4 py-3 text-left font-semibold">Actions</th>
+            <thead className=" bg-blue-100 text-blue-700">
+              <tr className="">
+                <th className="px-4 py-3 text-center font-semibold">S. No</th>
+                <th className="px-4 py-3 text-center font-semibold">Name</th>
+                <th className="px-4 py-3 text-center font-semibold">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-100">
-              {filteredUsers.length > 0 ? (
-                filteredUsers.map((user, index) => (
+              {currentUsers.length > 0 ? (
+                currentUsers.map((user, index) => (
                   <tr key={index} className="hover:bg-gray-50 transition">
-                    <td className="px-4 py-3 text-gray-700">{index + 1}</td>
-                    <td className="px-4 py-3 font-medium text-gray-800">
+                    <td className="px-4 py-3 text-gray-700 text-center">{index + 1}</td>
+                    <td className="px-4 py-3 font-medium text-gray-800 text-center">
                       {user.name}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 flex justify-center">
                       <button
-                        onClick={() => {setSelectedUser(user);}}
-                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded-md"
+                        onClick={() => { setSelectedUser(user); }}
+                        className=" bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded-md mx-auto"
                         style={{
                           boxShadow:
                             "inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px",
@@ -205,6 +215,12 @@ const UserTable = () => {
               )}
             </tbody>
           </table>
+          <Pagination
+            usersPerPage={usersPerPage}
+            totalUsers={filteredUsers.length}
+            paginate={paginate}
+            currentPage={currentPage}
+          />
         </div>
       </div>
 
@@ -280,8 +296,9 @@ const UserTable = () => {
                   className="ms-2 border-b outline-none bg-white"
                   defaultValue={selectedUser?.centerName || ""}
                   disabled={!update}
-                  onChange={(e)=>{
-                    setSelectedCenter(e.target.value)}}
+                  onChange={(e) => {
+                    setSelectedCenter(e.target.value)
+                  }}
                 >
                   <option value="" >No center alloted</option>
                   {Array.isArray(centers) &&
