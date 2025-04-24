@@ -1,6 +1,18 @@
-// components/TeachersTable.js
 "use client";
+import { useState } from "react";
+import Pagination from "./Pagination"; // import the pagination component
+
 export default function TeachersTable({ data, loading, message }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 10; // or any number of rows per page
+
+  // Pagination calculations
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = data.slice(indexOfFirstUser, indexOfLastUser);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
     <div className="w-full max-w-7xl overflow-x-auto">
       <table className="min-w-[700px] sm:min-w-full table-fixed border border-gray-300 shadow-md rounded-lg text-sm text-center">
@@ -30,9 +42,11 @@ export default function TeachersTable({ data, loading, message }) {
               </td>
             </tr>
           ) : (
-            data.map((item, index) => (
+            currentUsers.map((item, index) => (
               <tr key={item.id} className="hover:bg-gray-100">
-                <td className="border px-2 py-2 truncate">{index + 1}</td>
+                <td className="border px-2 py-2 truncate">
+                  {indexOfFirstUser + index + 1}
+                </td>
                 <td className="border px-2 py-2 truncate">{item.date}</td>
                 <td className="border px-2 py-2 truncate">{item.name}</td>
                 <td className="border px-2 py-2 truncate">{item.center}</td>
@@ -45,6 +59,16 @@ export default function TeachersTable({ data, loading, message }) {
           )}
         </tbody>
       </table>
+
+      {/* Show pagination only when there is data */}
+      {data.length > usersPerPage && (
+        <Pagination
+          usersPerPage={usersPerPage}
+          totalUsers={data.length}
+          paginate={paginate}
+          currentPage={currentPage}
+        />
+      )}
     </div>
   );
 }
