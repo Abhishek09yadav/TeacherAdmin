@@ -7,7 +7,8 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 import { MdDelete } from "react-icons/md";
 import { FaLink } from "react-icons/fa";
 import Pagination from "@/components/Pagination";
-
+import { FaSearch } from "react-icons/fa";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export default function LinksPage() {
   const [links, setLinks] = useState([]);
@@ -17,10 +18,13 @@ export default function LinksPage() {
   const [newLinkUrl, setNewLinkUrl] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(7);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredLinks, setFilteredLinks] = useState([]);
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = links.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredLinks.slice(indexOfFirstItem, indexOfLastItem);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   useEffect(() => {
@@ -32,6 +36,7 @@ export default function LinksPage() {
       setLoading(true);
       const response = await axiosInstance.get("/links/links");
       setLinks(response.data);
+      setFilteredLinks(response.data); // Set filtered links to all links initially
       setCurrentPage(1);
     } catch (error) {
       console.error("Error fetching links:", error);
@@ -39,6 +44,20 @@ export default function LinksPage() {
       setLoading(false);
     }
   };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  useEffect(() => {
+    if(debouncedSearchTerm !== undefined){
+      const filtered = links.filter((link) =>
+        link.title.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+      );
+      setFilteredLinks(filtered);
+      setCurrentPage(1); 
+    }
+  }, [debouncedSearchTerm, links]);
 
   const handleAddLink = async (e) => {
     e.preventDefault();
@@ -124,6 +143,21 @@ export default function LinksPage() {
           onCancel={() => setShowAddForm(false)}
         />
       )}
+      {/* Search Bar */}
+      <div className="mb-6 flex items-center justify-center">
+        <div className="relative w-full sm:w-3/4 md:w-1/2">
+          <input
+            type="text"
+            placeholder="Search subjects..."
+            value={searchTerm}
+            onChange={handleSearch}
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <span className="absolute right-3 top-2.5 text-gray-400">
+            <FaSearch />
+          </span>
+        </div>
+      </div>
 
       <div className="overflow-x-scroll lg:overflow-x-auto lg:w-lg mx-auto">
         <table className="min-w-full bg-white border border-gray-300">
@@ -141,10 +175,10 @@ export default function LinksPage() {
                   Loading...
                 </td>
               </tr>
-            ) : links.length === 0 ? (
+            ) : filteredLinks.length === 0 ? (
               <tr>
                 <td colSpan="3" className="border px-4 py-2 text-center">
-                  No links found
+                  {searchTerm ? "No matching results found." : "No links found."}
                 </td>
               </tr>
             ) : (
@@ -180,7 +214,7 @@ export default function LinksPage() {
         </table>
         <Pagination
           usersPerPage={itemsPerPage}
-          totalUsers={links.length}
+          totalUsers={filteredLinks.length}
           paginate={paginate}
           currentPage={currentPage}
         />

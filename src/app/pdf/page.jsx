@@ -7,6 +7,8 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 import { FaFilePdf } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import Pagination from "@/components/Pagination";
+import { FaSearch } from "react-icons/fa";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export default function PdfListPage() {
   const [pdfs, setPdfs] = useState([]);
@@ -19,15 +21,31 @@ export default function PdfListPage() {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(7);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredPdfs, setFilteredPdfs] = useState([]);
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = pdfs.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredPdfs.slice(indexOfFirstItem, indexOfLastItem);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  
+  // for fetching pdfs
   useEffect(() => {
     fetchPdfs();
   }, []);
+
+  // for searching pdfs
+  useEffect(() => {
+    if(debouncedSearchTerm !== undefined){
+      const filtered = pdfs.filter((pdf) =>
+        pdf.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+      );
+      setFilteredPdfs(filtered);
+      setCurrentPage(1); 
+    }
+  }, [debouncedSearchTerm, pdfs]);
 
   const fetchPdfs = async () => {
     try {
@@ -39,12 +57,17 @@ export default function PdfListPage() {
           url: `/${pdf.secure_url}`,
         }))
       );
+      setFilteredPdfs(response.data); // Set filtered PDFs to all PDFs initially
       setCurrentPage(1);
     } catch (error) {
       console.error("Error fetching PDFs:", error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
   };
 
   const handleDelete = (id) => {
@@ -126,6 +149,22 @@ export default function PdfListPage() {
         </button>
       </div>
 
+      {/* Search Bar */}
+      <div className="mb-6 flex items-center justify-center">
+        <div className="relative w-full sm:w-3/4 md:w-1/2">
+          <input
+            type="text"
+            placeholder="Search subjects..."
+            value={searchTerm}
+            onChange={handleSearch}
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <span className="absolute right-3 top-2.5 text-gray-400">
+            <FaSearch />
+          </span>
+        </div>
+      </div>
+
       {/* Table */}
       <div className="overflow-x-scroll lg:overflow-x-auto lg:w-lg mx-auto">
         <table className="min-w-full bg-white border border-gray-300">
@@ -143,10 +182,10 @@ export default function PdfListPage() {
                   Loading...
                 </td>
               </tr>
-            ) : pdfs.length === 0 ? (
+            ) : filteredPdfs.length === 0 ? (
               <tr>
                 <td colSpan="3" className="border px-4 py-2 text-center">
-                  No PDFs found
+                  {searchTerm ? "No matching results found." : "No PDFs found."}
                 </td>
               </tr>
             ) : (
@@ -193,7 +232,7 @@ export default function PdfListPage() {
         </table>
         <Pagination
           usersPerPage={itemsPerPage}
-          totalUsers={pdfs.length}
+          totalUsers={filteredPdfs.length}
           paginate={paginate}
           currentPage={currentPage}
         />
