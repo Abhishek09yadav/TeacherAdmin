@@ -15,8 +15,9 @@ const UserTable = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedCenter, setSelectedCenter] = useState("");
   const [update, setUpdate] = useState(false);
-  const [updateUser, setUpdateUser] = useState(null);
+  // const [updateUser, setUpdateUser] = useState(null);
   const [centers, setCenters] = useState([]);
 
   const fetchUsers = async () => {
@@ -69,18 +70,23 @@ const UserTable = () => {
 
     setFilteredUsers(filtered);
   };
+// console.log(selectedUser);
 
-  const handleSelectedUser = (user) => {
-    setSelectedUser(user);
-    setUpdateUser({
-      name: user.name,
-      email: user.email,
-      aadhar: user.aadhar,
-      phoneNumber: user.phoneNumber,
-      centerName: user.centerName || "",
-    });
-    setUpdate(false); // Ensure edit mode is off by default
-  };
+  // const handleSelectedUser = (user) => {
+  //   console.log(user);
+    
+  //   setSelectedUser(user._id);
+  //   console.log(selectedUser);
+    
+  //   setUpdateUser({
+  //     name: user.name,
+  //     email: user.email,
+  //     aadhar: user.aadhar,
+  //     phoneNumber: user.phoneNumber,
+  //     centerName: user.centerName || "",
+  //   });
+  //   // setUpdate(false); // Ensure edit mode is off by default
+  // };
 
   const handleDelete = async (id) => {
     confirmAlert({
@@ -113,12 +119,26 @@ const UserTable = () => {
     });
   };
 
-  const handleUpdateCenter = (e) => {
-    console.log("Updating center for user:", selectedUser._id, selectedUser.centerName);
-    
+  const handleUpdateCenter = async () => {
+    // console.log("Updating center for user:", selectedUser._id, selectedUser.centerName);
+    // setUpdate(false)
     try {
-    setUpdateUser({ ...updateUser, centerName: e.target.value })
-    updateUserCenter(selectedUser._id, selectedUser.centerName)
+    // setUpdateUser({ ...updateUser, centerName: e.target.value })
+    // console.log(selectedUser._id, selectedCenter);
+    const object = {userId:selectedUser._id, centerName:selectedCenter};
+   const data = await updateUserCenter(object);
+   fetchUsers();
+  //  console.log(data);
+  
+  const updatedUser = users.map((user) => {
+    if (user._id === selectedUser._id) {
+      return { ...user, centerName: selectedCenter };
+    }
+    return user;
+  });
+
+   setUsers(updatedUser);
+     
     toast.success("Center updated!");
     } catch (error) {
       toast.error("Error updating center.");
@@ -164,7 +184,7 @@ const UserTable = () => {
                     </td>
                     <td className="px-4 py-3">
                       <button
-                        onClick={() => handleSelectedUser(user)}
+                        onClick={() => {setSelectedUser(user);}}
                         className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded-md"
                         style={{
                           boxShadow:
@@ -201,7 +221,6 @@ const UserTable = () => {
           <button
             onClick={() => {
               setSelectedUser(null);
-              setUpdateUser(null);
               setUpdate(false);
             }}
             className="absolute top-5 right-5 text-gray-500 hover:text-red-500 text-xl font-bold"
@@ -217,7 +236,7 @@ const UserTable = () => {
           <div className="flex justify-center mb-4">
             <img
               src={selectedUser.secure_url}
-              alt={updateUser.name}
+              alt={selectedUser?.name || "image"}
               className="w-40 h-40 mt-4 rounded-full object-cover border-2 border-blue-400"
             />
           </div>
@@ -225,18 +244,15 @@ const UserTable = () => {
           {/* Info */}
           <div className="text-center space-y-3">
             <p className="text-2xl font-semibold text-gray-800">
-              {updateUser.name || "Unable to fetch"}
+              {selectedUser?.name || "Unable to fetch"}
             </p>
             <p className="text-base text-gray-600">
               <strong>Phone:</strong>
               <input
                 className="ms-2 border-b outline-none"
                 type="text"
-                value={updateUser.phoneNumber || "Unable to fetch"}
-                onChange={(e) =>
-                  update &&
-                  setUpdateUser({ ...updateUser, phoneNumber: e.target.value })
-                }
+                value={selectedUser?.phoneNumber || "Unable to fetch"}
+                readOnly
               />
             </p>
             <p className="text-base text-gray-600">
@@ -244,15 +260,8 @@ const UserTable = () => {
               <input
                 className="ms-2 border-b outline-none"
                 type="text"
-                value={
-                  updateUser.aadhar
-                    ? updateUser.aadhar.replace(/\d(?=\d{4})/g, "X")
-                    : ""
-                }
-                onChange={(e) =>
-                  update &&
-                  setUpdateUser({ ...updateUser, aadhar: e.target.value })
-                }
+                value={selectedUser?.aadhar ? selectedUser?.aadhar?.replace(/\d(?=\d{4})/g, "X") : ""}
+                readOnly
               />
             </p>
             <p className="text-base text-gray-600">
@@ -260,11 +269,8 @@ const UserTable = () => {
               <input
                 className="ms-2 border-b outline-none"
                 type="text"
-                value={updateUser.email || "Unable to fetch"}
-                onChange={(e) =>
-                  update &&
-                  setUpdateUser({ ...updateUser, email: e.target.value })
-                }
+                value={selectedUser?.email || "Unable to fetch"}
+                readOnly
               />
             </p>
             <div className="flex items-center justify-center ml-12">
@@ -272,17 +278,12 @@ const UserTable = () => {
                 <strong>Center:</strong>
                 <select
                   className="ms-2 border-b outline-none bg-white"
-                  value={updateUser.pendingCenterName || updateUser.centerName || ""}
+                  defaultValue={selectedUser?.centerName || ""}
                   disabled={!update}
-                  onChange={(e) =>
-                    update &&
-                    setUpdateUser({
-                      ...updateUser,
-                      pendingCenterName: e.target.value,
-                    })
-                  }
+                  onChange={(e)=>{
+                    setSelectedCenter(e.target.value)}}
                 >
-                  <option value="">No center alloted</option>
+                  <option value="" >No center alloted</option>
                   {Array.isArray(centers) &&
                     centers.map((center) => (
                       <option key={center._id} value={center.name}>
