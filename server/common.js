@@ -61,12 +61,11 @@ export async function getAllUsers(){
   }
 }
 
-export async function updateUserCenter(userId, centerName) {
-  console.log("userId", userId);
-  console.log("centerName", centerName); 
+export async function updateUserCenter(object) {
+ 
   try {
-   
-    const response = await axiosInstance.put(`/auth/update-center`, {userId, centerName});
+    const response = await axiosInstance.put(`/auth/update-center`, object);
+    // console.log({userId, centerName});
     return response.data;
   } catch (error) {
     console.log("Error updating User center:", error);
