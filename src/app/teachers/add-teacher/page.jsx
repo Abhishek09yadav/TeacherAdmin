@@ -27,7 +27,7 @@ const FormComponent = () => {
     try{
       const fetchCenters = async () => {
         const response = await getAllCenters();
-        setCenters(response);
+        setCenters(response?.data || []);
       };
       fetchCenters();
     }catch(error){
