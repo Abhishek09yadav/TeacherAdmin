@@ -12,6 +12,7 @@ import {
   getAllCenters,
   updateCenter,
 } from "../../server/common";
+import Pagination from "./Pagination";
 
 export default function Center() {
   const [centers, setCenters] = useState([]);
@@ -20,27 +21,34 @@ export default function Center() {
   const [toggleCenters, setToggleCenters] = useState(false);
   const [newCenterName, setNewCenterName] = useState("");
   const [newCenterDescription, setNewCenterDescription] = useState("");
-
   const [showEditForm, setShowEditForm] = useState(false);
   const [editCenterId, setEditCenterId] = useState(null);
   const [editCenterName, setEditCenterName] = useState("");
   const [editCenterDescription, setEditCenterDescription] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(7);
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = centers.slice(indexOfFirstItem, indexOfLastItem);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
   useEffect(() => {
     fetchCenters();
   }, [toggleCenters]);
 
-const fetchCenters = async () => {
-  try {
-    const response = await getAllCenters();
-    // console.log("Fetched centers:", response.data);
-    setCenters(response.data || []);
-  } catch (error) {
-    toast.error("Error fetching centers. Please try again.");
-  } finally {
-    setLoading(false);
-  }
-};
+  const fetchCenters = async () => {
+    try {
+      const response = await getAllCenters();
+      // console.log("Fetched centers:", response.data);
+      setCenters(response.data || []);
+      setCurrentPage(1);
+    } catch (error) {
+      toast.error("Error fetching centers. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   const handleAddCenter = async (e) => {
@@ -66,7 +74,6 @@ const fetchCenters = async () => {
               toast.error(
                 error?.response?.data?.message || "Error adding center."
               );
-
             }
           },
         },
@@ -96,9 +103,9 @@ const fetchCenters = async () => {
         name: newName,
         description: newDescription,
       });
-        toast.success("Center updated successfully!");
-        setToggleCenters((prev) => !prev);
-        setShowEditForm(false);
+      toast.success("Center updated successfully!");
+      setToggleCenters((prev) => !prev);
+      setShowEditForm(false);
     } catch (error) {
       toast.error("Error updating center. Please try again.");
     }
@@ -218,9 +225,9 @@ const fetchCenters = async () => {
                 </td>
               </tr>
             ) : (
-              centers?.map((center, index) => (
+              currentItems?.map((center, index) => (
                 <tr key={center._id} className="hover:bg-gray-50">
-                  <td className="border px-4 py-2 text-center">{index + 1}</td>
+                  <td className="border px-4 py-2 text-center">{indexOfFirstItem + index + 1}</td>
                   <td className="border px-4 py-2 text-center">
                     {center.name}
                   </td>
@@ -264,6 +271,12 @@ const fetchCenters = async () => {
             )}
           </tbody>
         </table>
+        <Pagination
+          usersPerPage={itemsPerPage}
+          totalUsers={centers.length}
+          paginate={paginate}
+          currentPage={currentPage}
+        />
       </div>
     </div>
   );

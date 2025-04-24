@@ -6,6 +6,7 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import Pagination from "@/components/Pagination";
 
 export default function SubjectsPage() {
   const [subjects, setSubjects] = useState([]);
@@ -13,11 +14,16 @@ export default function SubjectsPage() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [toggleSubjects, setToggleSubjects] = useState(false);
   const [newSubjectName, setNewSubjectName] = useState("");
-
   const [showEditForm, setShowEditForm] = useState(false);
   const [editSubjectId, setEditSubjectId] = useState(null);
   const [editSubjectName, setEditSubjectName] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(7);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = subjects.slice(indexOfFirstItem, indexOfLastItem);
 
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
   useEffect(() => {
     fetchSubjects();
   }, [toggleSubjects]);
@@ -27,6 +33,7 @@ export default function SubjectsPage() {
       setLoading(true);
       const response = await axiosInstance.get("/subject/get-subjects");
       setSubjects(response.data);
+      setCurrentPage(1);
     } catch (error) {
       console.error(
         "Error fetching subjects:",
@@ -201,9 +208,9 @@ export default function SubjectsPage() {
                 </td>
               </tr>
             ) : (
-              subjects.map((subject, index) => (
+              currentItems.map((subject, index) => (
                 <tr key={subject._id} className="hover:bg-gray-50">
-                  <td className="border px-4 py-2 text-center">{index + 1}</td>
+                  <td className="border px-4 py-2 text-center">{indexOfFirstItem + index + 1}</td>
                   <td className="border px-4 py-2 text-center">
                     {subject.subjectName}
                   </td>
@@ -219,6 +226,12 @@ export default function SubjectsPage() {
             )}
           </tbody>
         </table>
+        <Pagination
+          usersPerPage={itemsPerPage}
+          totalUsers={subjects.length}
+          paginate={paginate}
+          currentPage={currentPage}
+        />
       </div>
     </div>
   );
