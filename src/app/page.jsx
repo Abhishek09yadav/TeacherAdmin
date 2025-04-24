@@ -1,12 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
-import { DateRangePicker } from "react-date-range";
+// import { DateRangePicker } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { axiosInstance } from "../../lib/axios";
 import { IoSearch } from "react-icons/io5";
 import { toast } from "react-toastify";
 import { useRef } from "react";
+import DateRangeModal from "@/components/DateRangeModal/DateRangeModal";
+import TeachersTable from "@/components/TeachersTable";
 
 export default function Home() {
   const [teacherList, setTeacherList] = useState([]);
@@ -200,25 +202,37 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="flex flex-col">
-          <label className="mb-1 text-sm font-medium">Start Date</label>
-          <input
-            type="text"
-            value={dateRange.startDate ? dateRange.startDate.toLocaleDateString() : ""}
-            className="p-2 border rounded-md bg-gray-100"
-            readOnly
-          />
-        </div>
+        {dateRange.startDate && (
+          <>
+            <div className="flex flex-col">
+              <label className="mb-1 text-sm font-medium">Start Date</label>
+              <input
+                type="text"
+                value={
+                  dateRange.startDate
+                    ? dateRange.startDate.toLocaleDateString()
+                    : ""
+                }
+                className="p-2 border rounded-md bg-gray-100"
+                readOnly
+              />
+            </div>
 
-        <div className="flex flex-col">
-          <label className="mb-1 text-sm font-medium">End Date</label>
-          <input
-            type="text"
-            value={dateRange.endDate ? dateRange.endDate.toLocaleDateString() : ""}
-            className="p-2 border rounded-md bg-gray-100"
-            readOnly
-          />
-        </div>
+            <div className="flex flex-col">
+              <label className="mb-1 text-sm font-medium">End Date</label>
+              <input
+                type="text"
+                value={
+                  dateRange.endDate
+                    ? dateRange.endDate.toLocaleDateString()
+                    : ""
+                }
+                className="p-2 border rounded-md bg-gray-100"
+                readOnly
+              />
+            </div>
+          </>
+        )}
 
         <div className="flex flex-col justify-end">
           <button
@@ -234,13 +248,23 @@ export default function Home() {
             onClick={handleSearch}
             className="w-full px-6 py-3 bg-green-500 text-white rounded-md hover:bg-green-600 flex justify-center items-center"
           >
+            {/* <span className="mr-2">Search</span> */}
             <IoSearch className="text-lg" />
           </button>
         </div>
       </div>
 
+      <DateRangeModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleConfirm}
+        tempRange={tempRange}
+        setTempRange={setTempRange}
+        monthsToShow={monthsToShow}
+      />
+      {/* old code */}
       {/* Modal */}
-      {isModalOpen && (
+      {/* {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50">
           <div className="bg-white p-4 rounded-md shadow-md w-[95vw] max-w-full overflow-auto">
             <DateRangePicker
@@ -277,10 +301,12 @@ export default function Home() {
             </div>
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Table Section */}
-      <div className="w-full max-w-7xl overflow-x-auto">
+      <TeachersTable data={teachersData} loading={loading} message={message} />
+{/* old code */}
+      {/* <div className="w-full max-w-7xl overflow-x-auto">
         <table className="min-w-[700px] sm:min-w-full table-fixed border border-gray-300 shadow-md rounded-lg text-sm text-center">
           <thead className="sticky top-0 bg-gray-200">
             <tr>
@@ -323,7 +349,7 @@ export default function Home() {
             )}
           </tbody>
         </table>
-      </div>
+      </div> */}
     </div>
   );
 }
