@@ -6,6 +6,7 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { FaFilePdf } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import Pagination from "@/components/Pagination";
 
 export default function PdfListPage() {
   const [pdfs, setPdfs] = useState([]);
@@ -16,7 +17,14 @@ export default function PdfListPage() {
     name: "",
     file: null,
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(7);
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = pdfs.slice(indexOfFirstItem, indexOfLastItem);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
   useEffect(() => {
     fetchPdfs();
   }, []);
@@ -25,14 +33,13 @@ export default function PdfListPage() {
     try {
       setLoading(true);
       const response = await axiosInstance.get("/pdf/pdfs");
-      
-        setPdfs(
-          response.data.map((pdf) => ({
-            ...pdf,
-            url: `/${pdf.secure_url}`,
-          }))
-        );
-      
+      setPdfs(
+        response.data.map((pdf) => ({
+          ...pdf,
+          url: `/${pdf.secure_url}`,
+        }))
+      );
+      setCurrentPage(1);
     } catch (error) {
       console.error("Error fetching PDFs:", error);
     } finally {
@@ -50,10 +57,10 @@ export default function PdfListPage() {
           onClick: async () => {
             try {
               const response = await axiosInstance.delete(`/pdf/pdf/${id}`);
-             
-                toast.success("PDF deleted successfully!");
-                fetchPdfs();
-              
+
+              toast.success("PDF deleted successfully!");
+              fetchPdfs();
+
             } catch (error) {
               console.error("Error deleting PDF:", error);
               toast.error("Error deleting PDF. Please try again.");
@@ -82,7 +89,6 @@ export default function PdfListPage() {
     const uploadData = new FormData();
     uploadData.append("name", formData.name);
     uploadData.append("pdf", formData.file);
-
     setUploading(true); // Start loading
 
     try {
@@ -90,12 +96,12 @@ export default function PdfListPage() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      
-        toast.success("PDF uploaded successfully!");
-        setShowModal(false);
-        setFormData({ name: "", file: null });
-        fetchPdfs();
-      
+
+      toast.success("PDF uploaded successfully!");
+      setShowModal(false);
+      setFormData({ name: "", file: null });
+      fetchPdfs();
+
     } catch (error) {
       console.error("Upload error:", error);
       toast.error("Failed to upload PDF.");
@@ -144,12 +150,12 @@ export default function PdfListPage() {
                 </td>
               </tr>
             ) : (
-              pdfs.map((pdf, index) => (
+              currentItems.map((pdf, index) => (
                 <tr
                   key={pdf.id || index}
                   className="hover:bg-gray-50 text-center"
                 >
-                  <td className="border px-4 py-2">{index + 1}</td>
+                  <td className="border px-4 py-2">{indexOfFirstItem + index + 1}</td>
                   <td className="border px-4 py-2">
                     <button
                       onClick={() =>
@@ -185,6 +191,12 @@ export default function PdfListPage() {
             )}
           </tbody>
         </table>
+        <Pagination
+          usersPerPage={itemsPerPage}
+          totalUsers={pdfs.length}
+          paginate={paginate}
+          currentPage={currentPage}
+        />
       </div>
 
       {/* Modal */}
@@ -214,11 +226,10 @@ export default function PdfListPage() {
             <div className="flex justify-center space-x-10">
               <button
                 onClick={handleSave}
-                className={`px-4 py-2 text-white rounded ${
-                  uploading
+                className={`px-4 py-2 text-white rounded ${uploading
                     ? "bg-green-400 cursor-not-allowed"
                     : "bg-green-600 hover:bg-green-700"
-                }`}
+                  }`}
                 disabled={uploading}
               >
                 {uploading ? "Uploading..." : "Save"}

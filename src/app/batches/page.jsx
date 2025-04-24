@@ -6,6 +6,7 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import Pagination from "@/components/Pagination";
 
 export default function BatchesPage() {
   const [batches, setBatches] = useState([]);
@@ -15,7 +16,14 @@ export default function BatchesPage() {
   const [showEditForm, setShowEditForm] = useState(false);
   const [editBatchId, setEditBatchId] = useState(null);
   const [editBatchName, setEditBatchName] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(7);
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = batches.slice(indexOfFirstItem, indexOfLastItem);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
   useEffect(() => {
     fetchBatches();
   }, []);
@@ -24,8 +32,8 @@ export default function BatchesPage() {
     try {
       setLoading(true);
       const response = await axiosInstance.get("/class/classes");
-
       setBatches(response.data);
+      setCurrentPage(1); 
     } catch (error) {
       console.error("Error fetching batches:", error);
     } finally {
@@ -187,12 +195,12 @@ export default function BatchesPage() {
                 </td>
               </tr>
             ) : (
-              batches.map((batch, index) => (
+              currentItems.map((batch, index) => (
                 <tr
                   key={batch.id || index}
                   className="hover:bg-gray-50 text-center"
                 >
-                  <td className="border px-4 py-2">{index + 1}</td>
+                  <td className="border px-4 py-2">{indexOfFirstItem + index + 1}</td>
                   <td className="border px-4 py-2">{batch.className}</td>
                   <td className="border px-4 py-2">
                     <ActionButtons
@@ -206,6 +214,12 @@ export default function BatchesPage() {
             )}
           </tbody>
         </table>
+        <Pagination 
+          usersPerPage={itemsPerPage}
+          totalUsers={batches.length}
+          paginate={paginate}
+          currentPage={currentPage}
+        />
       </div>
     </div>
   );

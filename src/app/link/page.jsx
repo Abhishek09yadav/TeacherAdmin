@@ -6,6 +6,7 @@ import { confirmAlert } from "react-confirm-alert";
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import { MdDelete } from "react-icons/md";
 import { FaLink } from "react-icons/fa";
+import Pagination from "@/components/Pagination";
 
 
 export default function LinksPage() {
@@ -14,7 +15,14 @@ export default function LinksPage() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newLinkName, setNewLinkName] = useState("");
   const [newLinkUrl, setNewLinkUrl] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(7);
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = links.slice(indexOfFirstItem, indexOfLastItem);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
   useEffect(() => {
     fetchLinks();
   }, []);
@@ -23,10 +31,8 @@ export default function LinksPage() {
     try {
       setLoading(true);
       const response = await axiosInstance.get("/links/links");
-   
-        console.log(response.data);
-        setLinks(response.data);
-      
+      setLinks(response.data);
+      setCurrentPage(1);
     } catch (error) {
       console.error("Error fetching links:", error);
     } finally {
@@ -51,13 +57,13 @@ export default function LinksPage() {
                 link: newLinkUrl,
               });
 
-             
-                toast.success("Link added successfully!");
-                setNewLinkName("");
-                setNewLinkUrl("");
-                setShowAddForm(false);
-                fetchLinks();
-              
+
+              toast.success("Link added successfully!");
+              setNewLinkName("");
+              setNewLinkUrl("");
+              setShowAddForm(false);
+              fetchLinks();
+
             } catch (error) {
               console.error("Error adding link:", error);
               toast.error("Error adding link. Please try again.");
@@ -69,8 +75,8 @@ export default function LinksPage() {
     });
   };
 
-  const handleDelete = (id) => { 
-    console.log("delete",id);
+  const handleDelete = (id) => {
+    console.log("delete", id);
     confirmAlert({
       title: 'Confirm Deletion',
       message: 'Are you sure you want to delete this link?',
@@ -80,10 +86,10 @@ export default function LinksPage() {
           onClick: async () => {
             try {
               const response = await axiosInstance.delete(`/links/link/${id}`);
-            
-                toast.success("Link deleted successfully!");
-                fetchLinks();
-              
+
+              toast.success("Link deleted successfully!");
+              fetchLinks();
+
             } catch (error) {
               console.error("Error deleting link:", error);
               toast.error("Error deleting link. Please try again.");
@@ -101,14 +107,14 @@ export default function LinksPage() {
         <button
           className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
           onClick={() => setShowAddForm(true)}
-          style={{boxShadow:'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px'}}
+          style={{ boxShadow: 'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px' }}
         >
           Add Link
         </button>
       </div>
 
       {showAddForm && (
-        <LinkForm 
+        <LinkForm
           title="Add New Link"
           linkName={newLinkName}
           setLinkName={setNewLinkName}
@@ -142,18 +148,18 @@ export default function LinksPage() {
                 </td>
               </tr>
             ) : (
-              links.map((link, index) => (
+              currentItems.map((link, index) => (
                 <tr key={link._id || index} className="hover:bg-gray-50 text-center">
-                  <td className="border px-4 py-2">{index + 1}</td>
+                  <td className="border px-4 py-2">{indexOfFirstItem + index + 1}</td>
                   <td className="border px-4 py-2">
                     <button
                       onClick={() => window.open(link.secure_url, "_blank")}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-3 px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded mx-auto"
-                      style={{boxShadow:'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px'}}
+                      style={{ boxShadow: 'inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px' }}
                     >
-                     <FaLink /> {link.title}
+                      <FaLink /> {link.title}
                     </button>
                   </td>
                   <td className="border px-4 py-2 ">
@@ -161,7 +167,7 @@ export default function LinksPage() {
                       onClick={() => handleDelete(link._id)}
                       className="flex items-center gap-3 px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded mx-auto"
                       style={{
-                        boxShadow:"inset 2px 2px 2px #ad2929, inset -2px -2px 3px #ff8e8e"
+                        boxShadow: "inset 2px 2px 2px #ad2929, inset -2px -2px 3px #ff8e8e"
                       }}
                     >
                       <MdDelete />Delete
@@ -172,6 +178,12 @@ export default function LinksPage() {
             )}
           </tbody>
         </table>
+        <Pagination
+          usersPerPage={itemsPerPage}
+          totalUsers={links.length}
+          paginate={paginate}
+          currentPage={currentPage}
+        />
       </div>
     </div>
   );
