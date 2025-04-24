@@ -32,6 +32,10 @@ const DownloadProfile = ({ formData, onClose }) => {
             <span className="font-medium text-gray-700 mr-3">Password:</span>
             <span>{formData.password}</span>
           </div>
+          <div className="flex justify-between">
+            <span className="font-medium text-gray-700 mr-3">Center:</span>
+            <span>{formData.centerName}</span>
+          </div>
         </div>
         <div>
           <button

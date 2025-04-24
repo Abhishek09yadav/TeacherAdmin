@@ -1,8 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { axiosInstance } from "../../../../lib/axios";
 import { toast } from "react-toastify";
 import DownloadProfile from "@/components/DownloadProfile";
+import { getAllCenters } from "../../../../server/common";
 
 const FormComponent = () => {
   const [formData, setFormData] = useState({
@@ -12,19 +13,34 @@ const FormComponent = () => {
     aadhar: "",
     password: "",
     image: null,
+    centerName: "",
   });
 
   const [isProfileDownloadModalOpen, setIsProfileDownloadModalOpen] =
     useState(false);
   const [downloadData, setDownloadData] = useState(null);
-
   const [loading, setLoading] = useState(false);
+
+  const [centers, setCenters] = useState([]);
+
+  useEffect(() => {
+    try{
+      const fetchCenters = async () => {
+        const response = await getAllCenters();
+        setCenters(response);
+      };
+      fetchCenters();
+    }catch(error){
+      toast.error("Error fetching centers");
+    }
+    
+  }, []);
 
   const generatePassword = () => {
     const chars =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     let password = "";
-    const length = 8; // Ensuring password is always 8 characters
+    const length = 8;
     for (let i = 0; i < length; i++) {
       password += chars.charAt(Math.floor(Math.random() * chars.length));
     }
@@ -37,8 +53,6 @@ const FormComponent = () => {
     if (type === "file") {
       setFormData({ ...formData, [name]: files[0] });
     } else if (name === "generatePassword") {
-      // Check if the email is filled and valid before generating the password
-
       const newPassword = generatePassword();
       setFormData({ ...formData, password: newPassword });
     } else {
@@ -48,27 +62,24 @@ const FormComponent = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Validate all fields
     if (
       !formData.name ||
       !formData.phoneNumber ||
       !formData.email ||
       !formData.aadhar ||
       !formData.password ||
-      !formData.image
+      !formData.image ||
+      !formData.centerName
     ) {
       toast.warning("Enter all details carefully!");
       return;
     }
 
-    // Validate Aadhar
     if (!validateAadhar(formData.aadhar)) {
       toast.error("Please enter a valid 12-digit Aadhar number");
       return;
     }
 
-    // Validate Password
     if (!validatePassword(formData.password)) {
       toast.error("Password must be at least 6 characters long");
       return;
@@ -109,16 +120,12 @@ const FormComponent = () => {
       aadhar: "",
       password: "",
       image: null,
+      centerName: "",
     });
   };
 
-  const validateEmail = (email) => {
-    const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return regex.test(email);
-  };
-
   const validateAadhar = (aadhar) => {
-    const regex = /^\d{12}$/; // Exactly 12 digits
+    const regex = /^\d{12}$/;
     return regex.test(aadhar);
   };
 
@@ -195,7 +202,6 @@ const FormComponent = () => {
               name="aadhar"
               value={formData.aadhar}
               onChange={(e) => {
-                // Only allow digits
                 const value = e.target.value.replace(/\D/g, "");
                 if (value.length <= 12) {
                   setFormData({ ...formData, aadhar: value });
@@ -210,6 +216,29 @@ const FormComponent = () => {
                 Please enter 12 digits for Aadhar number
               </p>
             )}
+          </div>
+          <div>
+            <label
+              htmlFor="centerName"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Select Center
+            </label>
+            <select
+              id="centerName"
+              name="centerName"
+              value={formData.centerName || ""}
+              onChange={handleChange}
+              required
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 bg-white focus:ring focus:ring-blue-500"
+            >
+              <option value="">Select a center</option>
+              {centers.map((centerName) => (
+                <option key={centerName._id} value={centerName.name}>
+                  {centerName.name}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label
@@ -239,7 +268,6 @@ const FormComponent = () => {
               Generate Password
             </button>
           </div>
-
           <div>
             <label
               htmlFor="image"
@@ -256,6 +284,7 @@ const FormComponent = () => {
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-500"
             />
           </div>
+
           <div className="flex justify-around">
             <button
               type="submit"

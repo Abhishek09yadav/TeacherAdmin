@@ -4,7 +4,6 @@ import { axiosInstance } from "../lib/axios";
 export async function getAllCenters() {
   try {
     const response = await axiosInstance.get("center/centers");
-    console.log("response", response.data);
     return response.data;
   } catch (error) {
     console.log("Error fetching centers:", error);
