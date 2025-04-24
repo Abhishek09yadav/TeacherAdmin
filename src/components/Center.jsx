@@ -33,7 +33,8 @@ export default function Center() {
 const fetchCenters = async () => {
   try {
     const response = await getAllCenters();
-    setCenters(response || []);
+    // console.log("Fetched centers:", response.data);
+    setCenters(response.data || []);
   } catch (error) {
     toast.error("Error fetching centers. Please try again.");
   } finally {
@@ -217,7 +218,7 @@ const fetchCenters = async () => {
                 </td>
               </tr>
             ) : (
-              centers.map((center, index) => (
+              centers?.map((center, index) => (
                 <tr key={center._id} className="hover:bg-gray-50">
                   <td className="border px-4 py-2 text-center">{index + 1}</td>
                   <td className="border px-4 py-2 text-center">
