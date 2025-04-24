@@ -6,6 +6,9 @@ import { axiosInstance } from "../../../../lib/axios";
 import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
+import { getAllCenters, getAllUsers, updateUserCenter } from "../../../../server/common";
+import { CiEdit } from "react-icons/ci";
+import { IoMdSave } from "react-icons/io";
 
 const UserTable = () => {
   const [users, setUsers] = useState([]);
@@ -14,19 +17,44 @@ const UserTable = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [update, setUpdate] = useState(false);
   const [updateUser, setUpdateUser] = useState(null);
+  const [centers, setCenters] = useState([]);
+
   const fetchUsers = async () => {
     try {
-      const res = await axiosInstance.get("/auth/users");
-      console.log("Fetched users:", res);
-      setUsers(res.data);
-      setFilteredUsers(res.data);
+      const res = await getAllUsers(); // Await the promise
+
+      if (res && res.data && Array.isArray(res.data)) {
+        setUsers(res.data);
+        setFilteredUsers(res.data);
+      } else {
+        setUsers([]);
+        setFilteredUsers([]);
+      }
     } catch (error) {
       console.error("Failed to fetch users:", error);
+      setUsers([]);
+      setFilteredUsers([]);
     }
   };
+
   useEffect(() => {
     console.log("Fetching users...");
     fetchUsers();
+  }, []);
+
+  useEffect(() => {
+    async function fetchCenters() {
+      try {
+        const res = await getAllCenters();
+        setCenters(res && res.data ? res.data : []);
+        console.log("Fetched centers:", res.data);
+        
+      } catch (error) {
+        console.error("Error fetching centers:", error);
+        setCenters([]);
+      }
+    }
+    fetchCenters();
   }, []);
 
   const handleSearch = (e) => {
@@ -48,8 +76,10 @@ const UserTable = () => {
       name: user.name,
       email: user.email,
       aadhar: user.aadhar,
-      phoneNumber: user.phoneNumber
-    })
+      phoneNumber: user.phoneNumber,
+      centerName: user.centerName || "",
+    });
+    setUpdate(false); // Ensure edit mode is off by default
   };
 
   const handleDelete = async (id) => {
@@ -82,6 +112,18 @@ const UserTable = () => {
       ],
     });
   };
+
+  const handleUpdateCenter = (e) => {
+    console.log("Updating center for user:", selectedUser._id, selectedUser.centerName);
+    
+    try {
+    setUpdateUser({ ...updateUser, centerName: e.target.value })
+    updateUserCenter(selectedUser._id, selectedUser.centerName)
+    toast.success("Center updated!");
+    } catch (error) {
+      toast.error("Error updating center.");
+    }    
+  }
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-6 relative top-10 ">
@@ -150,11 +192,10 @@ const UserTable = () => {
       {selectedUser && (
         <div
           className={`transition-all duration-500 z-20 bg-white shadow-lg border rounded-lg p-6 fixed top-0 right-0 h-full overflow-auto 
-        ${
-          selectedUser
-            ? "w-full sm:w-[80%] md:w-[60%] lg:w-[55%]"
-            : "w-0 overflow-hidden"
-        }`}
+        ${selectedUser
+              ? "w-full sm:w-[80%] md:w-[60%] lg:w-[55%]"
+              : "w-0 overflow-hidden"
+            }`}
         >
           {/* Close Button */}
           <button
@@ -184,14 +225,14 @@ const UserTable = () => {
           {/* Info */}
           <div className="text-center space-y-3">
             <p className="text-2xl font-semibold text-gray-800">
-              {updateUser.name}
+              {updateUser.name || "Unable to fetch"}
             </p>
             <p className="text-base text-gray-600">
               <strong>Phone:</strong>
               <input
                 className="ms-2 border-b outline-none"
                 type="text"
-                value={updateUser.phoneNumber}
+                value={updateUser.phoneNumber || "Unable to fetch"}
                 onChange={(e) =>
                   update &&
                   setUpdateUser({ ...updateUser, phoneNumber: e.target.value })
@@ -219,31 +260,58 @@ const UserTable = () => {
               <input
                 className="ms-2 border-b outline-none"
                 type="text"
-                value={updateUser.email}
+                value={updateUser.email || "Unable to fetch"}
                 onChange={(e) =>
                   update &&
                   setUpdateUser({ ...updateUser, email: e.target.value })
                 }
               />
             </p>
+            <div className="flex items-center justify-center ml-12">
+              <p className="text-base text-gray-600 flex items-center">
+                <strong>Center:</strong>
+                <select
+                  className="ms-2 border-b outline-none bg-white"
+                  value={updateUser.pendingCenterName || updateUser.centerName || ""}
+                  disabled={!update}
+                  onChange={(e) =>
+                    update &&
+                    setUpdateUser({
+                      ...updateUser,
+                      pendingCenterName: e.target.value,
+                    })
+                  }
+                >
+                  <option value="">No center alloted</option>
+                  {Array.isArray(centers) &&
+                    centers.map((center) => (
+                      <option key={center._id} value={center.name}>
+                        {center.name}
+                      </option>
+                    ))}
+                </select>
+              </p>
+              {update ? (
+                <button
+                  className="hover:cursor-pointer bg-blue-600 p-1 rounded-lg ml-4"
+                  onClick={handleUpdateCenter}
+                  type="button"
+                >
+                  <IoMdSave className="text-white" size={25} />
+                </button>
+              ) : (
+                <button
+                  className="hover:cursor-pointer bg-green-600 p-1 rounded-lg ml-4"
+                  onClick={() => setUpdate(true)}
+                  type="button"
+                >
+                  <CiEdit className="text-white" size={25} />
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="flex justify-center flex-wrap gap-4 my-6">
-            {/* {!update ? (
-            <button
-              onClick={() => setUpdate(true)}
-              className="flex items-center gap-3 px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded"
-            >
-              Update
-            </button>
-          ) : (
-            <button
-              onClick={() => setUpdate(true)}
-              className="flex items-center gap-3 px-4 py-2 text-white bg-green-500 hover:bg-green-600 rounded"
-            >
-              Save
-            </button>
-          )} */}
             <button
               style={{
                 boxShadow:

@@ -4,7 +4,8 @@ import { axiosInstance } from "../lib/axios";
 export async function getAllCenters() {
   try {
     const response = await axiosInstance.get("center/centers");
-    return response.data;
+    console.log("response method called: ", response);
+    return response;
   } catch (error) {
     console.log("Error fetching centers:", error);
     throw error;
@@ -29,6 +30,8 @@ export async function addCenter(name, description) {
 export async function updateCenter(id,data) {
   try {
     const response = await axiosInstance.put(`center/center/${id}`,data);
+    console.log("response", response.data);
+    
     return response.data;
   } catch (error) {
     console.log("Error updating center:", error);
@@ -42,6 +45,31 @@ export async function deleteCenter(id) {
     return response.data;
   } catch (error) {
     console.log("Error updating center:", error);
+    throw error;
+  }
+}
+
+export async function getAllUsers(){
+  try {
+    const response = await axiosInstance.get("auth/users");
+    console.log("response", response.data);
+    
+    return response;
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    throw error;
+  }
+}
+
+export async function updateUserCenter(userId, centerName) {
+  console.log("userId", userId);
+  console.log("centerName", centerName); 
+  try {
+   
+    const response = await axiosInstance.put(`/auth/update-center`, {userId, centerName});
+    return response.data;
+  } catch (error) {
+    console.log("Error updating User center:", error);
     throw error;
   }
 }
