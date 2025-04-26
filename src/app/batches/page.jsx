@@ -53,8 +53,8 @@ export default function BatchesPage() {
   };
 
   const fetchBatches = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await axiosInstance.get("/class/classes");
       setBatches(response.data);
       setFilteredBatches(response.data);
@@ -227,7 +227,7 @@ export default function BatchesPage() {
             {loading ? (
               <tr>
                 <td colSpan="3" className="border px-4 py-2 text-center">
-                  Loading...
+                 <Loader size="25px" color="#3B82F6" />
                 </td>
               </tr>
             ) : filteredBatches.length === 0 ? (
@@ -289,7 +289,7 @@ const ActionButtons = ({ batch, handleDelete, handleEdit }) => {
         }}
       >
         <MdDelete />
-        Delete
+          Delete
       </button>
     </div>
   );

@@ -9,6 +9,7 @@ import { MdDelete } from "react-icons/md";
 import Pagination from "@/components/Pagination";
 import { FaSearch } from "react-icons/fa";
 import { useDebounce } from "@/hooks/useDebounce";
+import Loader from "@/components/Loader";
 
 export default function SubjectsPage() {
   const [subjects, setSubjects] = useState([]);
@@ -49,8 +50,8 @@ export default function SubjectsPage() {
   }, [toggleSubjects]);
 
   const fetchSubjects = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await axiosInstance.get("/subject/get-subjects");
       setSubjects(response.data);
       setFilteredSubjects(response.data);
@@ -234,7 +235,7 @@ export default function SubjectsPage() {
             {loading ? (
               <tr>
                 <td colSpan="3" className="border px-4 py-2 text-center">
-                  <span className="animate-pulse">Loading...</span>
+                  <span className="animate-pulse"><Loader size={30} color="#3B82F6" /></span>
                 </td>
               </tr>
             ) : filteredSubjects.length === 0 ? (

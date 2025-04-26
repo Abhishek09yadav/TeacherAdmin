@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import "./style.css";
+import Loader from "@/components/Loader";
 
 const BannerManager = () => {
   const [banners, setBanners] = useState([]);
@@ -18,8 +19,10 @@ const BannerManager = () => {
   const [bannerName, setBannerName] = useState("");
   const [bannerImage, setBannerImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     fetchBanners();
   }, []);
   const fetchBanners = () => {
@@ -29,13 +32,13 @@ const BannerManager = () => {
       .catch((err) => {
         console.error(err);
         toast.error("Failed to fetch banners!");
-      });
+      }).finally(() =>{
+        setLoading(false);
+      })
   };
 
   const handleSave = () => {
     setShowDialog(false);
-
-  
 
     confirmAlert({
       title: "Confirm to submit",
@@ -91,7 +94,6 @@ const BannerManager = () => {
           const updated = [...banners];
           updated.splice(index, 1);
           setBanners(updated);
-       
       })
       .catch((err) => {
         console.log("could not delete banner", err);
@@ -173,7 +175,7 @@ const BannerManager = () => {
       </div>
 
       <div className="flex justify-center items-center gap-5 flex-row flex-wrap">
-        {bannerGrid}
+        {loading ? <Loader size="50px" color="#3B82F6"/> : bannerGrid}
       </div>
 
       <Dialog

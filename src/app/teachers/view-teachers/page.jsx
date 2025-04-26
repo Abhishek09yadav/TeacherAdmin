@@ -10,6 +10,7 @@ import { getAllCenters, getAllUsers, updateUserCenter } from "../../../../server
 import { CiEdit } from "react-icons/ci";
 import { IoMdSave } from "react-icons/io";
 import Pagination from "@/components/Pagination";
+import Loader from "@/components/Loader";
 
 const UserTable = () => {
   const [users, setUsers] = useState([]);
@@ -21,8 +22,10 @@ const UserTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(10);
   const [centers, setCenters] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchUsers = async () => {
+    setLoading(true); // Set loading to true before fetching
     try {
       const res = await getAllUsers(); // Await the promise
 
@@ -37,6 +40,8 @@ const UserTable = () => {
       console.error("Failed to fetch users:", error);
       setUsers([]);
       setFilteredUsers([]);
+    } finally {
+      setLoading(false); // Set loading to false after fetching
     }
   };
 
@@ -98,6 +103,7 @@ const UserTable = () => {
         {
           label: 'Yes',
           onClick: async () => {
+            setLoading(true);
             try {
               if (selectedUser.role !== "admin") {
                 await axiosInstance.delete(`/auth/user/delete/${id}`);
@@ -110,6 +116,8 @@ const UserTable = () => {
             } catch (e) {
               console.log(e);
               toast.error("Error deleting user. Please try again.");
+            } finally{
+              setLoading(false);
             }
           },
         },
@@ -185,7 +193,13 @@ const UserTable = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-100">
-              {currentUsers.length > 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan="3" className="text-center py-6">
+                    <Loader size="40px" color="#3B82F6" />
+                  </td>
+                </tr>
+              ) : currentUsers.length > 0 ? (
                 currentUsers.map((user, index) => (
                   <tr key={index} className="hover:bg-gray-50 transition">
                     <td className="px-4 py-3 text-gray-700 text-center">{index + 1}</td>
@@ -209,7 +223,7 @@ const UserTable = () => {
               ) : (
                 <tr>
                   <td colSpan="3" className="text-center text-gray-500 py-6">
-                    Loading...
+                        {loading && <Loader size="25px" color="#fff" />}
                   </td>
                 </tr>
               )}
