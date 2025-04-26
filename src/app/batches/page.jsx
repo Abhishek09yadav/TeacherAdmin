@@ -9,6 +9,7 @@ import { MdDelete } from "react-icons/md";
 import Pagination from "@/components/Pagination";
 import { FaSearch } from "react-icons/fa";
 import { useDebounce } from "@/hooks/useDebounce";
+import Loader from "@/components/Loader";
 
 export default function BatchesPage() {
   const [batches, setBatches] = useState([]);
@@ -22,7 +23,7 @@ export default function BatchesPage() {
   const [filteredBatches, setFilteredBatches] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(7);
-
+  
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -302,6 +303,7 @@ const BatchForm = ({
   onSave,
   onCancel,
   submitLabel,
+  loading = false,
 }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50">

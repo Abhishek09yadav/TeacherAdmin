@@ -58,7 +58,7 @@ export default function Home() {
         chapter: item.chapterName,
         topic: item.topic,
       }));
-      setMessage(data.length === 0 ? "No data found" : "");
+      setMessage(data.length === 0 ? "No schedule found" : "");
       setTeachersData(data);
     } catch (err) {
       if (err.response && err.response.status === 404) {
@@ -149,7 +149,6 @@ export default function Home() {
       setLoading(false);
     }
   };
-
   return (
     <div className="px-4 sm:px-6 py-6 flex flex-col items-center justify-center">
       {/* Filter Section */}
@@ -304,7 +303,12 @@ export default function Home() {
       )} */}
 
       {/* Table Section */}
-      <TeachersTable data={teachersData} loading={loading} message={message} />
+      
+      
+      {teachersData.length == 0 ? (<>
+        <p className="text-2xl font-bold mt-5">{message}</p>
+        <img className="mx-auto" width={500} src="/404Error.svg" alt="No Data found" />
+      </>) : (<TeachersTable data={teachersData} loading={loading} message={message} />)}
 {/* old code */}
       {/* <div className="w-full max-w-7xl overflow-x-auto">
         <table className="min-w-[700px] sm:min-w-full table-fixed border border-gray-300 shadow-md rounded-lg text-sm text-center">

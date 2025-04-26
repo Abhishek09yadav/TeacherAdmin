@@ -38,7 +38,7 @@ export default function TeachersTable({ data, loading, message }) {
           ) : message ? (
             <tr>
               <td colSpan={8} className="p-4 text-gray-600 font-medium">
-                {message}
+              {message}
               </td>
             </tr>
           ) : (

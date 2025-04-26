@@ -3,23 +3,24 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { axiosInstance } from "../../lib/axios";
 import { useRouter } from "next/navigation";
+import Loader from "./Loader";
 
 const ResetPassword = ({ redirectToLogin}) => {
   const [aadhar, setAadhar] = useState("");
-
+  const [isLoading, setIsLoading] = useState(false);
   const [userDetails, setUserDetails] = useState("");
   const [phoneNumber, setphoneNumber] = useState("");
   const [verified, setVerified] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const router = useRouter();
+
   const handleVerify = async () => {
     if (!aadhar || !phoneNumber) return toast.info("Please fill all details");
 
+    setIsLoading(true);
     try {
       const res = await axiosInstance.post("/auth/reset-password", { aadhar, phoneNumber });
-
-      
         setVerified(true);
         console.log("Verify response:", res);
         setUserDetails(res.data.message);
@@ -28,6 +29,8 @@ const ResetPassword = ({ redirectToLogin}) => {
     
     } catch (err) {
       toast.error("Verification failed. Please check details.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -89,8 +92,9 @@ const ResetPassword = ({ redirectToLogin}) => {
           onClick={handleVerify}
           className="w-full bg-blue-600 text-white py-2 rounded-lg mb-6 hover:bg-blue-700 transition"
         >
-          Verify
+          {isLoading ? ( <Loader size="25px" color="#fff" />):"Verify"  }
         </button>
+      
 
         {verified && userDetails.name && (
           <p className="text-green-600 text-center mb-4 text-sm sm:text-base">
@@ -133,7 +137,7 @@ const ResetPassword = ({ redirectToLogin}) => {
               : "bg-gray-400 cursor-not-allowed"
           }`}
         >
-          Reset Password
+          {isLoading ? ( <Loader size="25px" color="#fff" />):"Reset Password"  }
         </button>
         
       { redirectToLogin === 'true' && (<div className="text-end mt-4">

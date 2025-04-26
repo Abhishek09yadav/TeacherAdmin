@@ -5,6 +5,11 @@
   --foreground: #171717;
 }
 
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
