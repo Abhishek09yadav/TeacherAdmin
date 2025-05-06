@@ -16,11 +16,11 @@ const PdfUploader = () => {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [selectedTopic, setSelectedTopic] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    // Simulate data fetch
     setClasses([
       { name: "Class 1", code: "C1" },
       { name: "Class 2", code: "C2" },
@@ -30,10 +30,7 @@ const PdfUploader = () => {
       { name: "Course B", code: "B" },
     ]);
     getAllSubjects()
-      .then((data) => {
-        setSubjects(data);
-        // console.log("Subjects fetched:", data);
-      })
+      .then((data) => setSubjects(data))
       .catch((err) => {
         toast.error("Failed to fetch subjects.");
         console.error(err);
@@ -47,7 +44,7 @@ const PdfUploader = () => {
   const allSelected =
     selectedClass && selectedCourse && selectedSubject && selectedTopic;
 
-  const handleButtonClick = () => {
+  const handleChooseFile = () => {
     if (!allSelected) {
       toast.warn("Please select all dropdown values first.");
       return;
@@ -55,7 +52,7 @@ const PdfUploader = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = async (e) => {
+  const handleFileChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -64,12 +61,17 @@ const PdfUploader = () => {
       return;
     }
 
+    setSelectedFile(file);
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile || !allSelected) return;
+
     const formData = new FormData();
-    formData.append("pdf", file);
+    formData.append("pdf", selectedFile);
     formData.append("class", selectedClass.code);
     formData.append("course", selectedCourse.code);
     formData.append("subject", selectedSubject._id);
-
     formData.append("topic", selectedTopic.code);
 
     try {
@@ -79,13 +81,15 @@ const PdfUploader = () => {
       });
 
       if (!res.ok) throw new Error("Upload failed");
-
       toast.success("PDF uploaded successfully!");
+      setSelectedFile(null);
     } catch (err) {
       console.error(err);
       toast.error("Failed to upload PDF.");
     }
   };
+
+  const removeFile = () => setSelectedFile(null);
 
   return (
     <div className="flex justify-center items-center">
@@ -131,13 +135,33 @@ const PdfUploader = () => {
           onChange={handleFileChange}
         />
 
-        <Button
-          label="Upload PDF"
-          icon={<FaUpload />}
-          disabled={!allSelected}
-          onClick={handleButtonClick}
-          className="w-full"
-        />
+        {!selectedFile ? (
+          <Button
+            label="Choose PDF"
+            icon="pi pi-file"
+            className="w-full"
+            onClick={handleChooseFile}
+            disabled={!allSelected}
+          />
+        ) : (
+          <div className="space-y-2">
+            <div className="flex justify-between items-center border p-2 rounded bg-gray-50">
+              <span className="text-sm truncate">{selectedFile.name}</span>
+              <Button
+                icon="pi pi-times"
+                className="p-button-text p-button-danger"
+                onClick={removeFile}
+                tooltip="Remove File"
+              />
+            </div>
+            <Button
+              label="Upload PDF"
+              icon={<FaUpload />}
+              className="w-full"
+              onClick={handleUpload}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
