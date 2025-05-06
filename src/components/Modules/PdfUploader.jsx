@@ -4,6 +4,7 @@ import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { FaUpload } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { getAllSubjects } from "../../../server/common";
 
 const PdfUploader = () => {
   const [classes, setClasses] = useState([]);
@@ -28,10 +29,15 @@ const PdfUploader = () => {
       { name: "Course A", code: "A" },
       { name: "Course B", code: "B" },
     ]);
-    setSubjects([
-      { name: "Math", code: "M" },
-      { name: "Science", code: "S" },
-    ]);
+    getAllSubjects()
+      .then((data) => {
+        setSubjects(data);
+        console.log("Subjects fetched:", data);
+      })
+      .catch((err) => {
+        toast.error("Failed to fetch subjects.");
+        console.error(err);
+      });
     setTopics([
       { name: "Algebra", code: "ALG" },
       { name: "Biology", code: "BIO" },
@@ -62,7 +68,8 @@ const PdfUploader = () => {
     formData.append("pdf", file);
     formData.append("class", selectedClass.code);
     formData.append("course", selectedCourse.code);
-    formData.append("subject", selectedSubject.code);
+    formData.append("subject", selectedSubject._id);
+
     formData.append("topic", selectedTopic.code);
 
     try {
@@ -103,7 +110,7 @@ const PdfUploader = () => {
           value={selectedSubject}
           onChange={(e) => setSelectedSubject(e.value)}
           options={subjects}
-          optionLabel="name"
+          optionLabel="subjectName"
           placeholder="Select Subject"
           className="w-full"
         />

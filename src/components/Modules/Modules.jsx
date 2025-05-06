@@ -10,14 +10,17 @@ const Modules = () => {
   return (
     <div>
       {/* Navbar */}
-      <div className="flex space-x-4 p-4 bg-gray-100 shadow">
+      <div className="flex space-x-4  text-sm   justify-center bg-blue-100 shadow">
         {tabs.map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded ${
-              activeTab === tab ? "bg-blue-500 text-white" : "bg-white"
-            }`}
+            className={` px-4 py-2 
+          rounded-md
+          transition-all duration-200
+          hover:bg-blue-200 ${
+            activeTab === tab ? "underline font-bold " : "text-gray-700"
+          }`}
           >
             {tab}
           </button>

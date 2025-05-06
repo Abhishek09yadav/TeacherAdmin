@@ -1,6 +1,18 @@
 
 import { axiosInstance } from "../lib/axios";
 
+// subject
+export async function getAllSubjects() {
+  try {
+    const response = await axiosInstance.get("/subject/get-subjects");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching subjects:", error);
+    throw error;
+  }
+}
+
+// Center related functions
 export async function getAllCenters() {
   try {
     const response = await axiosInstance.get("center/centers");
