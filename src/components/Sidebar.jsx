@@ -9,6 +9,8 @@ import { GrNotes } from "react-icons/gr";
 import { IoMenu } from "react-icons/io5";
 import { FaFilePdf, FaBuilding, FaLink } from "react-icons/fa6";
 import { IoMdPhotos } from "react-icons/io";
+import { MdViewModule } from "react-icons/md";
+
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -80,6 +82,12 @@ const Sidebar = () => {
       label: "Chapters",
       route: "/chapters",
       icon: <GrNotes />,
+    },
+    {
+      id: "modules",
+      label: "Modules",
+      route: "/modules",
+      icon: <MdViewModule />,
     },
     {
       id: "pdf",
