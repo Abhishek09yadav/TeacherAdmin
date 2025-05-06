@@ -19,7 +19,7 @@ const Modules = () => {
           rounded-md
           transition-all duration-200
           hover:bg-blue-200 ${
-            activeTab === tab ? "underline font-bold " : "text-gray-700"
+            activeTab === tab ? " font-bold " : "text-gray-700"
           }`}
           >
             {tab}

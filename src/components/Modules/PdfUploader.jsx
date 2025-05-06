@@ -32,7 +32,7 @@ const PdfUploader = () => {
     getAllSubjects()
       .then((data) => {
         setSubjects(data);
-        console.log("Subjects fetched:", data);
+        // console.log("Subjects fetched:", data);
       })
       .catch((err) => {
         toast.error("Failed to fetch subjects.");
