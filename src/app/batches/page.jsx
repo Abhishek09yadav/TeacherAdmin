@@ -7,6 +7,9 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import Pagination from "@/components/Pagination";
+import { FaSearch } from "react-icons/fa";
+import { useDebounce } from "@/hooks/useDebounce";
+import Loader from "@/components/Loader";
 
 export default function BatchesPage() {
   const [batches, setBatches] = useState([]);
@@ -16,26 +19,49 @@ export default function BatchesPage() {
   const [showEditForm, setShowEditForm] = useState(false);
   const [editBatchId, setEditBatchId] = useState(null);
   const [editBatchName, setEditBatchName] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredBatches, setFilteredBatches] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(7);
-
+  
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+  
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = batches.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredBatches.slice(indexOfFirstItem, indexOfLastItem);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // for fetching batches
   useEffect(() => {
     fetchBatches();
   }, []);
 
+  // for debouncing the search term
+  useEffect(() => {
+    if (debouncedSearchTerm !== undefined) {
+      const filtered = batches.filter((batch) =>
+        batch.className.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+      );
+      setFilteredBatches(filtered);
+      setCurrentPage(1);
+    }
+  }, [debouncedSearchTerm, batches]);
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
   const fetchBatches = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await axiosInstance.get("/class/classes");
       setBatches(response.data);
+      setFilteredBatches(response.data);
       setCurrentPage(1); 
     } catch (error) {
       console.error("Error fetching batches:", error);
+      toast.error("Error fetching batches");
     } finally {
       setLoading(false);
     }
@@ -171,6 +197,22 @@ export default function BatchesPage() {
         />
       )}
 
+      {/* Search Bar */}
+      <div className="mb-6 flex items-center justify-center">
+        <div className="relative w-full sm:w-3/4 md:w-1/2">
+          <input
+            type="text"
+            placeholder="Search batches..."
+            value={searchTerm}
+            onChange={handleSearch}
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <span className="absolute right-3 top-2.5 text-gray-400">
+            <FaSearch />
+          </span>
+        </div>
+      </div>
+
       {/* Batch Table */}
       <div className="overflow-x-scroll lg:overflow-x-auto lg:w-lg mx-auto">
         <table className="min-w-full bg-white border border-gray-300">
@@ -185,13 +227,13 @@ export default function BatchesPage() {
             {loading ? (
               <tr>
                 <td colSpan="3" className="border px-4 py-2 text-center">
-                  Loading...
+                 <Loader size="25px" color="#3B82F6" />
                 </td>
               </tr>
-            ) : batches.length === 0 ? (
+            ) : filteredBatches.length === 0 ? (
               <tr>
                 <td colSpan="3" className="border px-4 py-2 text-center">
-                  No batches found
+                  {searchTerm ? "No matching batches found" : "No batches found"}
                 </td>
               </tr>
             ) : (
@@ -216,7 +258,7 @@ export default function BatchesPage() {
         </table>
         <Pagination 
           usersPerPage={itemsPerPage}
-          totalUsers={batches.length}
+          totalUsers={filteredBatches.length}
           paginate={paginate}
           currentPage={currentPage}
         />
@@ -247,7 +289,7 @@ const ActionButtons = ({ batch, handleDelete, handleEdit }) => {
         }}
       >
         <MdDelete />
-        Delete
+          Delete
       </button>
     </div>
   );
@@ -261,6 +303,7 @@ const BatchForm = ({
   onSave,
   onCancel,
   submitLabel,
+  loading = false,
 }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50">

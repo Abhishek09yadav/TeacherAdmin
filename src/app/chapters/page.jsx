@@ -11,6 +11,7 @@ import { FaRegTrashAlt } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { Dialog } from "primereact/dialog";
 import './chapter.css';
+import Loader from "@/components/Loader";
 
 export default function ChaptersPage() {
   const [subjects, setSubjects] = useState({});
@@ -18,9 +19,11 @@ export default function ChaptersPage() {
   const [selectedSubject, setSelectedSubject] = useState("");
   const [chapterName, setChapterName] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const [searchTerm, setSearchTerm] = useState("");
+  
   // Fetch subjects and chapters
   const fetchSubjects = () => {
+    setLoading(true);
     axiosInstance
       .get("/subject/get-subjects")
       .then((response) => {
@@ -39,7 +42,10 @@ export default function ChaptersPage() {
 
         setSubjects(formattedSubjects);
       })
-      .catch((error) => console.error("Error fetching subjects:", error));
+      .catch((error) => console.error("Error fetching subjects:", error))
+      .finally(() => {
+        setLoading(false);
+      })
   };
 
   useEffect(() => {
@@ -117,39 +123,79 @@ export default function ChaptersPage() {
   };
 
   return (
-    <div className="p-2 sm:p-4 flex flex-col items-center w-full min-h-screen bg-transparent">
+    <div className="p-2 sm:p-4 flex flex-col items-center w-full min-h-[90vhs] bg-transparent">
       <div
-        className="w-full max-w-full md:max-w-2xl lg:max-w-3xl bg-white shadow-md rounded-md relative"
+        className="w-full max-w-full md:max-w-2xl lg:max-w-3xl bg-white shadow-md rounded-md relative p-4"
         style={{ marginTop: "1rem" }}
       >
-        <TabView className="no-wrap" scrollable>
-          {Object.keys(subjects).map((subjectName) => {
-            const { subjectId, chapters } = subjects[subjectName];
-            return (
-              <TabPanel key={subjectId} header={subjectName}>
-                <div className="overflow-x-auto">
-                  <DataTable
-                    value={chapters}
-                    paginator
-                    rows={5}
-                    className="min-w-[300px] sm:min-w-[400px]"
-                    responsiveLayout="scroll"
-                  >
-                    <Column field="chapter" header="Chapter" />
-                    <Column
-                      body={(rowData) =>
-                        deleteChapterButton(rowData, { rowData: { subjectName } })
-                      }
-                      header="Actions"
-                      headerClassName="text-center"
-                      bodyClassName="text-center"
-                    />
-                  </DataTable>
-                </div>
-              </TabPanel>
-            );
-          })}
-        </TabView>
+        {loading ? (
+          <div className="flex justify-center items-center h-[300px]">
+          <Loader size="40px" color="#3B82F6" />
+        </div>
+        ) : (
+          <>
+          {/* Search Input */}
+          <div className="w-full mb-4">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search subjects..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value.toLowerCase())}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          {/* TabView Component */}
+          <TabView className="no-wrap" scrollable>
+            {Object.keys(subjects)
+              .sort((a, b) => {
+                // First sort by search match
+                const aIncludes = a.toLowerCase().includes(searchTerm);
+                const bIncludes = b.toLowerCase().includes(searchTerm);
+                if (aIncludes && !bIncludes) return -1;
+                if (!aIncludes && bIncludes) return 1;
+                // Then alphabetically
+                return a.localeCompare(b);
+              })
+              .filter(subjectName => 
+                searchTerm ? subjectName.toLowerCase().includes(searchTerm) : true
+              )
+              .map((subjectName) => {
+                const { subjectId, chapters } = subjects[subjectName];
+                return (
+                  <TabPanel key={subjectId} header={subjectName}>
+                    <div className="overflow-x-auto">
+                      <DataTable
+                        value={chapters}
+                        paginator
+                        rows={5}
+                        className="min-w-[300px] sm:min-w-[400px]"
+                        responsiveLayout="scroll"
+                      >
+                        <Column field="chapter" header="Chapter" />
+                        <Column
+                          body={(rowData) =>
+                            deleteChapterButton(rowData, { rowData: { subjectName } })
+                          }
+                          header="Actions"
+                          headerClassName="text-center"
+                          bodyClassName="text-center"
+                        />
+                      </DataTable>
+                    </div>
+                  </TabPanel>
+                );
+              })}
+          </TabView>
+          </>
+        )}
       </div>
 
       {/* Floating Action Button */}

@@ -297,7 +297,6 @@ const FormComponent = () => {
             >
               {loading ? (
                 <div className="flex items-center justify-center flex-nowrap mx-auto">
-                  <span>Loading... </span>
                   <div className=" animate-spin border-t-2 border-white w-4 h-4 rounded-full"></div>
                 </div>
               ) : (

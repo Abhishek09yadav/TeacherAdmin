@@ -7,6 +7,9 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import Pagination from "@/components/Pagination";
+import { FaSearch } from "react-icons/fa";
+import { useDebounce } from "@/hooks/useDebounce";
+import Loader from "@/components/Loader";
 
 export default function SubjectsPage() {
   const [subjects, setSubjects] = useState([]);
@@ -19,20 +22,39 @@ export default function SubjectsPage() {
   const [editSubjectName, setEditSubjectName] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(7);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredSubjects, setFilteredSubjects] = useState([]);
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = subjects.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredSubjects.slice(indexOfFirstItem, indexOfLastItem);
+
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  useEffect(() => {
+    if (debouncedSearchTerm !== undefined) {
+      const filtered = subjects.filter((subject) => subject.subjectName.toLowerCase().includes(debouncedSearchTerm.toLowerCase()));
+      setFilteredSubjects(filtered);
+      setCurrentPage(1);
+    }
+  }, [subjects, debouncedSearchTerm]);
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  // for fetching subjects
   useEffect(() => {
     fetchSubjects();
   }, [toggleSubjects]);
 
   const fetchSubjects = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await axiosInstance.get("/subject/get-subjects");
       setSubjects(response.data);
+      setFilteredSubjects(response.data);
       setCurrentPage(1);
     } catch (error) {
       console.error(
@@ -102,11 +124,11 @@ export default function SubjectsPage() {
         }
       );
 
-    
-        toast.success("Subject updated successfully!");
-        setToggleSubjects((prev) => !prev);
-        setShowEditForm(false);
-    
+
+      toast.success("Subject updated successfully!");
+      setToggleSubjects((prev) => !prev);
+      setShowEditForm(false);
+
     } catch (error) {
       console.error("Error updating subject:", error);
       toast.error("Error updating subject. Please try again.");
@@ -127,10 +149,10 @@ export default function SubjectsPage() {
               const response = await axiosInstance.delete(
                 `/subject/delete-subject?subjectId=${id}`
               );
-        
-                toast.success("Subject deleted successfully!");
-                fetchSubjects();
-              
+
+              toast.success("Subject deleted successfully!");
+              fetchSubjects();
+
             } catch (error) {
               console.error("Error deleting subject:", error);
               toast.error("Error deleting subject. Please try again.");
@@ -184,6 +206,21 @@ export default function SubjectsPage() {
           onCancel={() => setShowEditForm(false)}
         />
       )}
+      {/* Search bar */}
+      <div className="mb-6 flex items-center justify-center">
+        <div className="relative w-full sm:w-3/4 md:w-1/2">
+          <input
+            type="text"
+            placeholder="Search subjects..."
+            value={searchTerm}
+            onChange={handleSearch}
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <span className="absolute right-3 top-2.5 text-gray-400">
+            <FaSearch />
+          </span>
+        </div>
+      </div>
 
       <div className="overflow-x-scroll lg:overflow-x-auto lg:w-lg mx-auto">
         <table className="min-w-full bg-white border border-gray-300">
@@ -198,13 +235,13 @@ export default function SubjectsPage() {
             {loading ? (
               <tr>
                 <td colSpan="3" className="border px-4 py-2 text-center">
-                  <span className="animate-pulse">Loading...</span>
+                  <span className="animate-pulse"><Loader size={30} color="#3B82F6" /></span>
                 </td>
               </tr>
-            ) : subjects.length === 0 ? (
+            ) : filteredSubjects.length === 0 ? (
               <tr>
                 <td colSpan="3" className="border px-4 py-2 text-center">
-                  No subjects found
+                {searchTerm ? "No matching subjects found" : "No subjects found"}
                 </td>
               </tr>
             ) : (
@@ -228,7 +265,7 @@ export default function SubjectsPage() {
         </table>
         <Pagination
           usersPerPage={itemsPerPage}
-          totalUsers={subjects.length}
+          totalUsers={filteredSubjects.length}
           paginate={paginate}
           currentPage={currentPage}
         />

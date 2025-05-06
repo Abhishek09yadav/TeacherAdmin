@@ -13,6 +13,7 @@ import {
   updateCenter,
 } from "../../server/common";
 import Pagination from "./Pagination";
+import Loader from "./Loader";
 
 export default function Center() {
   const [centers, setCenters] = useState([]);
@@ -38,6 +39,7 @@ export default function Center() {
   }, [toggleCenters]);
 
   const fetchCenters = async () => {
+    setLoading(true);
     try {
       const response = await getAllCenters();
       // console.log("Fetched centers:", response.data);
@@ -215,7 +217,7 @@ export default function Center() {
             {loading ? (
               <tr>
                 <td colSpan="4" className="border px-4 py-2 text-center">
-                  <span className="animate-pulse">Loading...</span>
+                  <span className="animate-pulse"><Loader size={50} color={"#3B82F6"} /></span>
                 </td>
               </tr>
             ) : centers.length === 0 ? (
@@ -248,10 +250,10 @@ export default function Center() {
                             center.description
                           )
                         }
-                        className="flex items-center gap-1 px-2 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded text-xs"
+                        className="flex items-center gap-1 px-2 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded text-md"
                         title="Edit"
                       >
-                        Edit <FaEdit size={16} />
+                        <FaEdit size={16} className="mr-1"/>Edit 
                       </button>
                       <button
                         style={{
@@ -259,10 +261,10 @@ export default function Center() {
                             "inset 2px 2px 2px #ad2929, inset -2px -2px 3px #ff8e8e",
                         }}
                         onClick={() => handleDelete(center._id)}
-                        className="flex items-center gap-1 px-2 py-2 text-white bg-red-500 hover:bg-red-600 rounded text-xs"
+                        className="flex items-center gap-1 px-2 py-2 text-white bg-red-500 hover:bg-red-600 rounded text-md"
                         title="Delete"
                       >
-                        Delete <MdDelete size={16} />
+                        <MdDelete size={16} /> Delete 
                       </button>
                     </div>
                   </td>
