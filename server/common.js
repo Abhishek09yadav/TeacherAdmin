@@ -2,15 +2,15 @@
 import { axiosInstance } from "../lib/axios";
 
 // subject
-export async function getAllSubjects() {
-  try {
-    const response = await axiosInstance.get("/subject/get-subjects");
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching subjects:", error);
-    throw error;
-  }
-}
+// export async function getAllSubjects() {
+//   try {
+//     const response = await axiosInstance.get("/subject/get-subjects");
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching subjects:", error);
+//     throw error;
+//   }
+// }
 
 // Center related functions
 export async function getAllCenters() {
@@ -81,6 +81,47 @@ export async function updateUserCenter(object) {
     return response.data;
   } catch (error) {
     console.log("Error updating User center:", error);
+    throw error;
+  }
+}
+
+// modules related functions
+export async function getAllSubjects() {
+  try {
+    const response = await axiosInstance.get("/module/get-subjects");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Subjects:", error);
+    throw error;
+  }
+}
+
+export async function getAllClasses() {
+  try {
+    const response = await axiosInstance.get("/module/get-classess");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching classes:", error);
+    throw error;
+  }
+}
+export async function getAllCourses() {
+  try {
+    const response = await axiosInstance.get("/module/get-courses");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching classes:", error);
+    throw error;
+  }
+}
+
+
+export async function getAllTopics() {
+  try {
+    const response = await axiosInstance.get("/module/get-topics");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Topics:", error);
     throw error;
   }
 }

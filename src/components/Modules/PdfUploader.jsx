@@ -4,7 +4,12 @@ import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { FaUpload } from "react-icons/fa";
 import { toast } from "react-toastify";
-import { getAllSubjects } from "../../../server/common";
+import {
+  getAllClasses,
+  getAllCourses,
+  getAllSubjects,
+  getAllTopics,
+} from "../../../server/common";
 
 const PdfUploader = () => {
   const [classes, setClasses] = useState([]);
@@ -21,24 +26,41 @@ const PdfUploader = () => {
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    setClasses([
-      { name: "Class 1", code: "C1" },
-      { name: "Class 2", code: "C2" },
-    ]);
-    setCourses([
-      { name: "Course A", code: "A" },
-      { name: "Course B", code: "B" },
-    ]);
     getAllSubjects()
       .then((data) => setSubjects(data))
       .catch((err) => {
         toast.error("Failed to fetch subjects.");
         console.error(err);
       });
-    setTopics([
-      { name: "Algebra", code: "ALG" },
-      { name: "Biology", code: "BIO" },
-    ]);
+    // Fetch classes from the server
+    getAllClasses()
+      .then((data) => {
+        setClasses(data);
+        console.log("Classes data: ", data);
+      })
+      .catch((err) => {
+        toast.error("Failed to fetch classes.");
+        console.log(err);
+      });
+
+    getAllCourses()
+      .then((data) => {
+        setCourses(data);
+        console.log("Courses data: ", data);
+      })
+      .catch((err) => {
+        toast.error("Failed to fetch courses");
+        console.log(err);
+      });
+    getAllTopics()
+      .then((data) => {
+        setTopics(data);
+        console.log("Topics data: ", data);
+      })
+      .catch((err) => {
+        toast.error("Failed to fetch Topics");
+        console.log(err);
+      });
   }, []);
 
   const allSelected =
@@ -98,7 +120,7 @@ const PdfUploader = () => {
           value={selectedClass}
           onChange={(e) => setSelectedClass(e.value)}
           options={classes}
-          optionLabel="name"
+          optionLabel="className"
           placeholder="Select Class"
           className="w-full"
         />
@@ -106,7 +128,7 @@ const PdfUploader = () => {
           value={selectedCourse}
           onChange={(e) => setSelectedCourse(e.value)}
           options={courses}
-          optionLabel="name"
+          optionLabel="courseName"
           placeholder="Select Course"
           className="w-full"
         />
@@ -122,7 +144,7 @@ const PdfUploader = () => {
           value={selectedTopic}
           onChange={(e) => setSelectedTopic(e.value)}
           options={topics}
-          optionLabel="name"
+          optionLabel="subjectTopic"
           placeholder="Select Topic"
           className="w-full"
         />
