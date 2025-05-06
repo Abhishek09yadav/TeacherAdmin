@@ -1,4 +1,5 @@
-import Modules from '@/components/Modules';
+
+import Modules from '@/components/Modules/Modules';
 import React from 'react'
 
 const page = () => {
