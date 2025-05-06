@@ -5,6 +5,7 @@ import { Button } from "primereact/button";
 import { FaUpload } from "react-icons/fa";
 import { toast } from "react-toastify";
 import {
+  addModulePdf,
   getAllClasses,
   getAllCourses,
   getAllSubjects,
@@ -90,25 +91,19 @@ const PdfUploader = () => {
     if (!selectedFile || !allSelected) return;
 
     const formData = new FormData();
+    formData.append("className", selectedClass.className);
+    formData.append("subjectName", selectedSubject.subjectName);
+    formData.append("courseName", selectedCourse.courseName);
+    formData.append("topic", selectedTopic.subjectTopic);
     formData.append("pdf", selectedFile);
-    formData.append("class", selectedClass.code);
-    formData.append("course", selectedCourse.code);
-    formData.append("subject", selectedSubject._id);
-    formData.append("topic", selectedTopic.code);
 
-    try {
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!res.ok) throw new Error("Upload failed");
-      toast.success("PDF uploaded successfully!");
-      setSelectedFile(null);
-    } catch (err) {
-      console.error(err);
+   addModulePdf(formData).then((data) => {console.log("upload res data: ", data)
+    toast.success("PDF uploaded successfully.");
+    setSelectedFile(null);
+   }).catch((err) => {
+      // console.error("Error uploading PDF:", err);
       toast.error("Failed to upload PDF.");
-    }
+    });
   };
 
   const removeFile = () => setSelectedFile(null);

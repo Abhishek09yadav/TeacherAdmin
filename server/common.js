@@ -1,4 +1,3 @@
-
 import { axiosInstance } from "../lib/axios";
 
 // subject
@@ -27,11 +26,10 @@ export async function addCenter(name, description) {
   try {
     // console.log("name", name);
     // console.log("description", description);
-    const response = await axiosInstance.post(
-      "center/add-Center",
-     { name,
-      description}
-    );
+    const response = await axiosInstance.post("center/add-Center", {
+      name,
+      description,
+    });
     return response.data;
   } catch (error) {
     console.log("Error adding center:", error);
@@ -39,11 +37,11 @@ export async function addCenter(name, description) {
   }
 }
 
-export async function updateCenter(id,data) {
+export async function updateCenter(id, data) {
   try {
-    const response = await axiosInstance.put(`center/center/${id}`,data);
+    const response = await axiosInstance.put(`center/center/${id}`, data);
     console.log("response", response.data);
-    
+
     return response.data;
   } catch (error) {
     console.log("Error updating center:", error);
@@ -61,11 +59,11 @@ export async function deleteCenter(id) {
   }
 }
 
-export async function getAllUsers(){
+export async function getAllUsers() {
   try {
     const response = await axiosInstance.get("auth/users");
     console.log("response", response.data);
-    
+
     return response;
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -74,7 +72,6 @@ export async function getAllUsers(){
 }
 
 export async function updateUserCenter(object) {
- 
   try {
     const response = await axiosInstance.put(`/auth/update-center`, object);
     // console.log({userId, centerName});
@@ -85,7 +82,9 @@ export async function updateUserCenter(object) {
   }
 }
 
-// modules related functions
+// modules
+
+// all module get methods
 export async function getAllSubjects() {
   try {
     const response = await axiosInstance.get("/module/get-subjects");
@@ -115,13 +114,26 @@ export async function getAllCourses() {
   }
 }
 
-
 export async function getAllTopics() {
   try {
     const response = await axiosInstance.get("/module/get-topics");
     return response.data;
   } catch (error) {
     console.error("Error fetching Topics:", error);
+    throw error;
+  }
+}
+// all module post methods
+
+export async function addModulePdf(formdata) {
+  try {
+    const response = await axiosInstance.post(
+      "/module/add-module-pdf",
+      formdata
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error Uploading Pdf:", error);
     throw error;
   }
 }
