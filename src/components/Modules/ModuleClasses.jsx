@@ -1,345 +1,315 @@
 "use client";
-import { useState, useEffect } from "react";
-
+import React, { useEffect, useRef, useState } from "react";
+import { Dropdown } from "primereact/dropdown";
+import { Button } from "primereact/button";
+import { Dialog } from "primereact/dialog";
+import { FaUpload } from "react-icons/fa";
 import { toast } from "react-toastify";
-import { confirmAlert } from "react-confirm-alert";
-import "react-confirm-alert/src/react-confirm-alert.css";
-import { FaEdit } from "react-icons/fa";
-import { MdDelete } from "react-icons/md";
-import Pagination from "@/components/Pagination";
-import { FaSearch } from "react-icons/fa";
-import { useDebounce } from "@/hooks/useDebounce";
-import Loader from "@/components/Loader";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
 import {
-  getAllModuleSubjects,
-  addSubject,
-  updateSubject,
-  deleteSubject,
+  addModulePdf,
+  getAllClasses,
+  getModuleClassByName,
 } from "../../../server/common";
 
-export default function ModuleClasses() {
+const ModuleClasses = () => {
+  const [showModal, setShowModal] = useState(false);
+  const [classes, setClasses] = useState([]);
+  const [courses, setCourses] = useState([]);
   const [subjects, setSubjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [toggleSubjects, setToggleSubjects] = useState(false);
-  const [newSubjectName, setNewSubjectName] = useState("");
-  const [showEditForm, setShowEditForm] = useState(false);
-  const [editSubjectId, setEditSubjectId] = useState(null);
-  const [editSubjectName, setEditSubjectName] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(7);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredSubjects, setFilteredSubjects] = useState([]);
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = Array.isArray(filteredSubjects)
-    ? filteredSubjects.slice(indexOfFirstItem, indexOfLastItem)
-    : [];
+  const [topics, setTopics] = useState([]);
+  const [moduleData, setModuleData] = useState([]);
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const [selectedClass, setSelectedClass] = useState(null);
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [selectedSubject, setSelectedSubject] = useState(null);
+  const [selectedTopic, setSelectedTopic] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
-    if (debouncedSearchTerm !== undefined) {
-      const filtered = subjects.filter((subject) =>
-        subject.subjectName
-          .toLowerCase()
-          .includes(debouncedSearchTerm.toLowerCase())
-      );
-      setFilteredSubjects(filtered);
-      setCurrentPage(1);
-    }
-  }, [subjects, debouncedSearchTerm]);
+    getAllClasses()
+      .then((data) => setClasses(data))
+      .catch((err) => {
+        toast.error("Failed to fetch classes.");
+        console.error(err);
+      });
+  }, []);
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
+  const handleClassChange = async (selected) => {
+    setSelectedClass(selected);
+    setSelectedCourse(null);
+    setSelectedSubject(null);
+    setSelectedTopic(null);
+    setCourses([]);
+    setSubjects([]);
+    setTopics([]);
+    setModuleData([]);
 
-  // for fetching subjects
-  useEffect(() => {
-    fetchSubjects();
-  }, [toggleSubjects]);
-
-  const fetchSubjects = async () => {
-    setLoading(true);
-    try {
-      const data = await getAllModuleSubjects();
-      const validData = Array.isArray(data) ? data : [];
-      setSubjects(validData);
-      setFilteredSubjects(validData);
-      setCurrentPage(1);
-    } catch (error) {
-      console.error(
-        "Error fetching subjects:",
-        error.response?.data || error.message
-      );
-      toast.error("Failed to load subjects. Please try again.");
-    } finally {
-      setLoading(false);
+    if (selected) {
+      try {
+        const data = await getModuleClassByName(selected.className);
+        const courseList = data[0]?.courses || [];
+        setModuleData(courseList);
+        setCourses(courseList);
+      } catch (err) {
+        toast.error("Failed to fetch module data.");
+        console.error(err);
+      }
     }
   };
 
-  const handleAddSubject = async (e) => {
-    e.preventDefault();
-    if (!newSubjectName.trim()) return;
-
-    confirmAlert({
-      title: "Confirm Submission",
-      message: "Are you sure you want to add this subject?",
-      buttons: [
-        {
-          label: "Yes",
-          onClick: async () => {
-            try {
-              await addSubject(newSubjectName);
-              toast.success("Subject added successfully!");
-              setNewSubjectName("");
-              setToggleSubjects((prev) => !prev);
-              setShowAddForm(false);
-            } catch (error) {
-              console.error("Error adding subject:", error);
-              toast.error("Error adding subject. Please try again.");
-            }
-          },
-        },
-        {
-          label: "No",
-          onClick: () => toast.info("Subject addition cancelled!"),
-        },
-      ],
-    });
+  const handleCourseChange = (selected) => {
+    setSelectedCourse(selected);
+    setSelectedSubject(null);
+    setSelectedTopic(null);
+    const subjectList = selected?.subjects || [];
+    setSubjects(subjectList);
+    setTopics([]);
   };
 
-  const openEditPopup = (id, currentName) => {
-    setEditSubjectId(id);
-    setEditSubjectName(currentName);
-    setShowEditForm(true);
+  const handleSubjectChange = (selected) => {
+    setSelectedSubject(selected);
+    setSelectedTopic(null);
+    const topicList = selected?.topics || [];
+    setTopics(topicList);
   };
 
-  const handleEdit = async (id, newName) => {
-    if (!newName || newName.trim() === "") {
-      toast.warning("Subject name cannot be empty.");
+  const allSelected =
+    selectedClass && selectedCourse && selectedSubject && selectedTopic;
+
+  const handleChooseFile = () => {
+    if (!allSelected) {
+      toast.warn("Please select all dropdown values first.");
       return;
     }
-
-    try {
-      await updateSubject(id, newName);
-      toast.success("Subject updated successfully!");
-      setToggleSubjects((prev) => !prev);
-      setShowEditForm(false);
-    } catch (error) {
-      console.error("Error updating subject:", error);
-      toast.error("Error updating subject. Please try again.");
-    }
+    fileInputRef.current?.click();
   };
 
-  const handleDelete = (id) => {
-    console.log("wefewswr " + id);
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.type !== "application/pdf") {
+      toast.error("Only PDF files are allowed.");
+      return;
+    }
+    setSelectedFile(file);
+  };
 
-    confirmAlert({
-      title: "Confirm Deletion",
-      message: "Are you sure you want to delete this subject?",
-      buttons: [
-        {
-          label: "Yes",
-          onClick: async () => {
-            try {
-              await deleteSubject(id);
-              toast.success("Subject deleted successfully!");
-              fetchSubjects();
-            } catch (error) {
-              console.error("Error deleting subject:", error);
-              toast.error("Error deleting subject. Please try again.");
-            }
-          },
-        },
-        { label: "No" },
-      ],
-    });
+  const handleUpload = async () => {
+    if (!selectedFile || !allSelected) return;
+
+    const formData = new FormData();
+    formData.append("topicId", selectedTopic._id);
+    formData.append("pdf", selectedFile);
+
+    addModulePdf(formData)
+      .then(() => {
+        toast.success("PDF uploaded successfully.");
+        setSelectedFile(null);
+        setShowModal(false);
+      })
+      .catch((err) => {
+        toast.error("Failed to upload PDF.");
+        console.error(err);
+      });
+  };
+
+  const removeFile = () => setSelectedFile(null);
+
+  // Flatten and filter data for table
+  const getFlatData = () => {
+    const result = [];
+
+    for (const course of moduleData) {
+      if (selectedCourse && course.courseName !== selectedCourse.courseName)
+        continue;
+
+      for (const subject of course.subjects || []) {
+        if (
+          selectedSubject &&
+          subject.subjectName !== selectedSubject.subjectName
+        )
+          continue;
+
+        for (const topic of subject.topics || []) {
+          result.push({
+            className: selectedClass?.className || "",
+            courseName: course.courseName,
+            subjectName: subject.subjectName,
+            topicName: topic.subjectTopic,
+            pdfs: topic.pdfs,
+          });
+        }
+      }
+    }
+    return result;
+  };
+
+  const pdfViewTemplate = (rowData) => {
+    const pdfOptions =
+      rowData.pdfs?.map((pdf, index) => ({
+        label: `View PDF ${index + 1}`,
+        value: `${process.env.NEXT_PUBLIC_PDF_URL}/${pdf.pdf}`,
+      })) || [];
+
+    return (
+      <div className="space-x-2">
+        {rowData.pdfs?.length > 0 ? (
+          <Dropdown
+            options={pdfOptions}
+            onChange={(e) => window.open(e.value, "_blank")}
+            placeholder="Select a PDF"
+            className="w-full"
+          />
+        ) : (
+          <span className="text-gray-400">No PDFs</span>
+        )}
+      </div>
+    );
   };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-end m-5">
+    <div className="relative">
+      {/* Add Class Button */}
+      <div className="m-4 text-right">
         <button
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-          onClick={() => setShowAddForm(true)}
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          onClick={() => setShowModal(true)}
           style={{
             boxShadow:
               "inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px",
           }}
         >
-          Add Subject
+          Add Class
         </button>
       </div>
 
-      {showAddForm && (
-        <SubjectForm
-          title="Add New Subject"
-          subjectName={newSubjectName}
-          setSubjectName={setNewSubjectName}
-          onSave={handleAddSubject}
-          submitLabel="Add"
-          onCancel={() => {
-            setShowAddForm(false);
-            setNewSubjectName("");
-          }}
-        />
-      )}
-
-      {showEditForm && (
-        <SubjectForm
-          title="Edit Subject"
-          subjectName={editSubjectName}
-          setSubjectName={setEditSubjectName}
-          submitLabel="Update"
-          onSave={(e) => {
-            e.preventDefault();
-            handleEdit(editSubjectId, editSubjectName);
-          }}
-          onCancel={() => setShowEditForm(false)}
-        />
-      )}
-      {/* Search bar */}
-      <div className="mb-6 flex items-center justify-center">
-        <div className="relative w-full sm:w-3/4 md:w-1/2">
-          <input
-            type="text"
-            placeholder="Search subjects..."
-            value={searchTerm}
-            onChange={handleSearch}
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+      {/* Modal */}
+      <Dialog
+        header="Upload Module PDF"
+        visible={showModal}
+        style={{ width: "60vw" }}
+        onHide={() => setShowModal(false)}
+        modal
+        className="p-fluid"
+      >
+        <div className="space-y-4">
+          <Dropdown
+            value={selectedClass}
+            onChange={(e) => handleClassChange(e.value)}
+            options={classes}
+            optionLabel="className"
+            placeholder="Select Class"
           />
-          <span className="absolute right-3 top-2.5 text-gray-400">
-            <FaSearch />
-          </span>
+          <Dropdown
+            value={selectedCourse}
+            onChange={(e) => handleCourseChange(e.value)}
+            options={courses}
+            optionLabel="courseName"
+            placeholder="Select Course"
+            disabled={!selectedClass}
+          />
+          <Dropdown
+            value={selectedSubject}
+            onChange={(e) => handleSubjectChange(e.value)}
+            options={subjects}
+            optionLabel="subjectName"
+            placeholder="Select Subject"
+            disabled={!selectedCourse}
+          />
+          <Dropdown
+            value={selectedTopic}
+            onChange={(e) => setSelectedTopic(e.value)}
+            options={topics}
+            optionLabel="subjectTopic"
+            placeholder="Select Topic"
+            disabled={!selectedSubject}
+          />
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="application/pdf"
+            style={{ display: "none" }}
+            onChange={handleFileChange}
+          />
+
+          {!selectedFile ? (
+            <Button
+              label="Choose PDF"
+              icon="pi pi-file"
+              onClick={handleChooseFile}
+              disabled={!allSelected}
+            />
+          ) : (
+            <div className="space-y-2">
+              <div className="flex justify-between items-center border p-2 rounded bg-gray-50">
+                <span className="text-sm truncate">{selectedFile.name}</span>
+                <Button
+                  icon="pi pi-times"
+                  className="p-button-text p-button-danger"
+                  onClick={removeFile}
+                  tooltip="Remove File"
+                />
+              </div>
+              <Button
+                label="Upload PDF"
+                icon={<FaUpload />}
+                onClick={handleUpload}
+              />
+            </div>
+          )}
         </div>
-      </div>
+      </Dialog>
 
-      <div className="overflow-x-scroll lg:overflow-x-auto lg:w-lg mx-auto">
-        <table className="min-w-full bg-white border border-gray-300">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border px-4 py-2 text-center">S.No.</th>
-              <th className="border px-4 py-2 text-center">Subject Name</th>
-              <th className="border px-4 py-2 text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan="3" className="border px-4 py-2 text-center">
-                  <span className="animate-pulse">
-                    <Loader size={30} color="#3B82F6" />
-                  </span>
-                </td>
-              </tr>
-            ) : filteredSubjects.length === 0 ? (
-              <tr>
-                <td colSpan="3" className="border px-4 py-2 text-center">
-                  {searchTerm
-                    ? "No matching subjects found"
-                    : "No subjects found"}
-                </td>
-              </tr>
-            ) : (
-              currentItems.map((subject, index) => (
-                <tr key={subject._id} className="hover:bg-gray-50">
-                  <td className="border px-4 py-2 text-center">
-                    {indexOfFirstItem + index + 1}
-                  </td>
-                  <td className="border px-4 py-2 text-center">
-                    {subject.subjectName}
-                  </td>
-                  <td className="border px-4 py-2 text-center">
-                    <ActionButtons
-                      subject={subject}
-                      handleDelete={handleDelete}
-                      handleEdit={openEditPopup}
-                    />
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-        <Pagination
-          usersPerPage={itemsPerPage}
-          totalUsers={filteredSubjects.length}
-          paginate={paginate}
-          currentPage={currentPage}
-        />
-      </div>
-    </div>
-  );
-}
+      {/* Table Section */}
+      <div className="p-4">
+        <h2 className="text-lg font-semibold mb-3">Module Classes</h2>
 
-const ActionButtons = ({ subject, handleDelete, handleEdit }) => {
-  return (
-    <div className="flex space-x-4 justify-center">
-      <button
-        style={{
-          boxShadow:
-            "inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px",
-        }}
-        onClick={() => handleEdit(subject._id, subject.subjectName)}
-        className="flex items-center gap-3 px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded"
-      >
-        <FaEdit />
-        Edit
-      </button>
-      <button
-        style={{
-          boxShadow: "inset 2px 2px 2px #ad2929, inset -2px -2px 3px #ff8e8e",
-        }}
-        onClick={() => handleDelete(subject._id)}
-        className="flex items-center gap-3 px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded"
-      >
-        <MdDelete />
-        Delete
-      </button>
-    </div>
-  );
-};
-
-const SubjectForm = ({
-  title,
-  subjectName,
-  setSubjectName,
-  onSave,
-  onCancel,
-  submitLabel,
-}) => {
-  return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50">
-      <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-lg">
-        <h2 className="text-lg font-semibold mb-4">{title}</h2>
-        <form onSubmit={onSave} className="space-y-4">
-          <input
-            type="text"
-            value={subjectName}
-            onChange={(e) => setSubjectName(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter subject name"
-            required
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+          <Dropdown
+            value={selectedClass}
+            onChange={(e) => handleClassChange(e.value)}
+            options={classes}
+            optionLabel="className"
+            placeholder="Filter by Class"
           />
-          <div className="flex justify-center space-x-10">
-            <button
-              type="submit"
-              className="bg-green-500 hover:bg-green-600 text-white px-8 py-2 rounded"
-            >
-              {submitLabel}
-            </button>
-            <button
-              type="button"
-              onClick={onCancel}
-              className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-2 rounded"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
+          <Dropdown
+            value={selectedCourse}
+            onChange={(e) => handleCourseChange(e.value)}
+            options={courses}
+            optionLabel="courseName"
+            placeholder="Filter by Course"
+            disabled={!selectedClass}
+          />
+          <Dropdown
+            value={selectedSubject}
+            onChange={(e) => handleSubjectChange(e.value)}
+            options={subjects}
+            optionLabel="subjectName"
+            placeholder="Filter by Subject"
+            disabled={!selectedCourse}
+          />
+        </div>
+
+        <DataTable
+          value={getFlatData()}
+          paginator
+          rows={10}
+          className="shadow rounded"
+        >
+          <Column field="className" header="Class" />
+          <Column field="courseName" header="Course" />
+          <Column field="subjectName" header="Subject" />
+          <Column field="topicName" header="Topic" />
+          <Column body={pdfViewTemplate} header="PDFs" />
+        </DataTable>
       </div>
     </div>
   );
 };
+
+export default ModuleClasses;

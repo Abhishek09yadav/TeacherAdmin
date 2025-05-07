@@ -34,7 +34,6 @@ export async function updateSubject(id, subjectName) {
   }
 }
 
-
 export async function deleteSubject(id) {
   try {
     const response = await axiosInstance.delete(
@@ -178,6 +177,17 @@ export async function addModulePdf(formdata) {
     const response = await axiosInstance.post(
       "/module/add-module-pdf",
       formdata
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error Uploading Pdf:", error);
+    throw error;
+  }
+}
+export async function addModulePdfClass(className) {
+  try {
+    const response = await axiosInstance.post(
+      `/module/add-module-class/${className}`
     );
     return response.data;
   } catch (error) {
