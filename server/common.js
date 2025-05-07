@@ -208,4 +208,15 @@ export async function addModulePdfCourse(courseName, className) {
     throw error;
   }
 }
+export async function addModuleSubject(subjectName, courseName) {
+  try {
+    const response = await axiosInstance.post(
+      `/module/add-module-course/${subjectName}/${courseName}`
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error Adding Subject:", error);
+    throw error;
+  }
+}
 
