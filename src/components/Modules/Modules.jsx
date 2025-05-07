@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import PdfUploader from "./PdfUploader";
 import ModuleSubject from "./ModuleSubject";
+import ModuleClasses from "./ModuleClasses";
 const Modules = () => {
   const [activeTab, setActiveTab] = useState("Classes");
 
@@ -32,6 +33,7 @@ const Modules = () => {
 
       {/* Conditional Content */}
       {activeTab === "Upload PDF" && <PdfUploader />}
+      {activeTab === "Classes" && <ModuleClasses />}
       {activeTab === "Subject" && <ModuleSubject />}
     </div>
   );
