@@ -7,10 +7,7 @@ import { toast } from "react-toastify";
 import {
   addModulePdf,
   getAllClasses,
-  getAllCourses,
-  getAllModuleSubjects,
-
-  getAllTopics,
+  getModuleClassByName,
 } from "../../../server/common";
 
 const PdfUploader = () => {
@@ -28,13 +25,6 @@ const PdfUploader = () => {
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    getAllModuleSubjects()
-      .then((data) => setSubjects(data))
-      .catch((err) => {
-        toast.error("Failed to fetch subjects.");
-        console.error(err);
-      });
-    // Fetch classes from the server
     getAllClasses()
       .then((data) => {
         setClasses(data);
@@ -42,28 +32,44 @@ const PdfUploader = () => {
       })
       .catch((err) => {
         toast.error("Failed to fetch classes.");
-        console.log(err);
-      });
-
-    getAllCourses()
-      .then((data) => {
-        setCourses(data);
-        console.log("Courses data: ", data);
-      })
-      .catch((err) => {
-        toast.error("Failed to fetch courses");
-        console.log(err);
-      });
-    getAllTopics()
-      .then((data) => {
-        setTopics(data);
-        console.log("Topics data: ", data);
-      })
-      .catch((err) => {
-        toast.error("Failed to fetch Topics");
-        console.log(err);
+        console.error(err);
       });
   }, []);
+
+  const handleClassChange = async (selected) => {
+    setSelectedClass(selected);
+    setSelectedCourse(null);
+    setSelectedSubject(null);
+    setSelectedTopic(null);
+    setCourses([]);
+    setSubjects([]);
+    setTopics([]);
+
+    try {
+      const [classData] = await getModuleClassByName(selected.className);
+      const courseList = classData.courses || [];
+      setCourses(courseList);
+    } catch (err) {
+      toast.error("Failed to load data for selected class.");
+      console.error(err);
+    }
+  };
+
+  const handleCourseChange = (selected) => {
+    setSelectedCourse(selected);
+    setSelectedSubject(null);
+    setSelectedTopic(null);
+    const subjectList = selected.subjects || [];
+    setSubjects(subjectList);
+    setTopics([]);
+  };
+
+  const handleSubjectChange = (selected) => {
+    setSelectedSubject(selected);
+    setSelectedTopic(null);
+    const topicList = selected.topics || [];
+    setTopics(topicList);
+  };
 
   const allSelected =
     selectedClass && selectedCourse && selectedSubject && selectedTopic;
@@ -79,12 +85,10 @@ const PdfUploader = () => {
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     if (file.type !== "application/pdf") {
       toast.error("Only PDF files are allowed.");
       return;
     }
-
     setSelectedFile(file);
   };
 
@@ -92,21 +96,20 @@ const PdfUploader = () => {
     if (!selectedFile || !allSelected) return;
 
     const formData = new FormData();
-    formData.append("className", selectedClass.className);
-    formData.append("subjectName", selectedSubject.subjectName);
-    formData.append("courseName", selectedCourse.courseName);
-    formData.append("topic", selectedTopic.subjectTopic);
+    // formData.append("className", selectedClass.className);
+    // formData.append("subjectName", selectedSubject.subjectName);
+    // formData.append("courseName", selectedCourse.courseName);
+    formData.append("topicId", selectedTopic._id);
     formData.append("pdf", selectedFile);
 
     addModulePdf(formData)
       .then((data) => {
-        console.log("upload res data: ", data);
         toast.success("PDF uploaded successfully.");
         setSelectedFile(null);
       })
       .catch((err) => {
-        // console.error("Error uploading PDF:", err);
         toast.error("Failed to upload PDF.");
+        console.error(err);
       });
   };
 
@@ -117,7 +120,7 @@ const PdfUploader = () => {
       <div className="w-full max-w-md p-6 shadow-lg rounded-lg bg-white space-y-5">
         <Dropdown
           value={selectedClass}
-          onChange={(e) => setSelectedClass(e.value)}
+          onChange={(e) => handleClassChange(e.value)}
           options={classes}
           optionLabel="className"
           placeholder="Select Class"
@@ -125,19 +128,21 @@ const PdfUploader = () => {
         />
         <Dropdown
           value={selectedCourse}
-          onChange={(e) => setSelectedCourse(e.value)}
+          onChange={(e) => handleCourseChange(e.value)}
           options={courses}
           optionLabel="courseName"
           placeholder="Select Course"
           className="w-full"
+          disabled={!selectedClass}
         />
         <Dropdown
           value={selectedSubject}
-          onChange={(e) => setSelectedSubject(e.value)}
+          onChange={(e) => handleSubjectChange(e.value)}
           options={subjects}
           optionLabel="subjectName"
           placeholder="Select Subject"
           className="w-full"
+          disabled={!selectedCourse}
         />
         <Dropdown
           value={selectedTopic}
@@ -146,6 +151,7 @@ const PdfUploader = () => {
           optionLabel="subjectTopic"
           placeholder="Select Topic"
           className="w-full"
+          disabled={!selectedSubject}
         />
 
         <input

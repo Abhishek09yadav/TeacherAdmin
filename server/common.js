@@ -121,6 +121,18 @@ export async function updateUserCenter(object) {
 // modules
 
 // all module get methods
+
+export async function getModuleClassByName(className) {
+  try {
+    const response = await axiosInstance.get(
+      `/module/get-module-class-by-name/${className}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Module Class:", error);
+    throw error;
+  }
+}
 export async function getAllModuleSubjects() {
   try {
     const response = await axiosInstance.get("/module/get-subjects");
