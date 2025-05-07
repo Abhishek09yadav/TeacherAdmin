@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import PdfUploader from "./PdfUploader";
 import ModuleSubject from "./ModuleSubject";
 import ModuleClasses from "./ModuleClasses";
+import ModuleCourses from "./ModuleCourses";
 const Modules = () => {
   const [activeTab, setActiveTab] = useState("Classes");
 
@@ -35,6 +36,7 @@ const Modules = () => {
       {activeTab === "Upload PDF" && <PdfUploader />}
       {activeTab === "Classes" && <ModuleClasses />}
       {activeTab === "Subject" && <ModuleSubject />}
+      {activeTab === "Courses" && <ModuleCourses />}
     </div>
   );
 };

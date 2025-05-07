@@ -191,10 +191,9 @@ const PdfUploader = () => {
       <Dialog
         header="Upload Module PDF"
         visible={showModal}
-        style={{ width: "60vw" }}
         onHide={() => setShowModal(false)}
         modal
-        className="p-fluid"
+        className="p-fluid w-full md:w-1/2 p-4 md:p-0"
       >
         <div className="space-y-4">
           <Dropdown

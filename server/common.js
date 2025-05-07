@@ -170,7 +170,6 @@ export async function getAllTopics() {
     throw error;
   }
 }
-// all module post methods
 
 export async function addModulePdf(formdata) {
   try {
@@ -197,3 +196,16 @@ export async function addModulePdfClass(className) {
     throw error;
   }
 }
+// for adding course
+export async function addModulePdfCourse(courseName, className) {
+  try {
+    const response = await axiosInstance.post(
+      `/module/add-module-course/${courseName}/${className}`
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error Adding course:", error);
+    throw error;
+  }
+}
+
