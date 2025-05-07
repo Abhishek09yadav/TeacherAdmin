@@ -28,7 +28,7 @@ const Modules = () => {
       </div>
 
       {/* Title */}
-      <h1 className="text-2xl font-bold text-center mt-5">{activeTab}</h1>
+      {/* <h1 className="text-2xl font-bold text-center mt-5">{activeTab}</h1> */}
 
       {/* Conditional Content */}
       {activeTab === "Upload PDF" && <PdfUploader />}

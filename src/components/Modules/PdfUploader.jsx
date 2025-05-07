@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
+import { Dialog } from "primereact/dialog";
 import { FaUpload } from "react-icons/fa";
 import { toast } from "react-toastify";
 import {
@@ -11,6 +12,7 @@ import {
 } from "../../../server/common";
 
 const PdfUploader = () => {
+  const [showModal, setShowModal] = useState(false);
   const [classes, setClasses] = useState([]);
   const [courses, setCourses] = useState([]);
   const [subjects, setSubjects] = useState([]);
@@ -26,10 +28,7 @@ const PdfUploader = () => {
 
   useEffect(() => {
     getAllClasses()
-      .then((data) => {
-        setClasses(data);
-        console.log("Classes data: ", data);
-      })
+      .then((data) => setClasses(data))
       .catch((err) => {
         toast.error("Failed to fetch classes.");
         console.error(err);
@@ -96,16 +95,14 @@ const PdfUploader = () => {
     if (!selectedFile || !allSelected) return;
 
     const formData = new FormData();
-    // formData.append("className", selectedClass.className);
-    // formData.append("subjectName", selectedSubject.subjectName);
-    // formData.append("courseName", selectedCourse.courseName);
     formData.append("topicId", selectedTopic._id);
     formData.append("pdf", selectedFile);
 
     addModulePdf(formData)
-      .then((data) => {
+      .then(() => {
         toast.success("PDF uploaded successfully.");
         setSelectedFile(null);
+        setShowModal(false);
       })
       .catch((err) => {
         toast.error("Failed to upload PDF.");
@@ -116,80 +113,106 @@ const PdfUploader = () => {
   const removeFile = () => setSelectedFile(null);
 
   return (
-    <div className="flex justify-center items-center">
-      <div className="w-full max-w-md p-6 shadow-lg rounded-lg bg-white space-y-5">
-        <Dropdown
-          value={selectedClass}
-          onChange={(e) => handleClassChange(e.value)}
-          options={classes}
-          optionLabel="className"
-          placeholder="Select Class"
-          className="w-full"
+    <div className="relative">
+      {/* Top-right Button */}
+      {/* <div className="absolute top-4 right-4">
+        <Button
+          // icon={<FaUpload />}
+          label="Add PDF"
+          className="p-button-sm"
+          onClick={() => setShowModal(true)}
         />
-        <Dropdown
-          value={selectedCourse}
-          onChange={(e) => handleCourseChange(e.value)}
-          options={courses}
-          optionLabel="courseName"
-          placeholder="Select Course"
-          className="w-full"
-          disabled={!selectedClass}
-        />
-        <Dropdown
-          value={selectedSubject}
-          onChange={(e) => handleSubjectChange(e.value)}
-          options={subjects}
-          optionLabel="subjectName"
-          placeholder="Select Subject"
-          className="w-full"
-          disabled={!selectedCourse}
-        />
-        <Dropdown
-          value={selectedTopic}
-          onChange={(e) => setSelectedTopic(e.value)}
-          options={topics}
-          optionLabel="subjectTopic"
-          placeholder="Select Topic"
-          className="w-full"
-          disabled={!selectedSubject}
-        />
-
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="application/pdf"
-          style={{ display: "none" }}
-          onChange={handleFileChange}
-        />
-
-        {!selectedFile ? (
-          <Button
-            label="Choose PDF"
-            icon="pi pi-file"
-            className="w-full"
-            onClick={handleChooseFile}
-            disabled={!allSelected}
+      </div> */}
+      {/* Add PDF Button */}
+      <div className="m-4  text-right">
+        <button
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          onClick={() => setShowModal(true)}
+          style={{
+            boxShadow:
+              "inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px",
+          }}
+        >
+          Add PDF
+        </button>
+      </div>
+      {/* Modal */}
+      <Dialog
+        header="Upload Module PDF"
+        visible={showModal}
+        style={{ width: "60vw" }}
+        onHide={() => setShowModal(false)}
+        modal
+        className="p-fluid"
+      >
+        <div className="space-y-4">
+          <Dropdown
+            value={selectedClass}
+            onChange={(e) => handleClassChange(e.value)}
+            options={classes}
+            optionLabel="className"
+            placeholder="Select Class"
           />
-        ) : (
-          <div className="space-y-2">
-            <div className="flex justify-between items-center border p-2 rounded bg-gray-50">
-              <span className="text-sm truncate">{selectedFile.name}</span>
+          <Dropdown
+            value={selectedCourse}
+            onChange={(e) => handleCourseChange(e.value)}
+            options={courses}
+            optionLabel="courseName"
+            placeholder="Select Course"
+            disabled={!selectedClass}
+          />
+          <Dropdown
+            value={selectedSubject}
+            onChange={(e) => handleSubjectChange(e.value)}
+            options={subjects}
+            optionLabel="subjectName"
+            placeholder="Select Subject"
+            disabled={!selectedCourse}
+          />
+          <Dropdown
+            value={selectedTopic}
+            onChange={(e) => setSelectedTopic(e.value)}
+            options={topics}
+            optionLabel="subjectTopic"
+            placeholder="Select Topic"
+            disabled={!selectedSubject}
+          />
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="application/pdf"
+            style={{ display: "none" }}
+            onChange={handleFileChange}
+          />
+
+          {!selectedFile ? (
+            <Button
+              label="Choose PDF"
+              icon="pi pi-file"
+              onClick={handleChooseFile}
+              disabled={!allSelected}
+            />
+          ) : (
+            <div className="space-y-2">
+              <div className="flex justify-between items-center border p-2 rounded bg-gray-50">
+                <span className="text-sm truncate">{selectedFile.name}</span>
+                <Button
+                  icon="pi pi-times"
+                  className="p-button-text p-button-danger"
+                  onClick={removeFile}
+                  tooltip="Remove File"
+                />
+              </div>
               <Button
-                icon="pi pi-times"
-                className="p-button-text p-button-danger"
-                onClick={removeFile}
-                tooltip="Remove File"
+                label="Upload PDF"
+                icon={<FaUpload />}
+                onClick={handleUpload}
               />
             </div>
-            <Button
-              label="Upload PDF"
-              icon={<FaUpload />}
-              className="w-full"
-              onClick={handleUpload}
-            />
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </Dialog>
     </div>
   );
 };
