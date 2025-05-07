@@ -38,18 +38,6 @@ const PdfUploader = () => {
       });
   }, []);
 
-  useEffect(() => {
-    if (!selectedClass) return;
-    getModuleClassByName(selectedClass.className)
-      .then((data) => {
-        setModuleData(data[0]?.courses || []);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch module data:", err);
-        toast.error("Failed to fetch module data.");
-      });
-  }, [selectedClass]);
-
   const handleClassChange = async (selected) => {
     setSelectedClass(selected);
     setSelectedCourse(null);
@@ -58,13 +46,26 @@ const PdfUploader = () => {
     setCourses([]);
     setSubjects([]);
     setTopics([]);
+    setModuleData([]);
+
+    if (selected) {
+      try {
+        const data = await getModuleClassByName(selected.className);
+        const courseList = data[0]?.courses || [];
+        setModuleData(courseList);
+        setCourses(courseList);
+      } catch (err) {
+        toast.error("Failed to fetch module data.");
+        console.error(err);
+      }
+    }
   };
 
   const handleCourseChange = (selected) => {
     setSelectedCourse(selected);
     setSelectedSubject(null);
     setSelectedTopic(null);
-    const subjectList = selected.subjects || [];
+    const subjectList = selected?.subjects || [];
     setSubjects(subjectList);
     setTopics([]);
   };
@@ -72,7 +73,7 @@ const PdfUploader = () => {
   const handleSubjectChange = (selected) => {
     setSelectedSubject(selected);
     setSelectedTopic(null);
-    const topicList = selected.topics || [];
+    const topicList = selected?.topics || [];
     setTopics(topicList);
   };
 
@@ -118,11 +119,21 @@ const PdfUploader = () => {
 
   const removeFile = () => setSelectedFile(null);
 
-  // Flatten and map data for display
+  // Flatten and filter data for table
   const getFlatData = () => {
     const result = [];
+
     for (const course of moduleData) {
+      if (selectedCourse && course.courseName !== selectedCourse.courseName)
+        continue;
+
       for (const subject of course.subjects || []) {
+        if (
+          selectedSubject &&
+          subject.subjectName !== selectedSubject.subjectName
+        )
+          continue;
+
         for (const topic of subject.topics || []) {
           result.push({
             className: selectedClass?.className || "",
@@ -137,7 +148,6 @@ const PdfUploader = () => {
     return result;
   };
 
-  // PDF view button column template
   const pdfViewTemplate = (rowData) => {
     const pdfOptions =
       rowData.pdfs?.map((pdf, index) => ({
@@ -267,7 +277,7 @@ const PdfUploader = () => {
             optionLabel="className"
             placeholder="Filter by Class"
           />
-          {/* <Dropdown
+          <Dropdown
             value={selectedCourse}
             onChange={(e) => handleCourseChange(e.value)}
             options={courses}
@@ -282,7 +292,7 @@ const PdfUploader = () => {
             optionLabel="subjectName"
             placeholder="Filter by Subject"
             disabled={!selectedCourse}
-          /> */}
+          />
         </div>
 
         <DataTable
