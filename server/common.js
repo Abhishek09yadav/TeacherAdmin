@@ -184,6 +184,8 @@ export async function addModulePdf(formdata) {
     throw error;
   }
 }
+
+// for adding class
 export async function addModulePdfClass(className) {
   try {
     const response = await axiosInstance.post(
@@ -191,7 +193,7 @@ export async function addModulePdfClass(className) {
     );
     return response.data;
   } catch (error) {
-    console.log("Error Uploading Pdf:", error);
+    console.log("Error Adding class:", error);
     throw error;
   }
 }
