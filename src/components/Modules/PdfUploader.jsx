@@ -5,6 +5,8 @@ import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { FaUpload } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
 import {
   addModulePdf,
   getAllClasses,
@@ -17,6 +19,7 @@ const PdfUploader = () => {
   const [courses, setCourses] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [topics, setTopics] = useState([]);
+  const [moduleData, setModuleData] = useState([]);
 
   const [selectedClass, setSelectedClass] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState(null);
@@ -35,6 +38,18 @@ const PdfUploader = () => {
       });
   }, []);
 
+  useEffect(() => {
+    if (!selectedClass) return;
+    getModuleClassByName(selectedClass.className)
+      .then((data) => {
+        setModuleData(data[0]?.courses || []);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch module data:", err);
+        toast.error("Failed to fetch module data.");
+      });
+  }, [selectedClass]);
+
   const handleClassChange = async (selected) => {
     setSelectedClass(selected);
     setSelectedCourse(null);
@@ -43,15 +58,6 @@ const PdfUploader = () => {
     setCourses([]);
     setSubjects([]);
     setTopics([]);
-
-    try {
-      const [classData] = await getModuleClassByName(selected.className);
-      const courseList = classData.courses || [];
-      setCourses(courseList);
-    } catch (err) {
-      toast.error("Failed to load data for selected class.");
-      console.error(err);
-    }
   };
 
   const handleCourseChange = (selected) => {
@@ -112,19 +118,53 @@ const PdfUploader = () => {
 
   const removeFile = () => setSelectedFile(null);
 
+  // Flatten and map data for display
+  const getFlatData = () => {
+    const result = [];
+    for (const course of moduleData) {
+      for (const subject of course.subjects || []) {
+        for (const topic of subject.topics || []) {
+          result.push({
+            className: selectedClass?.className || "",
+            courseName: course.courseName,
+            subjectName: subject.subjectName,
+            topicName: topic.subjectTopic,
+            pdfs: topic.pdfs,
+          });
+        }
+      }
+    }
+    return result;
+  };
+
+  // PDF view button column template
+  const pdfViewTemplate = (rowData) => {
+    const pdfOptions =
+      rowData.pdfs?.map((pdf, index) => ({
+        label: `View PDF ${index + 1}`,
+        value: `${process.env.NEXT_PUBLIC_PDF_URL}/${pdf.pdf}`,
+      })) || [];
+
+    return (
+      <div className="space-x-2">
+        {rowData.pdfs?.length > 0 ? (
+          <Dropdown
+            options={pdfOptions}
+            onChange={(e) => window.open(e.value, "_blank")}
+            placeholder="Select a PDF"
+            className="w-full"
+          />
+        ) : (
+          <span className="text-gray-400">No PDFs</span>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="relative">
-      {/* Top-right Button */}
-      {/* <div className="absolute top-4 right-4">
-        <Button
-          // icon={<FaUpload />}
-          label="Add PDF"
-          className="p-button-sm"
-          onClick={() => setShowModal(true)}
-        />
-      </div> */}
       {/* Add PDF Button */}
-      <div className="m-4  text-right">
+      <div className="m-4 text-right">
         <button
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           onClick={() => setShowModal(true)}
@@ -136,6 +176,7 @@ const PdfUploader = () => {
           Add PDF
         </button>
       </div>
+
       {/* Modal */}
       <Dialog
         header="Upload Module PDF"
@@ -213,6 +254,50 @@ const PdfUploader = () => {
           )}
         </div>
       </Dialog>
+
+      {/* Table Section */}
+      <div className="p-4">
+        <h2 className="text-lg font-semibold mb-3">Module PDFs</h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+          <Dropdown
+            value={selectedClass}
+            onChange={(e) => handleClassChange(e.value)}
+            options={classes}
+            optionLabel="className"
+            placeholder="Filter by Class"
+          />
+          {/* <Dropdown
+            value={selectedCourse}
+            onChange={(e) => handleCourseChange(e.value)}
+            options={courses}
+            optionLabel="courseName"
+            placeholder="Filter by Course"
+            disabled={!selectedClass}
+          />
+          <Dropdown
+            value={selectedSubject}
+            onChange={(e) => handleSubjectChange(e.value)}
+            options={subjects}
+            optionLabel="subjectName"
+            placeholder="Filter by Subject"
+            disabled={!selectedCourse}
+          /> */}
+        </div>
+
+        <DataTable
+          value={getFlatData()}
+          paginator
+          rows={10}
+          className="shadow rounded"
+        >
+          <Column field="className" header="Class" />
+          <Column field="courseName" header="Course" />
+          <Column field="subjectName" header="Subject" />
+          <Column field="topicName" header="Topic" />
+          <Column body={pdfViewTemplate} header="PDFs" />
+        </DataTable>
+      </div>
     </div>
   );
 };
