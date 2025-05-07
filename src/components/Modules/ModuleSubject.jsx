@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { axiosInstance } from "../../../lib/axios";
+
 import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
@@ -10,10 +10,16 @@ import Pagination from "@/components/Pagination";
 import { FaSearch } from "react-icons/fa";
 import { useDebounce } from "@/hooks/useDebounce";
 import Loader from "@/components/Loader";
+import {
+  getAllModuleSubjects,
+  addSubject,
+  updateSubject,
+  deleteSubject,
+} from "../../../server/common";
 
-export default function SubjectsPage() {
+export default function ModuleSubject() {
   const [subjects, setSubjects] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   const [toggleSubjects, setToggleSubjects] = useState(false);
   const [newSubjectName, setNewSubjectName] = useState("");
@@ -27,10 +33,9 @@ export default function SubjectsPage() {
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredSubjects.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
+  const currentItems = Array.isArray(filteredSubjects)
+    ? filteredSubjects.slice(indexOfFirstItem, indexOfLastItem)
+    : [];
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -56,21 +61,22 @@ export default function SubjectsPage() {
   }, [toggleSubjects]);
 
   const fetchSubjects = async () => {
-    // setLoading(true);
-    // try {
-    //   const response = await axiosInstance.get("/subject/get-subjects");
-    //   setSubjects(response.data);
-    //   setFilteredSubjects(response.data);
-    //   setCurrentPage(1);
-    // } catch (error) {
-    //   console.error(
-    //     "Error fetching subjects:",
-    //     error.response?.data || error.message
-    //   );
-    //   toast.error("Failed to load subjects. Please try again.");
-    // } finally {
-    //   setLoading(false);
-    // }
+    setLoading(true);
+    try {
+      const data = await getAllModuleSubjects();
+      const validData = Array.isArray(data) ? data : [];
+      setSubjects(validData);
+      setFilteredSubjects(validData);
+      setCurrentPage(1);
+    } catch (error) {
+      console.error(
+        "Error fetching subjects:",
+        error.response?.data || error.message
+      );
+      toast.error("Failed to load subjects. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleAddSubject = async (e) => {
@@ -85,13 +91,7 @@ export default function SubjectsPage() {
           label: "Yes",
           onClick: async () => {
             try {
-              const response = await axiosInstance.post(
-                "/subject/add-subject",
-                {
-                  subjectName: newSubjectName,
-                }
-              );
-
+              await addSubject(newSubjectName);
               toast.success("Subject added successfully!");
               setNewSubjectName("");
               setToggleSubjects((prev) => !prev);
@@ -123,13 +123,7 @@ export default function SubjectsPage() {
     }
 
     try {
-      const response = await axiosInstance.put(
-        `/subject/update-subject/${id}`,
-        {
-          subjectName: newName,
-        }
-      );
-
+      await updateSubject(id, newName);
       toast.success("Subject updated successfully!");
       setToggleSubjects((prev) => !prev);
       setShowEditForm(false);
@@ -150,10 +144,7 @@ export default function SubjectsPage() {
           label: "Yes",
           onClick: async () => {
             try {
-              const response = await axiosInstance.delete(
-                `/subject/delete-subject?subjectId=${id}`
-              );
-
+              await deleteSubject(id);
               toast.success("Subject deleted successfully!");
               fetchSubjects();
             } catch (error) {

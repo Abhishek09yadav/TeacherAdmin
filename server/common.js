@@ -1,15 +1,51 @@
 import { axiosInstance } from "../lib/axios";
 
-// subject
-// export async function getAllSubjects() {
-//   try {
-//     const response = await axiosInstance.get("/subject/get-subjects");
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error fetching subjects:", error);
-//     throw error;
-//   }
-// }
+// Subject related functions
+export async function getAllSubjects() {
+  try {
+    const response = await axiosInstance.get("/subject/get-subjects");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching subjects:", error);
+    throw error;
+  }
+}
+export async function addSubject(subjectName) {
+  try {
+    const response = await axiosInstance.post("/subject/add-subject", {
+      subjectName,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error adding subject:", error);
+    throw error;
+  }
+}
+
+export async function updateSubject(id, subjectName) {
+  try {
+    const response = await axiosInstance.put(`/subject/update-subject/${id}`, {
+      subjectName,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating subject:", error);
+    throw error;
+  }
+}
+
+
+export async function deleteSubject(id) {
+  try {
+    const response = await axiosInstance.delete(
+      `/subject/delete-subject?subjectId=${id}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting subject:", error);
+    throw error;
+  }
+}
 
 // Center related functions
 export async function getAllCenters() {
@@ -85,7 +121,7 @@ export async function updateUserCenter(object) {
 // modules
 
 // all module get methods
-export async function getAllSubjects() {
+export async function getAllModuleSubjects() {
   try {
     const response = await axiosInstance.get("/module/get-subjects");
     return response.data;

@@ -8,7 +8,8 @@ import {
   addModulePdf,
   getAllClasses,
   getAllCourses,
-  getAllSubjects,
+  getAllModuleSubjects,
+
   getAllTopics,
 } from "../../../server/common";
 
@@ -27,7 +28,7 @@ const PdfUploader = () => {
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    getAllSubjects()
+    getAllModuleSubjects()
       .then((data) => setSubjects(data))
       .catch((err) => {
         toast.error("Failed to fetch subjects.");
@@ -97,13 +98,16 @@ const PdfUploader = () => {
     formData.append("topic", selectedTopic.subjectTopic);
     formData.append("pdf", selectedFile);
 
-   addModulePdf(formData).then((data) => {console.log("upload res data: ", data)
-    toast.success("PDF uploaded successfully.");
-    setSelectedFile(null);
-   }).catch((err) => {
-      // console.error("Error uploading PDF:", err);
-      toast.error("Failed to upload PDF.");
-    });
+    addModulePdf(formData)
+      .then((data) => {
+        console.log("upload res data: ", data);
+        toast.success("PDF uploaded successfully.");
+        setSelectedFile(null);
+      })
+      .catch((err) => {
+        // console.error("Error uploading PDF:", err);
+        toast.error("Failed to upload PDF.");
+      });
   };
 
   const removeFile = () => setSelectedFile(null);

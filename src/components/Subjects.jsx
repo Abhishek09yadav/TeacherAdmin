@@ -10,7 +10,12 @@ import Pagination from "@/components/Pagination";
 import { FaSearch } from "react-icons/fa";
 import { useDebounce } from "@/hooks/useDebounce";
 import Loader from "@/components/Loader";
-import { axiosInstance } from "../../lib/axios";
+import {
+  getAllSubjects,
+  addSubject,
+  updateSubject,
+  deleteSubject,
+} from "../../server/common";
 
 export default function Subjects() {
   const [subjects, setSubjects] = useState([]);
@@ -28,10 +33,9 @@ export default function Subjects() {
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredSubjects.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
+  const currentItems = Array.isArray(filteredSubjects)
+    ? filteredSubjects.slice(indexOfFirstItem, indexOfLastItem)
+    : [];
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -59,10 +63,12 @@ export default function Subjects() {
   const fetchSubjects = async () => {
     setLoading(true);
     try {
-      const response = await axiosInstance.get("/subject/get-subjects");
-      setSubjects(response.data);
-      setFilteredSubjects(response.data);
-      setCurrentPage(1);
+          const data = await getAllSubjects();
+          const validData = Array.isArray(data) ? data : [];
+          setSubjects(validData);
+          setFilteredSubjects(validData);
+          setCurrentPage(1);
+
     } catch (error) {
       console.error(
         "Error fetching subjects:",
@@ -86,12 +92,7 @@ export default function Subjects() {
           label: "Yes",
           onClick: async () => {
             try {
-              const response = await axiosInstance.post(
-                "/subject/add-subject",
-                {
-                  subjectName: newSubjectName,
-                }
-              );
+              await addSubject(newSubjectName);
 
               toast.success("Subject added successfully!");
               setNewSubjectName("");
@@ -124,13 +125,7 @@ export default function Subjects() {
     }
 
     try {
-      const response = await axiosInstance.put(
-        `/subject/update-subject/${id}`,
-        {
-          subjectName: newName,
-        }
-      );
-
+      await updateSubject(id, newName);
       toast.success("Subject updated successfully!");
       setToggleSubjects((prev) => !prev);
       setShowEditForm(false);
@@ -151,10 +146,7 @@ export default function Subjects() {
           label: "Yes",
           onClick: async () => {
             try {
-              const response = await axiosInstance.delete(
-                `/subject/delete-subject?subjectId=${id}`
-              );
-
+              await deleteSubject(id);
               toast.success("Subject deleted successfully!");
               fetchSubjects();
             } catch (error) {
