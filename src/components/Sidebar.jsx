@@ -83,12 +83,12 @@ const Sidebar = () => {
       route: "/chapters",
       icon: <GrNotes />,
     },
-    {
-      id: "modules",
-      label: "Modules",
-      route: "/modules",
-      icon: <MdViewModule />,
-    },
+    // {
+    //   id: "modules",
+    //   label: "Modules",
+    //   route: "/modules",
+    //   icon: <MdViewModule />,
+    // },
     {
       id: "pdf",
       label: "PDF",
