@@ -1,3 +1,4 @@
+// changes: subject → class
 "use client";
 import { useState, useEffect } from "react";
 
@@ -18,36 +19,34 @@ import {
 } from "../../../server/common";
 
 export default function classes() {
-  const [classes, setclasses] = useState([]);
+  const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [toggleclasses, setToggleclasses] = useState(false);
-  const [newSubjectName, setNewSubjectName] = useState("");
+  const [toggleClasses, setToggleClasses] = useState(false);
+  const [newClassName, setNewClassName] = useState("");
   const [showEditForm, setShowEditForm] = useState(false);
-  const [editSubjectId, setEditSubjectId] = useState(null);
-  const [editSubjectName, setEditSubjectName] = useState("");
+  const [editClassId, setEditClassId] = useState(null);
+  const [editClassName, setEditClassName] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(7);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredclasses, setFilteredclasses] = useState([]);
+  const [filteredClasses, setFilteredClasses] = useState([]);
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = Array.isArray(filteredclasses)
-    ? filteredclasses.slice(indexOfFirstItem, indexOfLastItem)
+  const currentItems = Array.isArray(filteredClasses)
+    ? filteredClasses.slice(indexOfFirstItem, indexOfLastItem)
     : [];
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   useEffect(() => {
     if (debouncedSearchTerm !== undefined) {
-      const filtered = classes.filter((subject) =>
-        subject.className
-          .toLowerCase()
-          .includes(debouncedSearchTerm.toLowerCase())
+      const filtered = classes.filter((cls) =>
+        cls.className.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
       );
 
-      setFilteredclasses(filtered);
+      setFilteredClasses(filtered);
       setCurrentPage(1);
     }
   }, [classes, debouncedSearchTerm]);
@@ -56,19 +55,17 @@ export default function classes() {
     setSearchTerm(e.target.value);
   };
 
-  // for fetching classes
   useEffect(() => {
-    fetchclasses();
-  }, [toggleclasses]);
+    fetchClasses();
+  }, [toggleClasses]);
 
-  const fetchclasses = async () => {
+  const fetchClasses = async () => {
     setLoading(true);
     try {
       const data = await getAllClasses();
-      console.log("Fetched classes:", data);
       const validData = Array.isArray(data) ? data : [];
-      setclasses(validData);
-      setFilteredclasses(validData);
+      setClasses(validData);
+      setFilteredClasses(validData);
       setCurrentPage(1);
     } catch (error) {
       console.error(
@@ -81,83 +78,37 @@ export default function classes() {
     }
   };
 
-  const handleaddClass = async (e) => {
+  const handleAddClass = async (e) => {
     e.preventDefault();
-    if (!newSubjectName.trim()) return;
+    if (!newClassName.trim()) return;
 
     confirmAlert({
       title: "Confirm Submission",
-      message: "Are you sure you want to add this subject?",
+      message: "Are you sure you want to add this class?",
       buttons: [
         {
           label: "Yes",
           onClick: async () => {
             try {
-              await addModulePdfClass(newSubjectName);
+              await addModulePdfClass(newClassName);
 
-              toast.success("Subject added successfully!");
-              setNewSubjectName("");
-              setToggleclasses((prev) => !prev);
+              toast.success("Class added successfully!");
+              setNewClassName("");
+              setToggleClasses((prev) => !prev);
               setShowAddForm(false);
             } catch (error) {
-              console.error("Error adding subject:", error);
-              toast.error("Error adding subject. Please try again.");
+              console.error("Error adding class:", error);
+              toast.error("Error adding class. Please try again.");
             }
           },
         },
         {
           label: "No",
-          onClick: () => toast.info("Subject addition cancelled!"),
+          onClick: () => toast.info("Class addition cancelled!"),
         },
       ],
     });
   };
-
-  // const openEditPopup = (id, currentName) => {
-  //   setEditSubjectId(id);
-  //   setEditSubjectName(currentName);
-  //   setShowEditForm(true);
-  // };
-
-  // const handleEdit = async (id, newName) => {
-  //   if (!newName || newName.trim() === "") {
-  //     toast.warning("Subject name cannot be empty.");
-  //     return;
-  //   }
-
-  //   try {
-  //     await updateClass(id, newName);
-  //     toast.success("Subject updated successfully!");
-  //     setToggleclasses((prev) => !prev);
-  //     setShowEditForm(false);
-  //   } catch (error) {
-  //     console.error("Error updating subject:", error);
-  //     toast.error("Error updating subject. Please try again.");
-  //   }
-  // };
-
-  // const handleDelete = (id) => {
-  //   confirmAlert({
-  //     title: "Confirm Deletion",
-  //     message: "Are you sure you want to delete this subject?",
-  //     buttons: [
-  //       {
-  //         label: "Yes",
-  //         onClick: async () => {
-  //           try {
-  //             await deleteClass(id);
-  //             toast.success("Subject deleted successfully!");
-  //             fetchclasses();
-  //           } catch (error) {
-  //             console.error("Error deleting subject:", error);
-  //             toast.error("Error deleting subject. Please try again.");
-  //           }
-  //         },
-  //       },
-  //       { label: "No" },
-  //     ],
-  //   });
-  // };
 
   return (
     <div className="p-6">
@@ -170,40 +121,25 @@ export default function classes() {
               "inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px",
           }}
         >
-          Add Subject
+          Add Class
         </button>
       </div>
 
       {showAddForm && (
-        <SubjectForm
+        <ClassForm
           title="Add New Class"
           placeholder="Enter class name"
-          subjectName={newSubjectName}
-          setSubjectName={setNewSubjectName}
-          onSave={handleaddClass}
+          classNameValue={newClassName}
+          setClassName={setNewClassName}
+          onSave={handleAddClass}
           submitLabel="Add"
           onCancel={() => {
             setShowAddForm(false);
-            setNewSubjectName("");
+            setNewClassName("");
           }}
         />
       )}
 
-      {/* {showEditForm && (
-        <SubjectForm
-          title="Edit Subject"
-          subjectName={editSubjectName}
-          setSubjectName={setEditSubjectName}
-          submitLabel="Update"
-          onSave={(e) => {
-            e.preventDefault();
-            handleEdit(editSubjectId, editSubjectName);
-          }}
-          onCancel={() => setShowEditForm(false)}
-        />
-      )} */}
-
-      {/* Search bar */}
       <div className="mb-6 flex items-center justify-center">
         <div className="relative w-full sm:w-3/4 md:w-1/2">
           <input
@@ -225,7 +161,6 @@ export default function classes() {
             <tr className="bg-gray-100">
               <th className="border px-4 py-2 text-center">S.No.</th>
               <th className="border px-4 py-2 text-center">Class Name</th>
-              {/* <th className="border px-4 py-2 text-center">Actions</th> */}
             </tr>
           </thead>
           <tbody>
@@ -237,7 +172,7 @@ export default function classes() {
                   </span>
                 </td>
               </tr>
-            ) : filteredclasses.length === 0 ? (
+            ) : filteredClasses.length === 0 ? (
               <tr>
                 <td colSpan="3" className="border px-4 py-2 text-center">
                   {searchTerm
@@ -246,21 +181,14 @@ export default function classes() {
                 </td>
               </tr>
             ) : (
-              currentItems.map((subject, index) => (
-                <tr key={subject._id} className="hover:bg-gray-50">
+              currentItems.map((cls, index) => (
+                <tr key={cls._id} className="hover:bg-gray-50">
                   <td className="border px-4 py-2 text-center">
                     {indexOfFirstItem + index + 1}
                   </td>
                   <td className="border px-4 py-2 text-center">
-                    {subject.className}
+                    {cls.className}
                   </td>
-                  {/* <td className="border px-4 py-2 text-center">
-                    <ActionButtons
-                      subject={subject}
-                      handleDelete={handleDelete}
-                      handleEdit={openEditPopup}
-                    />
-                  </td> */}
                 </tr>
               ))
             )}
@@ -268,7 +196,7 @@ export default function classes() {
         </table>
         <Pagination
           usersPerPage={itemsPerPage}
-          totalUsers={filteredclasses.length}
+          totalUsers={filteredClasses.length}
           paginate={paginate}
           currentPage={currentPage}
         />
@@ -277,38 +205,10 @@ export default function classes() {
   );
 }
 
-// const ActionButtons = ({ subject, handleDelete, handleEdit }) => {
-//   return (
-//     <div className="flex space-x-4 justify-center">
-//       <button
-//         style={{
-//           boxShadow:
-//             "inset rgb(0 105 125) 2px 2px 5px, inset rgb(82 255 255) -1px -2px 3px",
-//         }}
-//         onClick={() => handleEdit(subject._id, subject.subjectName)}
-//         className="flex items-center gap-3 px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded"
-//       >
-//         <FaEdit />
-//         Edit
-//       </button>
-//       <button
-//         style={{
-//           boxShadow: "inset 2px 2px 2px #ad2929, inset -2px -2px 3px #ff8e8e",
-//         }}
-//         onClick={() => handleDelete(subject._id)}
-//         className="flex items-center gap-3 px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded"
-//       >
-//         <MdDelete />
-//         Delete
-//       </button>
-//     </div>
-//   );
-// };
-
-const SubjectForm = ({
+const ClassForm = ({
   title,
-  subjectName,
-  setSubjectName,
+  classNameValue,
+  setClassName,
   onSave,
   onCancel,
   submitLabel,
@@ -320,10 +220,10 @@ const SubjectForm = ({
         <form onSubmit={onSave} className="space-y-4">
           <input
             type="text"
-            value={subjectName}
-            onChange={(e) => setSubjectName(e.target.value)}
+            value={classNameValue}
+            onChange={(e) => setClassName(e.target.value)}
             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter subject name"
+            placeholder="Enter class name"
             required
           />
           <div className="flex justify-center space-x-10">
