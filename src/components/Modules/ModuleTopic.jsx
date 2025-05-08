@@ -82,47 +82,19 @@ const ModuleTopic = () => {
 
 
 
-  const handleFileChange = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.type !== "application/pdf") {
-      toast.error("Only PDF files are allowed.");
-      return;
-    }
-    setSelectedFile(file);
-  };
-
-  const handleUpload = async () => {
-    if (!selectedFile || !allSelected) return;
-
-    const formData = new FormData();
-    formData.append("topicId", selectedTopic._id);
-    formData.append("pdf", selectedFile);
-
-    addModulePdf(formData)
-      .then(() => {
-        toast.success("PDF uploaded successfully.");
-        setSelectedFile(null);
-        setShowModal(false);
-      })
-      .catch((err) => {
-        toast.error("Failed to upload PDF.");
-        console.error(err);
-      });
-  };
-
+ 
   const handleAddTopic = async () => {
     if (!selectedCourse || !selectedSubject ) {
       toast.warn("Please select a course, subject, and enter topic.");
       return;
     }
 
-    const formData = new FormData();
-    formData.append("subjectId", selectedSubject._id);
-    formData.append("subjectTopic", selectedTopic.trim());
+    // const formData = new FormData();
+    // formData.append("subjectId", selectedSubject._id);
+    // formData.append("subjectTopic", selectedTopic.trim());
 
     try {
-      await addModuleTopic(formData);
+      await addModuleTopic(selectedTopic.trim(), selectedSubject._id);
       toast.success("Topic added successfully.");
       setSelectedTopic(null);
       setShowModal(false);
@@ -153,7 +125,7 @@ const ModuleTopic = () => {
             courseName: course.courseName,
             subjectName: subject.subjectName,
             topicName: topic.subjectTopic,
-            pdfs: topic.pdfs,
+         
           });
         }
       }
@@ -161,32 +133,11 @@ const ModuleTopic = () => {
     return result;
   };
 
-  const pdfViewTemplate = (rowData) => {
-    const pdfOptions =
-      rowData.pdfs?.map((pdf, index) => ({
-        label: `View PDF ${index + 1}`,
-        value: `${process.env.NEXT_PUBLIC_PDF_URL}/${pdf.pdf}`,
-      })) || [];
-
-    return (
-      <div className="space-x-2">
-        {rowData.pdfs?.length > 0 ? (
-          <Dropdown
-            options={pdfOptions}
-            onChange={(e) => window.open(e.value, "_blank")}
-            placeholder="Select a PDF"
-            className="w-full"
-          />
-        ) : (
-          <span className="text-gray-400">No PDFs</span>
-        )}
-      </div>
-    );
-  };
+ 
 
   return (
     <div className="relative">
-      {/* Add PDF Button */}
+      {/* Add  Button */}
       <div className="m-4 text-right">
         <button
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
@@ -290,7 +241,7 @@ const ModuleTopic = () => {
           <Column field="courseName" header="Course" />
           <Column field="subjectName" header="Subject" />
           <Column field="topicName" header="Topic" />
-          <Column body={pdfViewTemplate} header="PDFs" />
+    
         </DataTable>
       </div>
     </div>
