@@ -79,14 +79,22 @@ const SubjectAdder = () => {
     }
   };
 
-  const getFlatData = () => {
-    const result = [];
+const getFlatData = () => {
+  const result = [];
 
-    for (const course of moduleData) {
-      if (selectedCourse && course.courseName !== selectedCourse.courseName)
-        continue;
+  for (const course of moduleData) {
+    if (selectedCourse && course.courseName !== selectedCourse.courseName)
+      continue;
 
-      for (const subject of course.subjects || []) {
+    // If no subjects, still add a row
+    if (!course.subjects || course.subjects.length === 0) {
+      result.push({
+        className: selectedClass?.className || "",
+        courseName: course.courseName,
+        subjectName: "", 
+      });
+    } else {
+      for (const subject of course.subjects) {
         result.push({
           className: selectedClass?.className || "",
           courseName: course.courseName,
@@ -94,9 +102,11 @@ const SubjectAdder = () => {
         });
       }
     }
+  }
 
-    return result;
-  };
+  return result;
+};
+
 
   return (
     <div className="relative">
@@ -183,7 +193,15 @@ const SubjectAdder = () => {
         <DataTable value={getFlatData()} paginator rows={10}>
           <Column field="className" header="Class" />
           <Column field="courseName" header="Course" />
-          <Column field="subjectName" header="Subject" />
+          <Column
+            field="subjectName"
+            header="Subject"
+            body={(rowData) =>
+              rowData.subjectName || (
+                <span className="text-gray-400 italic">No Subject</span>
+              )
+            }
+          />
         </DataTable>
       </div>
     </div>

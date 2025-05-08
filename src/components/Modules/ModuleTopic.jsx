@@ -96,21 +96,24 @@ const ModuleTopic = () => {
     }
   };
 
-  const getFlatData = () => {
-    const result = [];
+const getFlatData = () => {
+  const result = [];
 
-    for (const course of moduleData) {
-      if (selectedCourse && course.courseName !== selectedCourse.courseName)
+  for (const course of moduleData) {
+    if (selectedCourse && course.courseName !== selectedCourse.courseName)
+      continue;
+
+    for (const subject of course.subjects || []) {
+      if (
+        selectedSubject &&
+        subject.subjectName !== selectedSubject.subjectName
+      )
         continue;
 
-      for (const subject of course.subjects || []) {
-        if (
-          selectedSubject &&
-          subject.subjectName !== selectedSubject.subjectName
-        )
-          continue;
+      const topics = subject.topics || [];
 
-        for (const topic of subject.topics || []) {
+      if (topics.length > 0) {
+        for (const topic of topics) {
           result.push({
             className: selectedClass?.className || "",
             courseName: course.courseName,
@@ -118,10 +121,21 @@ const ModuleTopic = () => {
             topicName: topic.subjectTopic,
           });
         }
+      } else {
+        // Subject with no topics
+        result.push({
+          className: selectedClass?.className || "",
+          courseName: course.courseName,
+          subjectName: subject.subjectName,
+          topicName: "", // Empty topic field
+        });
       }
     }
-    return result;
-  };
+  }
+
+  return result;
+};
+
 
   return (
     <div className="relative">
@@ -232,7 +246,16 @@ const ModuleTopic = () => {
           <Column field="className" header="Class" />
           <Column field="courseName" header="Course" />
           <Column field="subjectName" header="Subject" />
-          <Column field="topicName" header="Topic" />
+          {/* <Column field="topicName" header="Topic" /> */}
+          <Column
+            field="topicName"
+            header="Topic"
+            body={(rowData) =>
+              rowData.topicName || (
+                <span className="text-gray-400 italic">No Topic</span>
+              )
+            }
+          />
         </DataTable>
       </div>
     </div>
