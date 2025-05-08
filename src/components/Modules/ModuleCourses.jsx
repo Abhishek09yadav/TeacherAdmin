@@ -101,7 +101,7 @@ const ModuleCourses = () => {
       </div>
 
       {/* Filter */}
-      <div className="mb-6 flex flex-row gap-3 ">
+      <div className="mb-6 flex flex-wrap flex-row gap-3 ">
         <Dropdown
           value={modalSelectedClass}
           onChange={(e) => handleClassChange(e.value, "filter")}
