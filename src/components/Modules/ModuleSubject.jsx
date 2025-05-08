@@ -111,9 +111,9 @@ const SubjectAdder = () => {
         visible={showModal}
         onHide={() => setShowModal(false)}
         modal
-        className="p-fluid w-full md:w-1/2"
+        className="p-fluid p-3 md:p-0 w-full md:w-1/2"
       >
-        <div className="space-y-4">
+        <div className="flex flex-col gap-4">
           <Dropdown
             value={selectedClass}
             onChange={(e) => handleClassChange(e.value)}
@@ -138,7 +138,7 @@ const SubjectAdder = () => {
           />
           <Button
             label="Add Subject"
-            className="p-button-success w-full"
+            className=" mt-3 w-full"
             onClick={handleAddSubject}
           />
         </div>

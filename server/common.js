@@ -211,7 +211,7 @@ export async function addModulePdfCourse(courseName, className) {
 export async function addModuleSubject(subjectName, courseName) {
   try {
     const response = await axiosInstance.post(
-      `/module/add-module-course/${subjectName}/${courseName}`
+      `/module/add-module-subject/${subjectName}/${courseName}`
     );
     return response.data;
   } catch (error) {
@@ -219,4 +219,14 @@ export async function addModuleSubject(subjectName, courseName) {
     throw error;
   }
 }
-
+export async function addModuleTopic(subjectTopic, subjectId) {
+  try {
+    const response = await axiosInstance.post(
+      `/module/add-module-topic/${subjectTopic}/${subjectId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error Adding Topic:", error);
+    throw error;
+  }
+}
