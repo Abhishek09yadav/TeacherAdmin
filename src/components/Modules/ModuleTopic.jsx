@@ -1,9 +1,8 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
-import { FaUpload } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -25,9 +24,6 @@ const ModuleTopic = () => {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [selectedTopic, setSelectedTopic] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
-
-  const fileInputRef = useRef(null);
 
   useEffect(() => {
     getAllClasses()
@@ -77,21 +73,11 @@ const ModuleTopic = () => {
     setTopics(topicList);
   };
 
-  const allSelected =
-    selectedClass && selectedCourse && selectedSubject && selectedTopic;
-
-
-
- 
   const handleAddTopic = async () => {
-    if (!selectedCourse || !selectedSubject ) {
+    if (!selectedCourse || !selectedSubject || !selectedTopic?.trim()) {
       toast.warn("Please select a course, subject, and enter topic.");
       return;
     }
-
-    // const formData = new FormData();
-    // formData.append("subjectId", selectedSubject._id);
-    // formData.append("subjectTopic", selectedTopic.trim());
 
     try {
       await addModuleTopic(selectedTopic.trim(), selectedSubject._id);
@@ -104,7 +90,6 @@ const ModuleTopic = () => {
     }
   };
 
-  // Flatten and filter data for table
   const getFlatData = () => {
     const result = [];
 
@@ -125,7 +110,6 @@ const ModuleTopic = () => {
             courseName: course.courseName,
             subjectName: subject.subjectName,
             topicName: topic.subjectTopic,
-         
           });
         }
       }
@@ -133,11 +117,9 @@ const ModuleTopic = () => {
     return result;
   };
 
- 
-
   return (
     <div className="relative">
-      {/* Add  Button */}
+      {/* Add Button */}
       <div className="m-4 text-right">
         <button
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
@@ -153,7 +135,7 @@ const ModuleTopic = () => {
 
       {/* Modal */}
       <Dialog
-        header="Add Module "
+        header="Add Module Topic"
         visible={showModal}
         onHide={() => setShowModal(false)}
         modal
@@ -183,16 +165,14 @@ const ModuleTopic = () => {
             placeholder="Select Subject"
             disabled={!selectedCourse}
           />
-       
-        <input
+          <input
             type="text"
-            value={selectedTopic}
+            value={selectedTopic || ""}
             onChange={(e) => setSelectedTopic(e.target.value)}
             placeholder="Enter Topic Name"
             className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            required  
+            required
           />
-         
           <Button
             label="Add Topic"
             onClick={handleAddTopic}
@@ -203,7 +183,7 @@ const ModuleTopic = () => {
 
       {/* Table Section */}
       <div className="p-4">
-        <h2 className="text-lg font-semibold mb-3">Module PDFs</h2>
+        <h2 className="text-lg font-semibold mb-3">Module Topics</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
           <Dropdown
@@ -241,7 +221,6 @@ const ModuleTopic = () => {
           <Column field="courseName" header="Course" />
           <Column field="subjectName" header="Subject" />
           <Column field="topicName" header="Topic" />
-    
         </DataTable>
       </div>
     </div>
