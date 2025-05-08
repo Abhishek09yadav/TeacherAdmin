@@ -65,8 +65,17 @@ const SubjectAdder = () => {
       toast.success("Subject added successfully.");
       setNewSubject("");
       setShowModal(false);
-    } catch (error) {
-      toast.error("Failed to add subject.");
+      if (selectedClass?.className) {
+        const updatedData = await getModuleClassByName(selectedClass.className);
+        const courseList = updatedData[0]?.courses || [];
+        setModuleData(courseList);
+        setCourses(courseList);
+      }
+    } catch (err) {
+      toast.error(
+        err?.response?.data?.error || err?.message || "Failed to add subject"
+      );
+      console.log(err);
     }
   };
 

@@ -98,24 +98,32 @@ const PdfUploader = () => {
     setSelectedFile(file);
   };
 
-  const handleUpload = async () => {
-    if (!selectedFile || !allSelected) return;
+const handleUpload = async () => {
+  if (!selectedFile || !allSelected) return;
 
-    const formData = new FormData();
-    formData.append("topicId", selectedTopic._id);
-    formData.append("pdf", selectedFile);
+  const formData = new FormData();
+  formData.append("topicId", selectedTopic._id);
+  formData.append("pdf", selectedFile);
 
-    addModulePdf(formData)
-      .then(() => {
-        toast.success("PDF uploaded successfully.");
-        setSelectedFile(null);
-        setShowModal(false);
-      })
-      .catch((err) => {
-        toast.error("Failed to upload PDF.");
-        console.error(err);
-      });
-  };
+  try {
+    await addModulePdf(formData);
+    toast.success("PDF uploaded successfully.");
+    setSelectedFile(null);
+    setShowModal(false);
+
+    // Re-fetch module data to update table
+    if (selectedClass?.className) {
+      const updatedData = await getModuleClassByName(selectedClass.className);
+      const courseList = updatedData[0]?.courses || [];
+      setModuleData(courseList);
+      setCourses(courseList);
+    }
+  } catch (err) {
+    toast.error("Failed to upload PDF.");
+    console.error(err);
+  }
+};
+
 
   const removeFile = () => setSelectedFile(null);
 

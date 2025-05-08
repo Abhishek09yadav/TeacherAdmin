@@ -96,9 +96,13 @@ export default function classes() {
               setNewClassName("");
               setToggleClasses((prev) => !prev);
               setShowAddForm(false);
-            } catch (error) {
-              console.error("Error adding class:", error);
-              toast.error("Error adding class. Please try again.");
+            } catch (err) {
+              toast.error(
+                err?.response?.data?.error ||
+                  err?.message ||
+                  "Failed to add class"
+              );
+              console.log(err);
             }
           },
         },

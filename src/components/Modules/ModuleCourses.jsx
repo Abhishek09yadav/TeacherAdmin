@@ -19,7 +19,7 @@ const ModuleCourses = () => {
   const [moduleData, setModuleData] = useState([]);
   const [modalSelectedClass, setFilterSelectedClass] = useState(null);
   // const [modalSelectedClass, setFilterSelectedClass] = useState(null);
-  
+
   const [courseName, setCourseName] = useState("");
 
   useEffect(() => {
@@ -70,9 +70,20 @@ const ModuleCourses = () => {
       setCourseName("");
       setShowModal(false);
       await handleClassChange(modalSelectedClass, "modal");
+
+      if (modalSelectedClass && modalSelectedClass?.className) {
+        const updatedData = await getModuleClassByName(
+          modalSelectedClass?.className
+        );
+        const courseList = updatedData[0]?.courses || [];
+        setModuleData(courseList);
+        setCourses(courseList);
+      }
     } catch (err) {
-      toast.error("Failed to add course.");
-      console.error(err);
+      toast.error(
+        err?.response?.data?.error || err?.message || "Failed to add course"
+      );
+      console.log(err);
     }
   };
 
@@ -111,7 +122,6 @@ const ModuleCourses = () => {
       <Dialog
         header="Add New Course"
         visible={showModal}
-     
         onHide={() => setShowModal(false)}
         modal
         className="p-fluid w-full md:w-1/2 p-4 md:p-0"

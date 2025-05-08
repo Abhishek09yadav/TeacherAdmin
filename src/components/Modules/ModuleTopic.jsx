@@ -30,7 +30,7 @@ const ModuleTopic = () => {
       .then((data) => setClasses(data))
       .catch((err) => {
         toast.error("Failed to fetch classes.");
-        console.error(err);
+        console.log(err);
       });
   }, []);
 
@@ -84,6 +84,12 @@ const ModuleTopic = () => {
       toast.success("Topic added successfully.");
       setSelectedTopic(null);
       setShowModal(false);
+      if (selectedClass?.className) {
+        const updatedData = await getModuleClassByName(selectedClass.className);
+        const courseList = updatedData[0]?.courses || [];
+        setModuleData(courseList);
+        setCourses(courseList);
+      }
     } catch (err) {
       toast.error("Failed to add topic.");
       console.error(err);
