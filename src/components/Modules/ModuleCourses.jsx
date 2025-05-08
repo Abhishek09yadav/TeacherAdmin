@@ -92,16 +92,16 @@ const ModuleCourses = () => {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Module Courses</h1>
-        <button
+        {/* <button
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-shadow shadow-md"
           onClick={() => setShowModal(true)}
         >
           Add Course
-        </button>
+        </button> */}
       </div>
 
       {/* Filter */}
-      <div className="mb-6 flex flex-row ">
+      <div className="mb-6 flex flex-row gap-3 ">
         <Dropdown
           value={modalSelectedClass}
           onChange={(e) => handleClassChange(e.value, "filter")}
@@ -109,6 +109,12 @@ const ModuleCourses = () => {
           optionLabel="className"
           placeholder="Filter by Class"
           className="w-full md:w-64"
+        />{" "}
+        <Button
+          label="Add Course"
+          icon="pi pi-plus"
+          className="p-button-primary"
+          onClick={() => setShowModal(true)}
         />
       </div>
       {/* Table */}

@@ -126,7 +126,7 @@ const ModuleTopic = () => {
   return (
     <div className="relative">
       {/* Add Button */}
-      <div className="m-4 text-right">
+      {/* <div className="m-4 text-right">
         <button
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           onClick={() => setShowModal(true)}
@@ -137,7 +137,7 @@ const ModuleTopic = () => {
         >
           Add Topic
         </button>
-      </div>
+      </div> */}
 
       {/* Modal */}
       <Dialog
@@ -191,7 +191,7 @@ const ModuleTopic = () => {
       <div className="p-4">
         <h2 className="text-lg font-semibold mb-3">Module Topics</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+        <div className="flex flex-row flex-wrap gap-4 mb-3">
           <Dropdown
             value={selectedClass}
             onChange={(e) => handleClassChange(e.value)}
@@ -214,6 +214,12 @@ const ModuleTopic = () => {
             optionLabel="subjectName"
             placeholder="Filter by Subject"
             disabled={!selectedCourse}
+          />
+          <Button
+            label="Add topic"
+            icon="pi pi-plus"
+            className="p-button-primary"
+            onClick={() => setShowModal(true)}
           />
         </div>
 
